@@ -1101,3 +1101,16 @@
 20221029	10:28:55	66ede7a3-afab-44c7-b89c-78c1bfe32a08	POST	http://localhost:8081	/auth
 20221029	10:28:57	89b1381d-3964-41fb-ab66-ae288d301380	POST	http://localhost:8081	/auth
 20221029	10:28:58	e14b2dba-6e0c-4c63-b1df-c9965e6abdce	POST	http://localhost:8081	/auth
+20221107	13:22:25	44ad69ec-f6f3-43bd-8111-5812f45b3a44	POST	undefined	/auth
+20221107	13:22:37	280ede5e-d2d1-48bc-b37c-4d759c4ccffc	GET	undefined	/students
+20221107	13:22:55	8d374270-acba-425f-892e-72163a548efc	POST	undefined	/students
+20221107	13:23:07	e60f1588-9ee1-4b84-9581-f1411438166b	GET	undefined	/students
+20221107	13:47:31	543111e0-129f-4155-ac91-20b31cac83f8	POST	undefined	/register
+20221107	13:48:34	37f89afd-04bf-451b-9979-4e1680e3a917	GET	undefined	/logout
+20221107	13:48:43	14a3edcb-59ed-4bf0-bcf7-c47788349d0f	GET	undefined	/refresh
+20221107	13:48:55	b8e3eb5b-b2fd-4eb4-b806-ae83ef45c20b	POST	undefined	/auth
+20221107	13:48:59	dfeb4fc0-3df6-44ee-949a-8687c931d3e8	GET	undefined	/refresh
+20221107	13:53:40	0dd27416-f7bb-4562-926c-5cf778952075	POST	undefined	/auth
+20221107	13:53:43	ac66c966-014e-4090-9abd-1b338c7c1d38	POST	undefined	/students
+20221107	13:54:04	35a3612b-8231-442d-b6cf-69de0391ce44	DELETE	undefined	/students
+20221107	13:58:44	88ce4042-5754-43da-ba20-9c80d7f41dca	GET	undefined	/students
