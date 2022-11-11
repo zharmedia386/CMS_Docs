@@ -1,22 +1,48 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import DocsView from '../views/Documentation/DocsView.vue'
+import CMSView from '../views/CMS/CMSView.vue'
+import SectionView from '../views/Documentation/SectionView.vue'
+import SectionList from '../views/CMS/SectionList.vue'
+import ChapterList from '../views/CMS/ChapterList.vue'
+import AppInfo from '../views/CMS/AppInfo.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'docs',
+    component: DocsView,
+    children: [
+      {
+        path: 'docs/:section',
+        name: 'section',
+        component: SectionView
+      }
+    ]
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/cms',
+    name: 'cms',
+    component: CMSView,
+    children: [
+      {
+        path: 'section',
+        name: 'sectionlist',
+        component: SectionList
+      },
+      {
+        path: 'chapter',
+        name : 'chapterlist',
+        component: ChapterList
+      },
+      {
+        path: 'appinfo',
+        name: 'appinfo',
+        component: AppInfo
+      }
+    ]
   }
 ]
 
