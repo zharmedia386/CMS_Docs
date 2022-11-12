@@ -5,7 +5,9 @@ import CMSView from '../views/CMS/CMSView.vue'
 import SectionView from '../views/Documentation/SectionView.vue'
 import SectionList from '../views/CMS/SectionList.vue'
 import ChapterList from '../views/CMS/ChapterList.vue'
-import AppInfo from '../views/CMS/AppInfo.vue'
+import Metadata from '../views/CMS/MetadataInfo.vue'
+import SectionEditor from '../views/CMS/SectionEditor.vue'
+import Versioning from '../views/CMS/VersioningEditor.vue'
 
 Vue.use(VueRouter)
 
@@ -18,7 +20,8 @@ const routes = [
       {
         path: 'docs/:section',
         name: 'section',
-        component: SectionView
+        component: SectionView,
+        props: true
       }
     ]
   },
@@ -29,18 +32,28 @@ const routes = [
     children: [
       {
         path: 'section',
-        name: 'sectionlist',
+        name: 'sectionList',
         component: SectionList
       },
       {
+        path: 'section/:title',
+        name: 'sectionEditor',
+        component: SectionEditor
+      },
+      {
         path: 'chapter',
-        name : 'chapterlist',
+        name : 'chapterList',
         component: ChapterList
       },
       {
-        path: 'appinfo',
-        name: 'appinfo',
-        component: AppInfo
+        path: 'metadata',
+        name: 'metadata',
+        component: Metadata
+      },
+      {
+        path: 'version',
+        name: 'version',
+        component: Versioning
       }
     ]
   }
