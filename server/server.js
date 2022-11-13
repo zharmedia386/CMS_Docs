@@ -32,6 +32,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 // routes
 app.use('/', require('./routes/root'));
 app.use('/documentations', require('./routes/api/documentations'));
+app.use('/chapters', require('./routes/api/chapters'));
 app.use('/sections', require('./routes/api/sections'));
 
 app.all('*', (req, res) => {
