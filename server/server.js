@@ -40,6 +40,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 
 // routes
 app.use('/', require('./routes/root'));
+<<<<<<< Updated upstream
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
@@ -48,6 +49,11 @@ app.use('/logout', require('./routes/logout'));
 app.use(verifyJWT);
 app.use('/students', require('./routes/api/students'));
 app.use('/users', require('./routes/api/users'));
+=======
+app.use('/documentations', require('./routes/api/documentations'));
+app.use('/chapters', require('./routes/api/chapters'));
+app.use('/sections', require('./routes/api/sections'));
+>>>>>>> Stashed changes
 
 app.all('*', (req, res) => {
     res.status(404);
