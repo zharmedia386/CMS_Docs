@@ -10,6 +10,9 @@
         <v-btn outlined>
             <v-icon>mdi-magnify</v-icon>search
         </v-btn>
+        <v-btn>
+            <v-icon>mdi-github</v-icon>
+        </v-btn>
     </v-app-bar>
     <v-navigation-drawer app >
         <v-card v-for="(chapter,index) in chapters" v-bind:key="index">
