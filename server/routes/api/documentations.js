@@ -9,6 +9,6 @@ router.route('/')
     .delete(documentationsController.deleteDocumentation);
 
 router.route('/version')
-    .get(documentationsController.getAllVersion)
+    .get(documentationsController.getAllVersions);
 
 module.exports = router;
