@@ -5,8 +5,8 @@ const chaptersController = require('../../controllers/chaptersController')
 router.route('/')
     .get(chaptersController.getAllChapters)
     .post(chaptersController.createNewChapter)
-//     .put(documentationsController.updateDocumentation)
-//     .delete(documentationsController.deleteDocumentation);
+    .put(chaptersController.updateChapter)
+    .delete(chaptersController.deleteChapter);
 
 router.route('/:id')
     .get(chaptersController.getChaptersById);
