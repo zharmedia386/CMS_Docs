@@ -3,50 +3,40 @@
     class="mx-auto"
   >
     <v-card-title>Versioning</v-card-title>
+    <v-select
+        v-model="selectedVersion" 
+        :items="docs"
+        item-text="version"
+        outlined
+        return-object
+    ></v-select>
     <v-list>
-      <v-list-group
-        v-for="(doc,i) in docs"
-        :key="i"
-        :value="false"
-      >
-        <template v-slot:activator>
-          <v-list-item-title v-text="doc.version"></v-list-item-title>
-        </template>
-        <v-list-item
-            v-for="(chapter,j) in doc.chapters"
-            :key="j"
-          >
-            <v-list-item-title v-text="chapter.title"></v-list-item-title>
-            <v-btn outlined fab small :disabled="k == 0"><v-icon>mdi-arrow-up</v-icon></v-btn>
-            <v-btn outlined fab small :disabled="k == doc.chapters.length-1"><v-icon>mdi-arrow-down</v-icon></v-btn>
-            <v-btn><v-icon>mdi-chevron-down</v-icon></v-btn>
-        </v-list-item>
-        <v-list-group
-          v-for="(chapter,j) in doc.chapters"
-          :key="j"
-          :value="false"
-          no-action
-          sub-group
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-                <v-list-item-title v-text="chapter.title"></v-list-item-title>
-            </v-list-item-content>
-              
-          </template>
-                <v-btn outlined fab small :disabled="j == 0"><v-icon>mdi-arrow-up</v-icon></v-btn>
-                <v-btn outlined fab small :disabled="j == doc.chapters.length-1"><v-icon>mdi-arrow-down</v-icon></v-btn>
-          <v-list-item
-            v-for="(section, k) in chapter.sections"
-            :key="k"
-          >
-            <v-list-item-title v-text="section.title"></v-list-item-title>
-            <v-btn outlined fab small :disabled="k == 0"><v-icon>mdi-arrow-up</v-icon></v-btn>
-            <v-btn outlined fab small :disabled="k == chapter.sections.length-1"><v-icon>mdi-arrow-down</v-icon></v-btn>
-          </v-list-item>
-        </v-list-group>
-
-      </v-list-group>
+      <div v-for="(chapter, i) in selectedVersion.chapters" :key="i">
+        <v-row>
+            <v-col cols="10">
+            <v-list-group
+                :value="false"
+                :prepend-icon="chapter.icon"
+            >
+                <template v-slot:activator>
+                    <v-list-item-title v-text="chapter.title"></v-list-item-title>
+                </template>
+                <v-list-item
+                    v-for="(section, j) in chapter.sections"
+                    :key="j"
+                >
+                    <v-list-item-title v-text="section.title"></v-list-item-title>
+                    <v-btn small outlined fab :disabled="j == 0"><v-icon>mdi-arrow-up</v-icon></v-btn>
+                    <v-btn small outlined fab :disabled="j == chapter.sections.length-1"><v-icon>mdi-arrow-down</v-icon></v-btn>
+                </v-list-item>
+            </v-list-group>
+            </v-col>
+            <v-col cols="2" class="my-auto">
+                <v-btn small outlined fab :disabled="i == 0"><v-icon>mdi-arrow-up</v-icon></v-btn>
+                <v-btn small outlined fab :disabled="i == selectedVersion.chapters.length-1"><v-icon>mdi-arrow-down</v-icon></v-btn>
+            </v-col>
+        </v-row>
+      </div>
     </v-list>
   </v-card>
 </template>
@@ -111,6 +101,18 @@ export default {
                                     title : "Typography"
                                 }
                             ]
+                        },
+                        {
+                            title : "Content",
+                            icon : "mdi-home",
+                            sections : [
+                                {
+                                    title : "Reboot"
+                                },
+                                {
+                                    title : "Typography"
+                                }
+                            ]
                         }
                     ]
                 }
@@ -134,11 +136,16 @@ export default {
                     title : "",
                     version : ""
                 }
-            ]
+            ],
+            showSection : [],
+            selectedVersion : {}
         }
     },
     methods : {
 
+    },
+    created(){
+        this.selectedVersion = this.docs[0]
     }
 
 }
