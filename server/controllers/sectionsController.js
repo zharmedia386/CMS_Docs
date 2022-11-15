@@ -68,8 +68,81 @@ const createNewSection = async (req, res) => {
     }
 }
 
+const updateSection = async (req, res) => {
+    if (!req?.body?.id) return res.status(400).json({ 'message': 'Sections ID required.' });
+
+    if (!req?.body?.title || !req?.body?.content || !req?.body?.version || !req?.body?.chapter) {
+        return res.status(400).json({ 'message': 'Title, content, version, and chapter is required' });
+    }
+
+    let sectionId = new mongo.ObjectId(req.body.id)
+
+    const Sections = await sectionsDB()
+    const Documentation = await documentationDB();
+
+    // convert chapter id from string into object id
+    req.body.chapter._id = new mongo.ObjectId(req.body.chapter._id)
+
+    const section = {
+        title: req.body.title,
+        content: req.body.content,
+        version: req.body.version,
+        chapter: req.body.chapter,
+    }
+
+    try {
+        // update section in section collections
+        await Sections.updateOne(
+            { _id: sectionId },
+            { $set: section }
+        )
+        
+        // updating section title in documentation content
+        await Documentation.updateOne(
+            {},
+            { $set: { "content.$[ct].chapter.$[].section.$[sc].title": `${section.title}` } },
+            { arrayFilters: [ { "ct.version": section.version[0] }, { "sc._id": sectionId } ] }
+        )
+    } catch (error) {
+        res.status(400).send({ message: error.message })
+    }
+
+
+
+    res.status(201).send({ message : "Sections Data Updated!" })
+}
+
+const deleteSection = async (req, res) => {
+    if (!req?.body?.id || !req?.body?.version) return res.status(400).json({ 'message': 'Sections ID and version required.' });
+
+    let sectionId = new mongo.ObjectId(req.body.id)
+
+    const Sections = await sectionsDB()
+    const Documentation = await documentationDB();
+
+    try {
+        // update section in section collections
+        await Sections.deleteOne(
+            { _id: sectionId }
+        )
+        
+        // updating section title in documentation content
+        await Documentation.updateOne(
+            {},
+            { $pull: { "content.$[ct].chapter.$[].section": { "_id": sectionId } } },
+            { arrayFilters: [ { "ct.version":  req.body.version[0]} ] }
+        )
+    } catch (error) {
+        res.status(400).send({ message: error.message })
+    }
+
+    res.status(201).send({ message : "Sections Data Deleted!" })
+}
+
 module.exports = {
     getAllSections,
     getSectionsById,
-    createNewSection
+    createNewSection,
+    updateSection,
+    deleteSection
 }

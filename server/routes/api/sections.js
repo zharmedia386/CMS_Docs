@@ -5,10 +5,10 @@ const sectionsController = require('../../controllers/sectionsController')
 router.route('/')
     .get(sectionsController.getAllSections)
     .post(sectionsController.createNewSection)
-//     .put(documentationsController.updateDocumentation)
-//     .delete(documentationsController.deleteDocumentation);
+    .put(sectionsController.updateSection)
+    .delete(sectionsController.deleteSection);
 
 router.route('/:id')
-    .get(sectionsController.getSectionsById);
+    .get(sectionsController.getSectionsById)
 
 module.exports = router;
