@@ -75,7 +75,8 @@ const updateDocumentation = async (req, res) => {
 const deleteDocumentation = async (req, res) => {
     const Documentations = await documentationDB()
     let objectId = new mongo.ObjectId(req.params.id)
-    await Documentations.deleteMany({
+    console.log(objectId)
+    await Documentations.deleteOne({
         _id: objectId
     })
     res.status(200).send({
