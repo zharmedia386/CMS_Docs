@@ -8,7 +8,7 @@ router.route('/')
     .put(documentationsController.updateDocumentation)
     .delete(documentationsController.deleteDocumentation);
 
-router.route('/:id')
-    .get(documentationsController.getDocumentationById);
+router.route('/version')
+    .get(documentationsController.getAllVersion)
 
 module.exports = router;
