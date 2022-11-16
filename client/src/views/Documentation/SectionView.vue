@@ -17,5 +17,24 @@ export default {
 </script>
 
 <style>
+h1{
+    text-align : left
+}
+
+p{
+    text-align : left
+}
+
+h2{
+    text-align : left
+}
+
+pre{
+    text-align : left
+}
+
+li{
+    text-align: left;
+}
 
 </style>
