@@ -1,27 +1,21 @@
-require('dotenv').config();
-const express = require('express');
-const app = express();
+require('dotenv').config()
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
 const path = require('path');
-const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
 const { logger } = require('./middleware/logEvents');
 const errorHandler = require('./middleware/errorHandler');
-const verifyJWT = require('./middleware/verifyJWT');
-const cookieParser = require('cookie-parser');
-const credentials = require('./middleware/credentials');
-const mongoose = require('mongoose');
-const connectDB = require('./config/dbConn');
-const PORT = process.env.PORT || 3500;
+const port = process.env.PORT || 5000
 
-// Connect to MongoDB
-connectDB();
+const app = express()
+
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
 
 // custom middleware logger
 app.use(logger);
-
-// Handle options credentials check - before CORS!
-// and fetch cookies credentials requirement
-app.use(credentials);
 
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
@@ -32,22 +26,14 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json 
 app.use(express.json());
 
-//middleware for cookies
-app.use(cookieParser());
-
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // routes
 app.use('/', require('./routes/root'));
-app.use('/register', require('./routes/register'));
-app.use('/auth', require('./routes/auth'));
-app.use('/refresh', require('./routes/refresh'));
-app.use('/logout', require('./routes/logout'));
-
-app.use(verifyJWT);
-app.use('/students', require('./routes/api/students'));
-app.use('/users', require('./routes/api/users'));
+app.use('/documentations', require('./routes/api/documentations'));
+app.use('/chapters', require('./routes/api/chapters'));
+app.use('/sections', require('./routes/api/sections'));
 
 app.all('*', (req, res) => {
     res.status(404);
@@ -62,7 +48,7 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler);
 
-mongoose.connection.once('open', () => {
-    console.log('Connected to MongoDB Database');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-});
+app.listen(port, () => {
+    console.log('Connected to MongoDB');
+    console.log(`Server live on port ${port}`)
+})
