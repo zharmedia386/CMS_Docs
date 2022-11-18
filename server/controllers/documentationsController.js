@@ -2,13 +2,13 @@ const documentationDB = require('../model/documentations')
 const mongo = require('mongodb')
 
 // Get all documentation info
-const getAllDocumentations = async (req, res) => {
-    if (!req?.body?.version) {
+const getDocumentations = async (req, res) => {
+    if (!req?.params?.version) {
         return res.status(400).json({ 'message': 'Version is required' });
     }
 
     const Documentations = await documentationDB()
-    let documentationVersion = req.body.version
+    let documentationVersion = req.params.version
     
     if (!Documentations) return res.status(204).json({ 'message': 'No documentation found.' });
 
@@ -60,6 +60,8 @@ const createNewDocumentation = async (req, res) => {
             createdAt : new Date(),
             updatedAt : new Date()
         })
+
+        await Documentations.insertOne(insertedDocumentation)
 
         res.status(201).send({
             message : "Documentation Data Created!" 
@@ -123,7 +125,7 @@ const deleteDocumentation = async (req, res) => {
 }
 
 module.exports = {
-    getAllDocumentations,
+    getDocumentations,
     getAllVersions,
     createNewDocumentation,
     updateDocumentation,
