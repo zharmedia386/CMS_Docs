@@ -1,1 +1,4 @@
 20221115	22:43:49	e8abc6d6-6ea5-4b51-8ae4-c95a33b02569	SyntaxError: Unexpected token } in JSON at position 363
+20221118	07:34:47	87a762c1-d593-4aac-9b9d-98e9857ad359	Error: Not allowed by CORS
+20221118	07:35:20	4b75a4d8-5f87-4a91-8007-9ba77ca13182	Error: Not allowed by CORS
+20221118	07:41:24	b323184d-3a77-47ad-81e3-7240dfce2a0f	Error: Not allowed by CORS

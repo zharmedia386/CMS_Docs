@@ -35,7 +35,8 @@
 </template>
 
 <script>
-import router from '@/router'
+import router from '@/router' 
+
 export default {
     data(){
         return {
@@ -68,17 +69,26 @@ export default {
                     ]
                 }
             ],
-            versions: [
-                "1.0.0",
-                "1.1.0",
-                "2.0.0"
-            ],
+            versions: [],
             choosenVersion: ''
         }
     },
-    created(){
-        this.choosenVersion = this.versions[0]
-        router.push(`/docs/${this.chapters[0].sections[0]}`)
+    beforeCreate(){
+        this.axios.get("http://localhost:3500/documentations/version").then((response) => {
+            response.data[0].content.forEach(v => {
+                this.versions.push(v.version)
+            });
+            this.choosenVersion = this.versions[0]
+            console.log(this.choosenVersion)
+            this.axios.get("http://localhost:3500/documentations", {
+                version : this.choosenVersion
+            }).then(response => {
+                console.log(response.data)
+            }).catch(message => {
+                console.log(message)
+            })
+            router.push(`/docs/${this.chapters[0].sections[0]}`)
+        })
     }
 }
 </script>
