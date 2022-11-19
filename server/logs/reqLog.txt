@@ -233,3 +233,5 @@
 20221115	22:55:49	77cc9a02-1532-46d9-9cfa-0fcbdbd83cae	GET	undefined	/documentations
 20221115	22:57:56	a12ec3b8-dfd4-455f-9e8a-f4682d229c2b	GET	undefined	/documentations/version
 20221115	22:58:48	4f3339f9-cb32-44f6-9732-5e108409a326	GET	undefined	/documentations
+20221116	13:20:30	136ecdcf-b8ce-40af-b95d-a6b7b8aa9cf8	GET	undefined	/documentations
+20221116	13:21:04	4e1fd8dd-defd-46cf-a666-63fdfd2a5c93	GET	undefined	/chapters
