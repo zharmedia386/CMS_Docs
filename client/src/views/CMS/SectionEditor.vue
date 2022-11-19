@@ -14,12 +14,22 @@ export default {
   },
   data(){
     return {
-      content : ""
+      content : "",
+      title : ""
     }
   },
   methods: {
     showData(){
       console.log(this.content)
+    }
+  },
+  beforeCreate(){
+    if(this.$route.params.id != "create"){
+      this.axios.get(`http://localhost:3500/sections/${this.$route.params.id}`)
+        .then(response => {
+          this.content = response.data[0].content
+          this.title = response.data[0].title
+        })
     }
   }
 }
