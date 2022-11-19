@@ -36,7 +36,7 @@ const routes = [
         component: SectionList
       },
       {
-        path: 'section/:title',
+        path: 'section/:id',
         name: 'sectionEditor',
         component: SectionEditor
       },
