@@ -12,7 +12,14 @@
 
 <script>
 export default {
+  data(){
+    return {
 
+    }
+  },
+  beforeCreate(){
+    // this.axios.get(`${this.$apiuri}/documentations`)
+  }
 }
 </script>
 

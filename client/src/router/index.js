@@ -18,7 +18,7 @@ const routes = [
     component: DocsView,
     children: [
       {
-        path: 'docs/:section',
+        path: 'docs/:id',
         name: 'section',
         component: SectionView,
         props: true

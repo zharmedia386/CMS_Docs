@@ -399,4 +399,3 @@
 20221118	19:06:10	8c1cb3e4-4702-4cd0-b4da-5ff96991bc6a	GET	undefined	/documentations/v1.2
 20221118	19:07:02	773e27b7-bed8-4bcd-b7dc-b2696588c696	GET	undefined	/documentations/version
 20221118	19:07:09	fa1d01e6-1b62-4126-b79a-a44b450d8024	GET	undefined	/documentations/v1.1
-20221118	19:07:15	3758d4ef-ec6e-40a1-b89a-be14cbc05586	GET	undefined	/sections
