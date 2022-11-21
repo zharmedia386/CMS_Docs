@@ -35,7 +35,7 @@ export default {
     }
   },
   beforeCreate(){
-    this.axios.get("http://localhost:3500/sections")
+    this.axios.get(`${this.$apiuri}/sections`)
       .then(response => {
         this.sections = response.data
       })
