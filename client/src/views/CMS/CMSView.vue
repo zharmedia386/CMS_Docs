@@ -1,6 +1,6 @@
 <template>
-  <v-app>
-    <div v-if="!user">
+  <div>
+    <v-app v-if="!user">
       <v-main>
       <v-card max-width="500" class="mx-auto px-3 pb-1">
         <v-card-title>Login</v-card-title>
@@ -23,8 +23,8 @@
         </v-form>
       </v-card>
     </v-main>
-    </div>
-    <div v-else>
+  </v-app>
+    <v-app v-else>
       <v-navigation-drawer app>
         <v-list-item-group>
           <v-list-item v-for="(menu,index) in menus" v-bind:key="index" :to="menu.ref">
@@ -42,8 +42,8 @@
             <router-view></router-view>
         </v-container>
       </v-main>
-    </div>
-  </v-app>
+    </v-app>
+  </div>
 </template>
 
 <script>

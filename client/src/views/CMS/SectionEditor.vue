@@ -1,6 +1,12 @@
 <template>
   <v-container>
-    <div v-html="content"></div>
+    <v-card>
+      <v-card-title>Section Title</v-card-title>
+      <v-text-field
+        v-model="title"
+      ></v-text-field>
+    </v-card>
+    <div class="my-8" v-html="content"></div>
     <vue-editor v-model="content"></vue-editor>
     <v-btn @click="showData()">console</v-btn>
   </v-container>
@@ -25,7 +31,7 @@ export default {
   },
   beforeCreate(){
     if(this.$route.params.id != "create"){
-      this.axios.get(`http://localhost:3500/sections/${this.$route.params.id}`)
+      this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
         .then(response => {
           this.content = response.data[0].content
           this.title = response.data[0].title
