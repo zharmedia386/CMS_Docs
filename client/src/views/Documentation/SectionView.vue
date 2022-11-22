@@ -7,11 +7,16 @@
 <script>
 export default {
     data: () => ({
-        param : null,
-        content: "<h1>Introduction</h1><p>hey this is a dummy data</p><h2>Next</h2><p>told ya this is a dummy data</p><pre class=\"ql-syntax\" spellcheck=\"false\">for dummy in dummies:\nprint(dummy)\n</pre><ul><li>That's</li><li>All</li><li>Bye</li></ul><p><br></p>"
+        id : null,
+        content: ""
     }),
-    created(){
-        this.param = this.$route.params
+    beforeCreate(){
+        // console.log(this.$route.params.id)
+        this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
+            .then(response => {
+                console.log(response.data)
+                this.content = response.data[0].content
+            })
     }
 }
 </script>

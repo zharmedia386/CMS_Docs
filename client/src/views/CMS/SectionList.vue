@@ -4,15 +4,21 @@
     <br>
     <v-card>
       <v-card-title>Section List</v-card-title>
-      <v-card-text v-for="(section, index) in sections" v-bind:key="index">
-        <v-card class="d-flex justify-space-between auto" :color="$vuetify.theme.dark ? 'grey lighten-5' : 'white'" flat tile>
-          {{section}}
-          <div>
-            <v-btn outlined fab small :to="`/cms/section/edit-${section}`"><v-icon>mdi-pencil</v-icon></v-btn>
-            <v-btn outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
-          </div>
-        </v-card>
-      </v-card-text>
+      <div class="text-left" v-for="(section, index) in sections" v-bind:key="index">
+        <v-card-subtitle class="d-inline" v-text="section.title"></v-card-subtitle>
+        <v-card-text class="d-inline">
+          <v-btn outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
+          <v-btn outlined fab small @click="deleteSection(section._id)"><v-icon>mdi-delete</v-icon></v-btn>
+        </v-card-text>
+        
+      </div>
+      <!-- <v-card-text class="text-left" v-for="(section, index) in sections" v-bind:key="index">
+        <p class="text-left d-inline" v-text="section.title"></p>
+        <p class="text-right d-inline">
+          <v-btn outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
+          <v-btn outlined fab small @click="deleteSection(section._id)"><v-icon>mdi-delete</v-icon></v-btn>
+        </p>
+      </v-card-text> -->
     </v-card>
   </v-container>
 </template>
@@ -21,14 +27,19 @@
 export default {
   data(){
     return {
-      sections: [
-        "Introduction",
-        "Layout",
-        "Components"
-      ]
+      sections: []
     }
   },
-  created(){
+  methods :{
+    deleteSection(id){
+      console.log(id)
+    }
+  },
+  beforeCreate(){
+    this.axios.get(`${this.$apiuri}/sections`)
+      .then(response => {
+        this.sections = response.data
+      })
   }
 }
 </script>
