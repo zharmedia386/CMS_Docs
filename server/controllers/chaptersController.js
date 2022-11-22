@@ -28,8 +28,8 @@ const getChaptersById = async (req, res) => {
 // Create chapters info
 const createNewChapter = async (req, res) => {
     // check all field required
-    if (!req?.body?.title || !req?.body?.documentation || !req?.body?.version) {
-        return res.status(400).json({ 'message': 'Title, documentation, and version is required' });
+    if (!req?.body?.title || !req?.body?.version) {
+        return res.status(400).json({ 'message': 'Title, and version is required' });
     }
 
     const Chapters = await chapterDB();
@@ -39,7 +39,6 @@ const createNewChapter = async (req, res) => {
         // insert new chapters
         const insertedChapter = await Chapters.insertOne({
             title: req.body.title,
-            documentation: req.body.documentation,
             version: req.body.version,
             createdAt: new Date(),
             updatedAt: new Date() 
@@ -67,7 +66,7 @@ const createNewChapter = async (req, res) => {
 const updateChapter = async (req, res) => {
     if (!req?.body?.id) return res.status(400).json({ 'message': 'Chapters ID required.' });
 
-    if (!req?.body?.title || !req?.body?.documentation || !req?.body?.version) {
+    if (!req?.body?.title || !req?.body?.version) {
         return res.status(400).json({ 'message': 'Title, documentation, and version is required' });
     }
 
@@ -78,7 +77,6 @@ const updateChapter = async (req, res) => {
 
     const chapter = {
         title: req.body.title,
-        documentation: req.body.documentation,
         version: req.body.version,
         updatedAt: new Date() 
     }
