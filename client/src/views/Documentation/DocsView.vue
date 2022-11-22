@@ -23,12 +23,12 @@
     <!-- Header Stop Here -->
     <!-- Sidebar Starts Here -->
     <v-navigation-drawer app >
-        <v-card v-for="(chapter,index) in chapters" v-bind:key="index">
-            <v-card-title><v-icon>{{ chapter.icon }}</v-icon>{{ chapter.title }}</v-card-title>
+        <v-card v-for="(chapter,i) in chapters" :key="i">
+            <v-card-title>{{ chapter.title }}</v-card-title>
             <v-list-item-group>
-                    <v-list-item v-for="section in chapter.sections" v-bind:key="section" :to="{name : 'section', params: { section : section}}">
+                    <v-list-item v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
                         <v-list-item-content>
-                            <v-list-item-title v-text="section" ></v-list-item-title>
+                            <v-list-item-title v-text="section.title" ></v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                 </v-list-item-group>
@@ -60,9 +60,7 @@
 </template>
 
 <script>
-import router from '@/router';
-
-
+import router from '@/router'
 export default {
 
 
@@ -73,27 +71,27 @@ export default {
                     title : "Getting Started",
                     icon : "mdi-book-open-outline",
                     sections : [
-                        "Lorem Ipsum",
-                        "Lorem Ipsum",
-                        "Lorem Ipsum"
+                        "introduction",
+                        "b",
+                        "c"
                     ]
                 },
                 {
                     title : "Introduction",
                     icon : "mdi-book-open-outline",
                     sections : [
-                        "Lorem Ipsum",
-                        "Lorem Ipsum",
-                        "Lorem Ipsum"
+                        "d",
+                        "e",
+                        "f"
                     ]
                 }, 
                 {
                     title : "Components",
                     icon : "mdi-book-open-outline",
                     sections : [
-                        "Lorem Ipsum",
-                        "Lorem Ipsum",
-                        "Lorem Ipsum"
+                        "g",
+                        "h",
+                        "i"
                     ]
                 }
             ],
@@ -105,9 +103,26 @@ export default {
             choosenVersion: ''
         }
     },
+    methods : {
+        getVersion(){
+            this.axios.get(`${this.$apiuri}/documentations/${this.choosenVersion}`).then(response => {
+                this.chapters = response.data[0].content[0].chapter
+                router.push(`/docs/${this.chapters[0].section[0]._id}`)
+            }).catch(message => {
+                console.log(message)
+            })
+        }
+    },
     created(){
-        this.choosenVersion = this.versions[0]
-        router.push(`/docs/${this.chapters[0].sections[0]}`)
+        // let temp = JSON.parse(JSON.stringify(this.versions))
+        this.axios.get(`${this.$apiuri}/documentations/version`)
+            .then((response) => {
+                response.data[0].content.forEach(v => {
+                    this.versions.push(v.version)
+                });
+                this.choosenVersion = this.versions[0]
+                this.getVersion()
+            })
     }
 
 }

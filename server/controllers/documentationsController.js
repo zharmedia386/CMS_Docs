@@ -2,17 +2,33 @@ const documentationDB = require('../model/documentations')
 const mongo = require('mongodb')
 
 // Get all documentation info
-const getAllDocumentations = async (req, res) => {
-    if (!req?.body?.version) {
+const getDocumentations = async (req, res) => {
+    if (!req?.params?.version) {
         return res.status(400).json({ 'message': 'Version is required' });
     }
 
     const Documentations = await documentationDB()
-    let documentationVersion = req.body.version
+    let documentationVersion = req.params.version
     
     if (!Documentations) return res.status(204).json({ 'message': 'No documentation found.' });
 
-    res.status(200).send(await Documentations.find({version: documentationVersion}).toArray())
+    res.status(200).send(await Documentations.find(
+        {
+        content: { 
+            $elemMatch: { 
+            "version": documentationVersion
+            } 
+        }
+        }
+    ).project(
+        {
+            "title": 1,
+            "logo": 1,
+            "logoLink": 1,
+            "footer": 1,
+            "content.$": 1
+        }
+    ).toArray())
 }
 
 // Get all versions
@@ -21,10 +37,7 @@ const getAllVersions = async (req, res) => {
     
     if (!Documentations) return res.status(204).json({ 'message': 'No documentation found.' });
 
-    res.status(200).send(await Documentations.find(
-        {},
-        { "content.version": 1 }
-    ).toArray())
+    res.status(200).send(await Documentations.find({}).project({"content.version": 1}).toArray())
 }
 
 // Create documentation info
@@ -48,6 +61,8 @@ const createNewDocumentation = async (req, res) => {
             updatedAt : new Date()
         })
 
+        await Documentations.insertOne(insertedDocumentation)
+
         res.status(201).send({
             message : "Documentation Data Created!" 
         })
@@ -58,14 +73,11 @@ const createNewDocumentation = async (req, res) => {
 
 // Edit documentation info
 const updateDocumentation = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ 'message': 'Documentation ID required.' });
-
-    if (!req?.body?.title || !req?.body?.description || !req?.body?.logo || !req?.body?.logoLink || !req?.body?.footer || !req?.body?.content) {
-        return res.status(400).json({ 'message': 'Title, Description, Logo, LogoLink, Footer, Content are required' });
+    if (!req?.body?.title || !req?.body?.description || !req?.body?.logo || !req?.body?.logoLink || !req?.body?.footer) {
+        return res.status(400).json({ 'message': 'Title, Description, Logo, LogoLink, Footer are required' });
     }
 
     const Documentations = await documentationDB()
-    let objectId = new mongo.ObjectId(req.body.id)
 
     const documentation = {
         title : req.body.title,
@@ -73,19 +85,17 @@ const updateDocumentation = async (req, res) => {
         description : req.body.description,
         logoLink : req.body.logoLink,
         footer : req.body.footer,
-        content : req.body.content,
         updatedAt : new Date()
     }
 
     try {
-        await Documentations.updateOne({
-            _id : objectId
-        }, {
-            $set : {
-                documentation
+        await Documentations.updateOne(
+            {}, 
+            {
+                $set : documentation
             }
-        })
-        res.status(204).send({
+        )
+        res.status(200).send({
             message : "Documentation Data Updated!"
         })
     } catch (error) {
@@ -115,7 +125,7 @@ const deleteDocumentation = async (req, res) => {
 }
 
 module.exports = {
-    getAllDocumentations,
+    getDocumentations,
     getAllVersions,
     createNewDocumentation,
     updateDocumentation,
