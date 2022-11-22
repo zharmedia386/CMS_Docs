@@ -1,5 +1,7 @@
 <template>
   <v-container>
+    <v-btn class="d-flex align-start flex-column" to="/cms/section/create">Create New Section</v-btn>
+    <br>
     <v-card>
       <v-card-title>Section List</v-card-title>
       <div class="text-left" v-for="(section, index) in sections" v-bind:key="index">
@@ -18,7 +20,6 @@
         </p>
       </v-card-text> -->
     </v-card>
-    <v-btn to="/cms/section/create">Create New Section</v-btn>
   </v-container>
 </template>
 
