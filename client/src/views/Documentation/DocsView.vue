@@ -1,38 +1,61 @@
 <template>
   <v-app>
-    <v-app-bar app>
-        <v-toolbar-title>Documentation</v-toolbar-title>
-        <v-select
+    <!-- Header Starts Here -->
+    <v-app-bar app style>
+        <img src="@/assets/logo.png" style="max-height: 50%">
+        <v-toolbar-title class="">Documentation</v-toolbar-title>
+        <v-btn 
+            outlined
+            class="search-box ml-auto"
+        ><v-icon>mdi-magnify</v-icon>Search
+        </v-btn>    
+        <v-select 
             v-model="choosenVersion"
             :items="versions"
             outlined
-            @change="getVersion()"
+            class="select-box ml-auto"
         ></v-select>
-        <v-btn outlined>
-            <v-icon>mdi-magnify</v-icon>search
-        </v-btn>
-        <v-btn>
-            <v-icon>mdi-github</v-icon>
-        </v-btn>
-    </v-app-bar>
-    <v-navigation-drawer app >
+        <v-btn
+            class="ml-auto"
+        ><v-icon>mdi-github</v-icon></v-btn>
+    </v-app-bar> 
+    <!-- Header Stop Here -->
+    <!-- Sidebar Starts Here -->
+    <v-navigation-drawer app class="fontstyle">
         <v-card v-for="(chapter,i) in chapters" :key="i">
             <v-card-title>{{ chapter.title }}</v-card-title>
             <v-list-item-group>
-                    <v-list-item v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
-                        <v-list-item-content>
-                            <v-list-item-title v-text="section.title" ></v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-list-item-group>
+                <v-list-item v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
+                    <v-list-item-content>
+                        <v-list-item-title v-text="section.title" ></v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list-item-group>
         </v-card>
     </v-navigation-drawer>
+    <!-- Sidebar Stop Here -->
     <v-main>
         <v-container>
             <router-view :key="$route.path"></router-view>
         </v-container>
     </v-main>
-  </v-app>
+    <!-- Footer Starts Here -->
+    <v-footer
+      v-bind="localAttrs"
+      :padless="padless"
+    >
+      <v-card
+        elevation="6"
+        width="100%"
+        class="grey lighten-2 text-center text-dark"
+      >
+         <v-card-text>
+          {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+        </v-card-text>
+      </v-card>
+    </v-footer>
+    <!-- Footer Stops Here -->
+    </v-app>
 </template>
 
 <script>
@@ -72,5 +95,16 @@ export default {
 </script>
 
 <style>
-
+    .select-box {
+        max-width: 100px;
+        max-height: 60px;
+        display: flex;
+    }
+    .search-box {
+        width: 400px;
+        display: flex !important;
+    }
+    .fontstyle{
+        font-family: "Merienda", Helvetica, Arial;
+    }
 </style>
