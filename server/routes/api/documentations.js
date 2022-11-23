@@ -10,6 +10,9 @@ router.route('/')
 router.route('/version')
     .get(documentationsController.getAllVersions);
 
+router.route('/metadata')
+    .get(documentationsController.getMetadata);
+
 router.route('/:version')
     .get(documentationsController.getDocumentations)
 
