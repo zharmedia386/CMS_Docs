@@ -32,6 +32,16 @@
                   label="Github Link"
                 ></v-text-field>
               </v-form>
+
+              <v-form class="ml-10" ref="form">
+                <v-text-field
+                  v-model="model"
+                  :counter="max"
+                  :rules="rules"
+                  label="Footer"
+                ></v-text-field>
+              </v-form>
+
             </v-col>
 
         </v-row>
