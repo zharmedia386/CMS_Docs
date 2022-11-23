@@ -399,7 +399,6 @@
 20221118	19:06:10	8c1cb3e4-4702-4cd0-b4da-5ff96991bc6a	GET	undefined	/documentations/v1.2
 20221118	19:07:02	773e27b7-bed8-4bcd-b7dc-b2696588c696	GET	undefined	/documentations/version
 20221118	19:07:09	fa1d01e6-1b62-4126-b79a-a44b450d8024	GET	undefined	/documentations/v1.1
-<<<<<<< HEAD
 20221122	23:45:42	02ba557a-c9c8-484f-9244-020babe6b689	GET	http://localhost:8080	/documentations/version
 20221122	23:45:45	7ce6eef5-ebae-455d-ba44-f86a78db6926	GET	http://localhost:8080	/documentations/v1.1
 20221122	23:45:46	fa4f74ca-a3f5-413b-824b-a439633a35ec	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
@@ -534,7 +533,6 @@
 20221123	09:51:46	52f475cd-100d-440f-8125-c4fac74f9d37	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
 20221123	09:51:52	a5c18a2f-007c-4f9c-8c93-4130c4f65973	GET	http://localhost:8080	/sections/637d7ca913c31ea41366dc24
 20221123	09:51:53	a5e658ab-b5bf-463f-8a7f-531b306d246d	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
-=======
 20221118	19:07:15	3758d4ef-ec6e-40a1-b89a-be14cbc05586	GET	undefined	/sections20221120	14:52:02	3e4da037-c8fc-427c-9fdd-c51226ea082a	GET	undefined	/users
 20221120	14:52:55	dde51351-cb7a-4195-a28c-7f0d5369b5a9	POST	undefined	/register
 20221120	14:54:49	ff4c1a38-bd15-47e9-8eab-5328c44c1781	POST	undefined	/register
@@ -1504,7 +1502,6 @@
 20221123	09:46:25	2813177d-1d04-48a2-9509-ac460ad9e310	GET	http://localhost:8080	/documentations/version
 20221123	09:46:26	ef0ffb2e-86c6-4a60-acfc-8afc56b6a297	GET	http://localhost:8080	/documentations/v1.1
 20221123	09:46:27	a50bde72-0af6-4532-9547-fc3dea50ae49	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
->>>>>>> b21e0efcf77501fb8d7ceb0738533fecf1acc325
 20221123	10:02:43	da51867c-e7f7-41fc-b36b-5dd4fb4b2895	GET	http://localhost:8080	/documentations/version
 20221123	10:02:44	096ffb06-37c0-491d-99e8-1eefb0848365	GET	http://localhost:8080	/sections/636dec8a766ae4515fc21185
 20221123	10:02:44	17a0da81-10c9-4522-a58f-9bf9bcbdbc6b	GET	http://localhost:8080	/documentations/v1.1
