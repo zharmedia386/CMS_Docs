@@ -439,3 +439,6 @@
 20221120	15:39:35	d6b21126-52e2-4c5a-a5cf-fc85dab0f0d5	POST	undefined	/auth
 20221120	15:39:45	987942c5-59e4-45c2-aa34-5dffc2e86460	POST	undefined	/auth
 
+20221122	20:35:49	34c883ff-2ab0-40c9-895d-355299f69e39	GET	http://localhost:8080	/documentations/version
+20221122	20:35:54	a560fcd1-b8e5-414b-a4d7-7726cbcf49a4	GET	http://localhost:8080	/documentations/version
+20221123	08:25:38	0ab56e68-686a-430d-b584-04ca5c4cdf1b	GET	undefined	/documentations/metadata
