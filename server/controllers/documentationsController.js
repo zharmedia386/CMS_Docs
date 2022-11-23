@@ -40,6 +40,26 @@ const getAllVersions = async (req, res) => {
     res.status(200).send(await Documentations.find({}).project({"content.version": 1}).toArray())
 }
 
+// Get all Metadatas
+const getMetadata = async (req, res) => {
+    const Documentations = await documentationDB()
+    
+    if (!Documentations) return res.status(204).json({ 'message': 'No documentation found.' });
+
+    res.status(200).send(await Documentations.find(
+        {
+
+        }
+    ).project(
+        {
+            "title": 1,
+            "logo": 1,
+            "logoLink": 1,
+            "footer": 1,
+        }
+    ).toArray())
+}
+
 // Create documentation info
 const createNewDocumentation = async (req, res) => {
     if (!req?.body?.title || !req?.body?.description || !req?.body?.logo || !req?.body?.logoLink || !req?.body?.footer || !req?.body?.content) {
@@ -129,5 +149,6 @@ module.exports = {
     getAllVersions,
     createNewDocumentation,
     updateDocumentation,
-    deleteDocumentation
+    deleteDocumentation,
+    getMetadata
 }
