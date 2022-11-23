@@ -1,15 +1,105 @@
 <template>
   <v-container>
-    <v-card >
-      <v-card-title>Chapter List</v-card-title>
-      <v-card-text v-for="(chapter, index) in chapters" v-bind:key="index">
+    <v-alert
+        :value="alert.value"
+        :type="alert.status ? 'success' : 'error'"
+        transition="slide-y-transition"
+      >{{ alert.message }}</v-alert>
+    <br>
+    <v-card>
+      <v-card-title class="d-flex justify-space-between px-5">
+        Chapter List
+        <v-btn 
+        @click="dialog = true"
+        class="d-flex align-start flex-column"
+        >
+          Create New Chapter
+        </v-btn>
+      </v-card-title>
+      <br>
+      <v-card-text class="d-flex justify-space-between px-5" v-for="(chapter, index) in chapters" v-bind:key="index">
         <!-- <v-icon>{{chapter.icon}}</v-icon> {{chapter.title}} -->
         {{ chapter.title }}
-        <v-btn outlined fab small><v-icon>mdi-pencil</v-icon></v-btn>
-        <v-btn outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
+        <div>
+          <v-btn outlined fab small
+          @click="() => { updateDialog = true; choosenChapter = chapter; title = chapter.title }"
+          >
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
+        </div>
       </v-card-text>
     </v-card>
-    <v-btn>Create New Chapter</v-btn>
+
+    <!-- insert dialog -->
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Create New Chapter
+        </v-card-title>
+
+        <v-text-field
+          v-model="title"
+          placeholder="Input Title"
+          class="pl-5 pr-5"
+        ></v-text-field>
+
+        <v-select
+            v-model="choosenVersion"
+            :items="versions"
+            outlined
+            placeholder="Choose Version"
+            class="pl-5 pr-5"
+        ></v-select>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="save"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Update dialog -->
+    <v-dialog
+      v-model="updateDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Update Chapter
+        </v-card-title>
+
+        <v-text-field
+          v-model="title"
+          placeholder="Input Title"
+          class="pl-5 pr-5"
+        ></v-text-field>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="update"
+          >
+            Update
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    
   </v-container>
 </template>
 
@@ -17,15 +107,90 @@
 export default {
   data(){
     return {
-      chapters : []
+      alert: {value: false, status: true, message: ''},
+      dialog: false,
+      updateDialog: false,
+      chapters : [],
+      versions: [],
+      title: '',
+      choosenVersion: '',
+      choosenChapter: ''
     }
   },
-  beforeCreate(){
-    this.axios.get(`${this.$apiuri}/chapters`)
+  methods: {
+    save(){
+      const chapter = {
+        title: this.title,
+        version: [ this.choosenVersion ]
+      }
+
+      this.axios.post(`${this.$apiuri}/chapters`, chapter)
+        .then(response => {
+          // send flash message
+          console.log(response.data)
+          this.trigger_alert(true, 'Chapter berhasil dibuat')
+          this.updateChapter()
+        })
+        .catch(error => {
+          // send flash message
+          this.trigger_alert(true, `Gagal membuat chapter, terjadi error ${error.message}`)
+        })
+
+      console.log(JSON.stringify(chapter))
+
+      this.dialog = false
+      this.title = ''
+      this.choosenVersion = ''
+    },
+    update(){
+      const chapter = {
+        id: this.choosenChapter._id,
+        title: this.title
+      }
+
+      this.axios.put(`${this.$apiuri}/chapters`, chapter)
+        .then(response => {
+          // send flash message
+          console.log(response.data)
+          this.trigger_alert(true, 'Chapter berhasil diubah')
+          this.updateChapter()
+        })
+        .catch(error => {
+          // send flash message
+          this.trigger_alert(true, `Gagal membuat chapter, terjadi error ${error.message}`)
+        })
+
+        this.updateDialog = false
+        this.title = ''
+        this.choosenChapter = ''
+    },
+    trigger_alert(status, message) {
+      this.alert.value = true
+      this.alert.status = status
+      this.alert.message = message
+      // `event` is the native DOM event
+      window.setTimeout(() => {
+        this.alert.value = false;
+      }, 3000)    
+    },
+    updateChapter(){
+      this.axios.get(`${this.$apiuri}/chapters`)
       .then(response => {
         this.chapters = response.data
       })
-
+    }
+  },
+  created(){
+    this.updateChapter()
+  },
+  beforeCreate(){
+    // get all version list
+    this.axios.get(`${this.$apiuri}/documentations/version`)
+      .then((response) => {
+          response.data[0].content.forEach(v => {
+              this.versions.push(v.version)
+          });
+      })
   }
 }
 </script>
