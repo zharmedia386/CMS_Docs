@@ -1,9 +1,9 @@
 <template>
   <v-app>
     <!-- Header Starts Here -->
-    <v-app-bar app>
+    <v-app-bar app style>
         <img src="@/assets/logo.png" style="max-height: 50%">
-        <v-toolbar-title>Documentation</v-toolbar-title>
+        <v-toolbar-title class="">Documentation</v-toolbar-title>
         <v-btn 
             outlined
             class="search-box ml-auto"
@@ -15,23 +15,22 @@
             outlined
             class="select-box ml-auto"
         ></v-select>
-        
         <v-btn
             class="ml-auto"
         ><v-icon>mdi-github</v-icon></v-btn>
     </v-app-bar> 
     <!-- Header Stop Here -->
     <!-- Sidebar Starts Here -->
-    <v-navigation-drawer app >
+    <v-navigation-drawer app class="fontstyle">
         <v-card v-for="(chapter,i) in chapters" :key="i">
             <v-card-title>{{ chapter.title }}</v-card-title>
             <v-list-item-group>
-                    <v-list-item v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
-                        <v-list-item-content>
-                            <v-list-item-title v-text="section.title" ></v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-list-item-group>
+                <v-list-item v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
+                    <v-list-item-content>
+                        <v-list-item-title v-text="section.title" ></v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list-item-group>
         </v-card>
     </v-navigation-drawer>
     <!-- Sidebar Stop Here -->
@@ -56,50 +55,18 @@
       </v-card>
     </v-footer>
     <!-- Footer Stops Here -->
-  </v-app>
+    </v-app>
 </template>
 
 <script>
-import router from '@/router'
+import router from '@/router' 
+
 export default {
-
-
     data(){
         return {
-            chapters : [
-                {
-                    title : "Getting Started",
-                    icon : "mdi-book-open-outline",
-                    sections : [
-                        "introduction",
-                        "b",
-                        "c"
-                    ]
-                },
-                {
-                    title : "Introduction",
-                    icon : "mdi-book-open-outline",
-                    sections : [
-                        "d",
-                        "e",
-                        "f"
-                    ]
-                }, 
-                {
-                    title : "Components",
-                    icon : "mdi-book-open-outline",
-                    sections : [
-                        "g",
-                        "h",
-                        "i"
-                    ]
-                }
-            ],
-            versions: [
-                "1.0.0",
-                "1.1.0",
-                "2.0.0"
-            ],
+            chapters : [],
+            versions: [],
+            arr : [],
             choosenVersion: ''
         }
     },
@@ -124,7 +91,6 @@ export default {
                 this.getVersion()
             })
     }
-
 }
 </script>
 
@@ -137,9 +103,8 @@ export default {
     .search-box {
         width: 400px;
         display: flex !important;
-
     }
-
-
-
+    .fontstyle{
+        font-family: "Merienda", Helvetica, Arial;
+    }
 </style>
