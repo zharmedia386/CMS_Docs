@@ -5,24 +5,29 @@
         :type="alert.status ? 'success' : 'error'"
         transition="slide-y-transition"
       >{{ alert.message }}</v-alert>
-    <v-btn 
-      @click="dialog = true"
-      class="d-flex align-start flex-column"
-    >
-      Create New Chapter
-    </v-btn>
     <br>
     <v-card>
-      <v-card-title>Chapter List</v-card-title>
-      <v-card-text v-for="(chapter, index) in chapters" v-bind:key="index">
+      <v-card-title class="d-flex justify-space-between px-5">
+        Chapter List
+        <v-btn 
+        @click="dialog = true"
+        class="d-flex align-start flex-column"
+        >
+          Create New Chapter
+        </v-btn>
+      </v-card-title>
+      <br>
+      <v-card-text class="d-flex justify-space-between px-5" v-for="(chapter, index) in chapters" v-bind:key="index">
         <!-- <v-icon>{{chapter.icon}}</v-icon> {{chapter.title}} -->
         {{ chapter.title }}
-        <v-btn outlined fab small
+        <div>
+          <v-btn outlined fab small
           @click="() => { updateDialog = true; choosenChapter = chapter; title = chapter.title }"
-        >
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
+          >
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
+        </div>
       </v-card-text>
     </v-card>
 
