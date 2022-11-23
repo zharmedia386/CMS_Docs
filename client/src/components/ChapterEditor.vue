@@ -1,7 +1,7 @@
 <template>
-  <v-card>
+  <v-dialog>
     
-  </v-card>
+  </v-dialog>
 </template>
 
 <script>
