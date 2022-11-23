@@ -8,7 +8,7 @@ const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
 // const { logger } = require('./middleware/logEvents');
-const errorHandler = require('./middleware/errorHandler');
+// const errorHandler = require('./middleware/errorHandler');
 const port = process.env.PORT || 5000
 
 const app = express()
@@ -68,7 +68,7 @@ app.all('*', (req, res) => {
     }
 });
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.listen(port, () => {
     console.log('Connected to MongoDB');
