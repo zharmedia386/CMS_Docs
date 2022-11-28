@@ -1,5 +1,5 @@
 <template>
-  <v-container v-html="content">
+  <v-container class="content" v-html="content">
     
   </v-container>
 </template>
@@ -22,5 +22,18 @@ export default {
 </script>
 
 <style>
+.content{
+    text-align: left;
+}
+
+.content > pre{
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.875);
+    color: white;
+}
+
+.content > ol{
+    
+}
 
 </style>

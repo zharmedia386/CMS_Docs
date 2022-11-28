@@ -33,6 +33,7 @@ const createNewSection = async (req, res) => {
 
     const Sections = await sectionsDB()
     const Documentation = await documentationDB();
+    
 
     // convert chapter id from string into object id
     req.body.chapter._id = new mongo.ObjectId(req.body.chapter._id)
@@ -47,6 +48,7 @@ const createNewSection = async (req, res) => {
             createdAt: new Date(),
             updatedAt: new Date() 
         })
+        console.log(insertedSection)
 
         // insert new sections into documentations contents
         const result = await Documentation.updateOne(
@@ -61,6 +63,7 @@ const createNewSection = async (req, res) => {
             await Sections.deleteOne({ _id: insertedSection.insertedId });
             throw new Error ("Error when try to insert section into documentations")
         }
+
 
         res.status(201).send({ message : "Sections Data Created!" })
     } catch (err) {

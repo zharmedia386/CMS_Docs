@@ -63,17 +63,23 @@ export default {
         version: [ this.choosenVersion ]
       }
 
-      console.log(JSON.stringify(section))
-      this.axios.post(`${this.$apiuri}/sections`, section)
-        .then(response => {
-          // send flash message
-          console.log(response.data)
-          this.trigger_alert(true, 'Section berhasil dibuat')
-        })
-        .catch(error => {
-          // send flash message
-          this.trigger_alert(true, `Terjadi error ${error.message}`)
-        })
+      if(this.title == "" || this.content == "" || Object.keys(this.choosenChapter).length === 0 || this.choosenVersion == ""){
+        this.trigger_alert(false, 'Harap isi semua field')
+      }
+      else{
+        console.log(JSON.stringify(section))
+        this.axios.post(`${this.$apiuri}/sections`, section)
+          .then(response => {
+            // send flash message
+            console.log(response.data)
+            this.trigger_alert(true, 'Section berhasil dibuat')
+            this.$router.push({name : "sectionList"})
+          })
+          .catch(error => {
+            // send flash message
+            this.trigger_alert(false, `Terjadi error ${error.message}`)
+          })
+      }      
     },
     updateChapterList(){
       this.axios.get(`${this.$apiuri}/documentations/${this.choosenVersion}`)
