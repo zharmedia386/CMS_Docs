@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-app v-if="!user">
+    <div v-if="!user">
       <v-main>
-      <v-card max-width="500" class="mx-auto px-3 pb-1">
+      <v-card max-width="500" class="container">
         <v-card-title>Login</v-card-title>
         <v-form v-model="form.valid" lazy-validation>
           <v-text-field
@@ -23,7 +23,7 @@
         </v-form>
       </v-card>
     </v-main>
-  </v-app>
+  </div>
     <v-app v-else>
       <v-navigation-drawer app>
         <v-list-item-group>
@@ -80,7 +80,7 @@ export default {
           icon: 'mdi-folder'
         }
       ],
-      user : true,
+      user : false,
       form : {
         email : "",
         emailRules: [
@@ -105,5 +105,7 @@ export default {
 </script>
 
 <style>
-
+.container{
+  margin: auto;
+}
 </style>
