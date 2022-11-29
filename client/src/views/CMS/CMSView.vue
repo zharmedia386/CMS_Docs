@@ -80,7 +80,7 @@ export default {
           icon: 'mdi-folder'
         }
       ],
-      user : false,
+      user : true,
       form : {
         email : "",
         emailRules: [

@@ -12,7 +12,8 @@ router.route('/version')
     .get(documentationsController.getAllVersions);
 
 router.route('/metadata')
-    .get(documentationsController.getMetadata);
+    .get(documentationsController.getMetadata)
+    .put(documentationsController.updateMetadata)
 
 router.route('/reorder')
     .put(documentationsController.reorderDocumentationsContent)
