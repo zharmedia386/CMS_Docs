@@ -34,7 +34,7 @@
         </v-card>
     </v-navigation-drawer>
     <!-- Sidebar Stop Here -->
-    <v-main>
+    <v-main style="padding-top: 16px">
         <v-container>
             <router-view :key="$route.path"></router-view>
         </v-container>
