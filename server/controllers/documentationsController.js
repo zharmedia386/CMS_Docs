@@ -1,6 +1,15 @@
 const documentationDB = require('../model/documentations')
 const mongo = require('mongodb')
 
+const getAllDocumentationContent = async (req, res) => {
+    const Documentations = await documentationDB()
+
+    res.status(200).send(await Documentations.find({})
+    .project({
+        "content": 1
+    }).toArray())
+}
+
 // Get all documentation info
 const getDocumentations = async (req, res) => {
     if (!req?.params?.version) {
@@ -144,11 +153,35 @@ const deleteDocumentation = async (req, res) => {
     })
 }
 
+const reorderDocumentationsContent = async (req, res) => {
+    if (!req?.body?.content) return res.status(400).json({ 'message': 'Documentations content required.' });
+
+    let content = req.body.content
+    console.log(content)
+
+    // // console.log(JSON.stringify(content))
+    const Documentation = await documentationDB();
+
+    try {
+        // updating chapter title in documentation content
+        await Documentation.updateOne(
+            {},
+            { $set: { "content": content } }
+        )
+    } catch (error) {
+        res.status(400).send({ message: error.message })
+    }
+    
+    res.status(200).send({ message: "Documentation content updated" })
+}
+
 module.exports = {
+    getAllDocumentationContent,
     getDocumentations,
     getAllVersions,
     createNewDocumentation,
     updateDocumentation,
     deleteDocumentation,
-    getMetadata
+    getMetadata,
+    reorderDocumentationsContent
 }
