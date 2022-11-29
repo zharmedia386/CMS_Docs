@@ -142,32 +142,10 @@ const deleteSection = async (req, res) => {
     res.status(201).send({ message : "Sections Data Deleted!" })
 }
 
-const addVersionSection = async (req, res) => {
-    const sections = req.body.sections.map(section => ({_id: new mongo.ObjectId(section._id), title: section.title}));
-    const sectionsId = sections.map(section => section._id)
-    let version = req.body.version;
-
-    const Sections = await sectionsDB();
-
-    try {
-        const result = await Sections.updateMany(
-            { _id: { $in: sectionsId } },
-            { $push: { version: version } }
-        )
-
-        console.log(result)
-    } catch (error) {
-        res.status(400).send({ message: error.message })
-    }
-
-    res.status(201).send({ message : "Sections version updated!" })
-}
-
 module.exports = {
     getAllSections,
     getSectionsById,
     createNewSection,
     updateSection,
-    deleteSection,
-    addVersionSection
+    deleteSection
 }

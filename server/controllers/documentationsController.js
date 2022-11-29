@@ -205,28 +205,6 @@ const deleteDocumentation = async (req, res) => {
     })
 }
 
-const reorderDocumentationsContent = async (req, res) => {
-    if (!req?.body?.content) return res.status(400).json({ 'message': 'Documentations content required.' });
-
-    let content = req.body.content
-    console.log(content)
-
-    // // console.log(JSON.stringify(content))
-    const Documentation = await documentationDB();
-
-    try {
-        // updating chapter title in documentation content
-        await Documentation.updateOne(
-            {},
-            { $set: { "content": content } }
-        )
-    } catch (error) {
-        res.status(400).send({ message: error.message })
-    }
-    
-    res.status(200).send({ message: "Documentation content updated" })
-}
-
 module.exports = {
     getAllDocumentationContent,
     getDocumentations,
@@ -236,5 +214,4 @@ module.exports = {
     deleteDocumentation,
     getMetadata,
     updateMetadata,
-    reorderDocumentationsContent
 }
