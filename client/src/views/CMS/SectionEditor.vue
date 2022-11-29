@@ -14,22 +14,6 @@
           class="pl-5 pr-5"
         ></v-text-field>
       </v-card>
-      <v-select
-          v-model="choosenVersion"
-          :items="versions"
-          outlined
-          @change="updateChapterList()"
-          placeholder="Choose Version"
-          class="mt-6"
-      ></v-select>
-      <v-select
-          v-model="choosenChapter"
-          :items="chapters"
-          item-text="title"
-          return-object
-          outlined
-          placeholder="Choose Chapters"
-      ></v-select>
       <div class="my-8" v-html="content"></div>
       <vue-editor v-model="content"></vue-editor>
       <v-btn type="submit" v-text="this.create ? 'Create' : 'Save' "></v-btn>
@@ -46,12 +30,8 @@ export default {
   data(){
     return {
       alert: {value: false, status: true, message: ''},
-      versions: [],
-      chapters: [],
       content : "",
       title : "",
-      choosenVersion: '',
-      choosenChapter: {},
       create: true
     }
   },
@@ -59,12 +39,10 @@ export default {
     saveData(){
       const section = {
         title: this.title,
-        content: this.content,
-        chapter: this.choosenChapter,
-        version: [ this.choosenVersion ]
+        content: this.content
       }
 
-      if(this.title == "" || this.content == "" || Object.keys(this.choosenChapter).length === 0 || this.choosenVersion == ""){
+      if(this.title == "" || this.content == ""){
         this.trigger_alert(false, 'Harap isi semua field')
       }
       else{
@@ -75,7 +53,6 @@ export default {
               // send flash message
               console.log(response.data)
               this.trigger_alert(true, 'Section berhasil dibuat')
-              this.$router.push({name : "sectionList"})
             })
             .catch(error => {
               // send flash message
@@ -89,7 +66,6 @@ export default {
               // send flash message
               console.log(response.data)
               this.trigger_alert(true, 'Section berhasil diupdate')
-              this.$router.push({name : "sectionList"})
             })
             .catch(error => {
               // send flash message
@@ -98,18 +74,6 @@ export default {
         }
         
       }      
-    },
-    updateChapterList(){
-      this.axios.get(`${this.$apiuri}/documentations/${this.choosenVersion}`)
-        .then(response => {
-          // update chapter list within version
-          this.chapters = response.data[0].content[0].chapter.map(ch => ({ '_id': ch._id, 'title': ch.title }))
-
-          // clear current selected chapter
-          this.choosenChapter = ''
-        }).catch(message => {
-            console.log(message)
-        })
     },
     trigger_alert(status, message) {
       this.alert.value = true
@@ -130,14 +94,6 @@ export default {
           this.create = false
         })
     }
-
-    // get all version list
-    this.axios.get(`${this.$apiuri}/documentations/version`)
-      .then((response) => {
-          response.data[0].content.forEach(v => {
-              this.versions.push(v.version)
-          });
-      })
   }
 }
 </script>
