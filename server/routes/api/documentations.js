@@ -15,9 +15,6 @@ router.route('/metadata')
     .get(documentationsController.getMetadata)
     .put(documentationsController.updateMetadata)
 
-router.route('/reorder')
-    .put(documentationsController.reorderDocumentationsContent)
-
 router.route('/:version')
     .get(documentationsController.getDocumentations)
 
