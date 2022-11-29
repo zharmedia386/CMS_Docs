@@ -6,16 +6,16 @@
         transition="slide-y-transition"
     >{{ alert.message }}</v-alert>
     <v-card>
-      <v-card-title class="d-flex justify-space-between px-5">
+      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Section List
-        <v-btn to="/cms/section/create">Create New Section</v-btn>
+        <v-btn class="blue darken-4 white--text" to="/cms/section/create">Create New Section</v-btn>
       </v-card-title>
       <br>
       <v-card-text class="d-flex justify-space-between px-5 text-left" v-for="(section, index) in sections" v-bind:key="index">
         <v-card-subtitle v-text="section.title"></v-card-subtitle>
         <div>
-          <v-btn outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
-          <v-btn outlined fab small @click="deleteSection(section._id)"><v-icon>mdi-delete</v-icon></v-btn>
+          <v-btn class="light-blue lighten-4" outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
+          <v-btn class="red lighten-2" outlined fab small @click="deleteSection(section._id)"><v-icon>mdi-delete</v-icon></v-btn>
         </div>
       </v-card-text>
     </v-card>
