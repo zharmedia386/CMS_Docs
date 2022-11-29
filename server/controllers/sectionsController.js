@@ -27,45 +27,23 @@ const getSectionsById = async (req, res) => {
 // Create documentation info
 const createNewSection = async (req, res) => {
     // check all field required
-    if (!req?.body?.title || !req?.body?.content || !req?.body?.version || !req?.body?.chapter) {
-        return res.status(400).json({ 'message': 'Title, content, version, and chapter is required' });
+    if (!req?.body?.title || !req?.body?.content) {
+        return res.status(400).json({ 'message': 'Title and content is required' });
     }
 
     const Sections = await sectionsDB()
-    const Documentation = await documentationDB();
-    
-
-    // convert chapter id from string into object id
-    req.body.chapter._id = new mongo.ObjectId(req.body.chapter._id)
 
     try {
         // insert new sections
         const insertedSection = await Sections.insertOne({
             title: req.body.title,
             content: req.body.content,
-            version: req.body.version,
-            chapter: req.body.chapter,
             createdAt: new Date(),
             updatedAt: new Date() 
         })
         console.log(insertedSection)
 
-        // insert new sections into documentations contents
-        const result = await Documentation.updateOne(
-            {},
-            { $push: { "content.$[ct].chapter.$[ch].section": { "_id": insertedSection.insertedId, "title": `${req.body.title}` } } },
-            { arrayFilters: [ { "ct.version": `${req.body.version[0]}` }, { "ch._id": req.body.chapter._id } ] }
-        )
-
-        // Check if sections failed inserted into documentations content
-        if ( result.modifiedCount == 0 ) {
-            // Cancel inserting new sections
-            await Sections.deleteOne({ _id: insertedSection.insertedId });
-            throw new Error ("Error when try to insert section into documentations")
-        }
-
-
-        res.status(201).send({ message : "Sections Data Created!" })
+        res.status(200).send({ message : "Sections Data Created!" })
     } catch (err) {
         res.status(400).send({ message: err.message })
     }
@@ -74,23 +52,17 @@ const createNewSection = async (req, res) => {
 const updateSection = async (req, res) => {
     if (!req?.body?.id) return res.status(400).json({ 'message': 'Sections ID required.' });
 
-    if (!req?.body?.title || !req?.body?.content || !req?.body?.version || !req?.body?.chapter) {
-        return res.status(400).json({ 'message': 'Title, content, version, and chapter is required' });
+    if (!req?.body?.title || !req?.body?.content) {
+        return res.status(400).json({ 'message': 'Title and content is required' });
     }
 
     let sectionId = new mongo.ObjectId(req.body.id)
 
     const Sections = await sectionsDB()
-    const Documentation = await documentationDB();
-
-    // convert chapter id from string into object id
-    req.body.chapter._id = new mongo.ObjectId(req.body.chapter._id)
 
     const section = {
         title: req.body.title,
-        content: req.body.content,
-        version: req.body.version,
-        chapter: req.body.chapter,
+        content: req.body.content
     }
 
     try {
@@ -98,13 +70,6 @@ const updateSection = async (req, res) => {
         await Sections.updateOne(
             { _id: sectionId },
             { $set: section }
-        )
-        
-        // updating section title in documentation content
-        await Documentation.updateOne(
-            {},
-            { $set: { "content.$[ct].chapter.$[].section.$[sc].title": `${section.title}` } },
-            { arrayFilters: [ { "ct.version": section.version[0] }, { "sc._id": sectionId } ] }
         )
     } catch (error) {
         res.status(400).send({ message: error.message })
@@ -116,8 +81,9 @@ const updateSection = async (req, res) => {
 }
 
 const deleteSection = async (req, res) => {
-    if (!req?.body?.id || !req?.body?.version) return res.status(400).json({ 'message': 'Sections ID and version required.' });
-
+    console.log(req.body)
+    if (!req?.body?.id) return res.status(400).json({ 'message': 'Sections ID required.' });
+    
     let sectionId = new mongo.ObjectId(req.body.id)
 
     const Sections = await sectionsDB()
@@ -132,8 +98,7 @@ const deleteSection = async (req, res) => {
         // updating section title in documentation content
         await Documentation.updateOne(
             {},
-            { $pull: { "content.$[ct].chapter.$[].section": { "_id": sectionId } } },
-            { arrayFilters: [ { "ct.version":  req.body.version[0]} ] }
+            { $pull: { "content.$[].chapter.$[].section": { "_id": sectionId } } }
         )
     } catch (error) {
         res.status(400).send({ message: error.message })
