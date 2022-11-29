@@ -32,7 +32,7 @@
       ></v-select>
       <div class="my-8" v-html="content"></div>
       <vue-editor v-model="content"></vue-editor>
-      <v-btn type="submit">Save</v-btn>
+      <v-btn type="submit" v-text="this.create ? 'Create' : 'Save' "></v-btn>
     </v-container>
   </v-form>
 </template>
@@ -51,7 +51,8 @@ export default {
       content : "",
       title : "",
       choosenVersion: '',
-      choosenChapter: {}
+      choosenChapter: {},
+      create: true
     }
   },
   methods: {
@@ -109,6 +110,7 @@ export default {
         .then(response => {
           this.content = response.data[0].content
           this.title = response.data[0].title
+          this.create = false
         })
     }
 

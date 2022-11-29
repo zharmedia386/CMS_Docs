@@ -20,8 +20,7 @@ const routes = [
       {
         path: 'docs/:id',
         name: 'section',
-        component: SectionView,
-        props: true
+        component: SectionView
       }
     ]
   },
