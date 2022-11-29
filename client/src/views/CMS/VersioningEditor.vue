@@ -9,7 +9,7 @@
       >{{ alert.message }}</v-alert>
     <v-card-title class="d-flex justify-space-between px-5">
         Versioning
-        <v-btn>Create New Version</v-btn>
+        <v-btn @click="() => { createDialog = true ;}">Create New Version</v-btn>
     </v-card-title>
     <v-row class="d-flex justify-space-between px-5">
         <v-col cols="9">
@@ -52,6 +52,14 @@
                         small 
                         outlined 
                         fab 
+                        @click="removeSection(section)"
+                    >
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-btn 
+                        small 
+                        outlined 
+                        fab 
                         :disabled="j == 0"
                         @click="moveUpSection(i, j)"
                     >
@@ -75,7 +83,7 @@
                     small 
                     outlined 
                     fab 
-                    @click="removeSection(i)"
+                    @click="removeChapter(chapter)"
                 >
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
@@ -175,6 +183,35 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Create Version Dialog -->
+    <v-dialog
+      v-model="createDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Create New Version
+        </v-card-title>
+        <v-text-field
+          v-model="versionName"
+          placeholder="Input version name"
+          class="pl-5 pr-5"
+        ></v-text-field>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="createVersion"
+          >
+            Create
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -185,6 +222,9 @@ export default {
             alert: {value: false, status: true, message: ''},
             dialog: false,
             chapterDialog: false,
+            createDialog: false,
+
+            versionName: '',
 
             content: [],
 
@@ -199,6 +239,25 @@ export default {
         }
     },
     methods : {
+        createVersion(){
+            const versionName = this.versionName;
+            this.axios.put(`${this.$apiuri}/versioning/create`, {versionName})
+                .then(response => {
+                // send flash message
+                console.log(response.data)
+                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                })
+                .catch(error => {
+                // send flash message
+                console.log(error.message)
+                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                })
+                .finally(() => {
+                    this.versionName = ''
+                    this.createDialog = false
+                    this.updateDocumentationContent()
+                })
+        },
         findVersionIndex() {
             let versionIdx = this.content.findIndex(object => {
                 return object.version === this.selectedVersion.version;
@@ -229,6 +288,23 @@ export default {
                     this.updateDocumentationContent()
                 })
         },
+        removeSection(section){
+            const version = this.selectedVersion.version;
+            const sectionId = section._id;
+            this.axios.put(`${this.$apiuri}/versioning/section/delete`, {sectionId, version})
+                .then(response => {
+                // send flash message
+                    console.log(response.data)
+                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                })
+                .catch(error => {
+                // send flash message
+                    console.log(error.message)
+                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                }).finally(() => {
+                    this.updateDocumentationContent()
+                })
+        },
         addChapter(){
             const version = this.selectedVersion.version;
             const chapters = this.selectedChapters
@@ -251,9 +327,24 @@ export default {
                     this.updateDocumentationContent()
                 })
         },
-        removeSection(index){
-            console.log('remove')
-            console.log(index)
+        removeChapter(chapter){
+            const version = this.selectedVersion.version;
+            const chapterId = chapter._id
+            const sectionsId = chapter.section.map(sc => sc._id)
+
+            this.axios.put(`${this.$apiuri}/versioning/chapter/delete`, {chapterId, sectionsId, version})
+                .then(response => {
+                // send flash message
+                    console.log(response.data)
+                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                })
+                .catch(error => {
+                // send flash message
+                    console.log(error.message)
+                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                }).finally(() => {
+                    this.updateDocumentationContent()
+                })
         },
         moveUpChapter(index) {
             let versionIdx = this.findVersionIndex()
@@ -302,8 +393,8 @@ export default {
         updateSection() {
             this.axios.get(`${this.$apiuri}/sections`)
             .then(response => {
-                this.sections = response.data
-                    .filter(section => !section.version.includes(this.selectedVersion.version))
+                const sections = response.data
+                this.sections = (!sections) ? sections : sections.filter(section => !section?.version?.includes(this.selectedVersion.version))                    
             })
         },
         updateChapter() {
