@@ -8,6 +8,9 @@ router.route('/')
     .put(sectionsController.updateSection)
     .delete(sectionsController.deleteSection);
 
+router.route('/version')
+    .put(sectionsController.addVersionSection)
+
 router.route('/:id')
     .get(sectionsController.getSectionsById)
 

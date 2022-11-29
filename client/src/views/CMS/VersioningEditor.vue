@@ -19,11 +19,12 @@
         item-text="version"
         outlined
         return-object
+        @change="updateSection"
     ></v-select>
     <v-list>
       <div v-for="(chapter, i) in selectedVersion.chapter" :key="i">
         <v-row>
-            <v-col cols="10">
+            <v-col cols="8">
             <v-list-group
                 :value="false"
             >
@@ -56,6 +57,26 @@
                 </v-list-item>
             </v-list-group>
             </v-col>
+            <!-- versioning -->
+            <v-col cols="2" class="my-auto">
+                <v-btn 
+                    small 
+                    outlined 
+                    fab 
+                    @click="removeSection(i)"
+                >
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-btn 
+                    small 
+                    outlined 
+                    fab 
+                    @click="() => { dialog = true }"
+                >
+                    <v-icon>mdi-plus</v-icon>
+                </v-btn>
+            </v-col>
+            <!-- reorder -->
             <v-col cols="2" class="my-auto">
                 <v-btn 
                     small 
@@ -79,6 +100,41 @@
         </v-row>
       </div>
     </v-list>
+
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Create New Chapter
+        </v-card-title>
+
+        <!-- card content -->
+        <!-- <div class="pl-4 pr-4"> -->
+            <!-- <v-checkbox v-for="section in sections" :key="section._id" :label="section.title" :value="section" v-model="selectedSections"></v-checkbox> -->
+        <!-- </div> -->
+        <v-list>
+            <v-list-item v-for="(section, index) in sections" :key="index">
+                <v-checkbox v-model="selectedSections" :value="section" multiple/>
+                {{ section.title }}
+            </v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="addSection()"
+          >
+            Add
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -87,7 +143,10 @@ export default {
     data(){
         return {
             alert: {value: false, status: true, message: ''},
+            dialog: false,
             content: [],
+            sections: [],
+            selectedSections: [],
             selectedVersion : {}
         }
     },
@@ -98,6 +157,34 @@ export default {
             })
 
             return versionIdx
+        },
+        addSection(){
+            const version = this.selectedVersion.version;
+
+            const sections = this.selectedSections
+                .map(section => ({_id: section._id, title: section.title}))
+
+
+            this.axios.put(`${this.$apiuri}/sections/version`, {sections, version})
+                .then(response => {
+                // send flash message
+                console.log(response.data)
+                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                })
+                .catch(error => {
+                // send flash message
+                console.log(error.message)
+                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                })
+                .finally(() => {
+                    this.dialog = false;
+                    this.selectedSections = ['']
+                    this.updateSection()
+                })
+        },
+        removeSection(index){
+            console.log('remove')
+            console.log(index)
         },
         moveUpChapter(index) {
             let versionIdx = this.findVersionIndex()
@@ -143,6 +230,13 @@ export default {
                 this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
                 })
         },
+        updateSection() {
+            this.axios.get(`${this.$apiuri}/sections`)
+            .then(response => {
+                this.sections = response.data
+                    .filter(section => !section.version.includes(this.selectedVersion.version))
+            })
+        },
         trigger_alert(status, message) {
             this.alert.value = true
             this.alert.status = status
@@ -158,6 +252,7 @@ export default {
             .then(response => {
                 this.content = response.data[0].content
                 this.selectedVersion = response.data[0].content[0]
+                this.updateSection()
             })
     }
 
