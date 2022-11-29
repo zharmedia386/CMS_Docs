@@ -7,11 +7,11 @@
       >{{ alert.message }}</v-alert>
     <br>
     <v-card>
-      <v-card-title class="d-flex justify-space-between px-5">
+      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Chapter List
         <v-btn 
         @click="dialog = true"
-        class="d-flex align-start flex-column"
+        class="blue darken-4 white--text d-flex align-start flex-column"
         >
           Create New Chapter
         </v-btn>
@@ -21,12 +21,12 @@
         <!-- <v-icon>{{chapter.icon}}</v-icon> {{chapter.title}} -->
         {{ chapter.title }}
         <div>
-          <v-btn outlined fab small
+          <v-btn class="light-blue lighten-4" outlined fab small
           @click="() => { updateDialog = true; choosenChapter = chapter; title = chapter.title }"
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
+          <v-btn class="red lighten-2" outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -37,7 +37,7 @@
       width="500"
     >
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
+        <v-card-title class="blue darken-4 text-h5 grey lighten-2  ">
           Create New Chapter
         </v-card-title>
 

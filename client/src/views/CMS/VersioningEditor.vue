@@ -7,9 +7,9 @@
         :type="alert.status ? 'success' : 'error'"
         transition="slide-y-transition"
       >{{ alert.message }}</v-alert>
-    <v-card-title class="d-flex justify-space-between px-5">
+    <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Versioning
-        <v-btn>Create New Version</v-btn>
+        <v-btn class="mt-1 blue darken-4 white--text">Create New Version</v-btn>
     </v-card-title>
     <v-row class="d-flex justify-space-between px-5">
         <v-col cols="9">
@@ -26,7 +26,8 @@
             <v-container >
         <v-btn
             @click="reorder()"
-        >
+            class="mt-1 blue darken-4 white--text"
+            >
             Reorder Content
         </v-btn>
     </v-container>
@@ -112,7 +113,9 @@
         </v-row>
       </div>
     </v-list>
-    <v-btn @click="() => { chapterDialog = true ;}">Add Chapter</v-btn>
+    <v-btn @click="() => { chapterDialog = true ;}"
+        class="mt-1 blue darken-4 white--text"
+        >Add Chapter</v-btn>
     <v-dialog
       v-model="dialog"
       width="500"

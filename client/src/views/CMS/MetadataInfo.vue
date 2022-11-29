@@ -6,7 +6,7 @@
         transition="slide-y-transition"
     >{{ alert.message }}</v-alert>
     <v-card class="mx-auto">
-        <v-card-title>Metadata</v-card-title>
+        <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold" >Metadata</v-card-title>
         <v-form
           ref="form" 
           style="padding: 16px;"
@@ -66,7 +66,7 @@
           </v-text-field>
           <v-card-subtitle>Footer</v-card-subtitle>
           <vue-editor v-model="metadata.footer"></vue-editor>
-          <v-btn type="submit" class="mt-1">Save</v-btn>
+          <v-btn type="submit" class="mt-1 blue darken-4 white--text" >Save</v-btn>
         </v-form>
          
     </v-card>
