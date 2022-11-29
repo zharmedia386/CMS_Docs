@@ -69,17 +69,34 @@ export default {
       }
       else{
         console.log(JSON.stringify(section))
-        this.axios.post(`${this.$apiuri}/sections`, section)
+        if(this.$route.params.id == "create"){
+          this.axios.post(`${this.$apiuri}/sections`, section)
+            .then(response => {
+              // send flash message
+              console.log(response.data)
+              this.trigger_alert(true, 'Section berhasil dibuat')
+              this.$router.push({name : "sectionList"})
+            })
+            .catch(error => {
+              // send flash message
+              this.trigger_alert(false, `Terjadi error ${error.message}`)
+            })
+        }
+        else{
+          section.id = this.$route.params.id
+          this.axios.put(`${this.$apiuri}/sections`, section)
           .then(response => {
-            // send flash message
-            console.log(response.data)
-            this.trigger_alert(true, 'Section berhasil dibuat')
-            this.$router.push({name : "sectionList"})
-          })
-          .catch(error => {
-            // send flash message
-            this.trigger_alert(false, `Terjadi error ${error.message}`)
-          })
+              // send flash message
+              console.log(response.data)
+              this.trigger_alert(true, 'Section berhasil diupdate')
+              this.$router.push({name : "sectionList"})
+            })
+            .catch(error => {
+              // send flash message
+              this.trigger_alert(false, `Terjadi error ${error.message}`)
+            })
+        }
+        
       }      
     },
     updateChapterList(){
