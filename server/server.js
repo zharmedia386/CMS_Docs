@@ -45,6 +45,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 // routes
 app.use('/', require('./routes/root'));
 app.use('/documentations', require('./routes/api/documentations'));
+app.use('/versioning', require('./routes/api/versioning'))
 app.use('/chapters', require('./routes/api/chapters'));
 app.use('/sections', require('./routes/api/sections'));
 
