@@ -2,8 +2,8 @@
   <v-app>
     <!-- Header Starts Here -->
     <v-app-bar app style>
-        <img src="@/assets/logo.png" style="max-height: 50%">
-        <v-toolbar-title class="">Documentation</v-toolbar-title>
+        <img :src="metadata.logo" style="max-height: 50%">
+        <v-toolbar-title class="" v-text="metadata.title"></v-toolbar-title>
         <v-btn 
             outlined
             class="search-box ml-auto"
@@ -12,11 +12,14 @@
         <v-select 
             v-model="choosenVersion"
             :items="versions"
+            @change="getVersion()"
             outlined
             class="select-box ml-auto"
         ></v-select>
         <v-btn
             class="ml-auto"
+            :href="metadata.githubLink"
+            target="_blank"
         ><v-icon>mdi-github</v-icon></v-btn>
     </v-app-bar> 
     <!-- Header Stop Here -->
@@ -41,17 +44,13 @@
     </v-main>
     <!-- Footer Starts Here -->
     <v-footer
-      v-bind="localAttrs"
-      :padless="padless"
     >
       <v-card
         elevation="6"
         width="100%"
         class="grey lighten-2 text-center text-dark"
+        v-html="metadata.footer"
       >
-         <v-card-text>
-          {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
-        </v-card-text>
       </v-card>
     </v-footer>
     <!-- Footer Stops Here -->
@@ -67,7 +66,13 @@ export default {
             chapters : [],
             versions: [],
             arr : [],
-            choosenVersion: ''
+            choosenVersion: '',
+            metadata : {
+                title : "",
+                logo : "",
+                githubLink : "",
+                footer : ""
+            }
         }
     },
     methods : {
@@ -89,6 +94,10 @@ export default {
                 });
                 this.choosenVersion = this.versions[0]
                 this.getVersion()
+            })
+        this.axios.get(`${this.$apiuri}/documentations/metadata`)
+            .then(response => {
+                this.metadata = response.data
             })
     }
 }
