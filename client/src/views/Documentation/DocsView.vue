@@ -2,8 +2,8 @@
   <v-app>
     <!-- Header Starts Here -->
     <v-app-bar app style>
-        <img src="@/assets/logo.png" style="max-height: 50%">
-        <v-toolbar-title class="">Documentation</v-toolbar-title>
+        <img src="@/assets/logo.png" style="max-height: 90% ">
+        <v-toolbar-title style="font-size:36px">Documentation</v-toolbar-title>
         <v-btn 
             outlined
             class="search-box ml-auto"
@@ -23,9 +23,9 @@
     <!-- Sidebar Starts Here -->
     <v-navigation-drawer app class="fontstyle">
         <v-card v-for="(chapter,i) in chapters" :key="i">
-            <v-card-title>{{ chapter.title }}</v-card-title>
-            <v-list-item-group>
-                <v-list-item v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
+            <v-card-title class="d-flex justify-center font-weight-bold">{{ chapter.title }}</v-card-title>
+            <v-list-item-group class="text-left">
+                <v-list-item class="font-weight-thin" v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
                     <v-list-item-content>
                         <v-list-item-title v-text="section.title" ></v-list-item-title>
                     </v-list-item-content>
@@ -96,7 +96,7 @@ export default {
 
 <style>
     .select-box {
-        max-width: 100px;
+        max-width: 140px;
         max-height: 60px;
         display: flex;
     }
