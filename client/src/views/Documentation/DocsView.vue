@@ -2,13 +2,8 @@
   <v-app>
     <!-- Header Starts Here -->
     <v-app-bar app style>
-<<<<<<< HEAD
-        <img src="@/assets/logo.png" style="max-height: 90% ">
-        <v-toolbar-title style="font-size:36px">Documentation</v-toolbar-title>
-=======
         <img :src="metadata.logo" style="max-height: 50%">
-        <v-toolbar-title class="" v-text="metadata.title"></v-toolbar-title>
->>>>>>> 4becd833048fb325d8e4bed3e29ea58dac075de1
+        <v-toolbar-title style="padding-left: 10px" v-text="metadata.title"></v-toolbar-title>
         <v-btn 
             outlined
             class="search-box ml-auto"
