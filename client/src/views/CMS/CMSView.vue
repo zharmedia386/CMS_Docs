@@ -1,11 +1,30 @@
 <template>
-  <v-app>
-    <div v-if="!user">
-      <v-card>
-        
+  <div>
+    <v-app v-if="!user">
+      <v-main>
+      <v-card max-width="500" class="mx-auto px-3 pb-1">
+        <v-card-title>Login</v-card-title>
+        <v-form v-model="form.valid" lazy-validation>
+          <v-text-field
+            v-model="form.email"
+            label="E-mail"
+            :rules="form.emailRules"
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="form.password"
+            label="Password"
+            :rules="form.passwordRules"
+            required
+          ></v-text-field>
+          <v-btn>
+            login
+          </v-btn>
+        </v-form>
       </v-card>
-    </div>
-    <div v-else>
+    </v-main>
+  </v-app>
+    <v-app v-else>
       <v-navigation-drawer app>
         <v-list-item-group>
           <v-list-item v-for="(menu,index) in menus" v-bind:key="index" :to="menu.ref">
@@ -23,8 +42,8 @@
             <router-view></router-view>
         </v-container>
       </v-main>
-    </div>
-  </v-app>
+    </v-app>
+  </div>
 </template>
 
 <script>
@@ -61,7 +80,25 @@ export default {
           icon: 'mdi-folder'
         }
       ],
-      user :true
+      user : true,
+      form : {
+        email : "",
+        emailRules: [
+          v => !!v || 'E-mail is required',
+          v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+        ],
+        password : "",
+        passwordRules: [
+          v => !!v || 'Password is required',
+          v => v.length >= 8 || 'Min 8 characters'
+        ],
+        valid : true
+      }
+    }
+  },
+  created(){
+    if(this.user){
+      this.$router.push("/cms/metadata")
     }
   }
 }

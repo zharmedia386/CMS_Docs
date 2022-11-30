@@ -4,8 +4,11 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const path = require('path');
 const corsOptions = require('./config/corsOptions');
-const { logger } = require('./middleware/logEvents');
-const errorHandler = require('./middleware/errorHandler');
+const verifyJWT = require('./middleware/verifyJWT');
+const cookieParser = require('cookie-parser');
+const credentials = require('./middleware/credentials');
+// const { logger } = require('./middleware/logEvents');
+// const errorHandler = require('./middleware/errorHandler');
 const port = process.env.PORT || 5000
 
 const app = express()
@@ -14,8 +17,18 @@ app.use(bodyParser.urlencoded({
     extended: false
 }))
 
+// built-in middleware for json 
+app.use(express.json());
+
+//middleware for cookies
+app.use(cookieParser());
+
 // custom middleware logger
-app.use(logger);
+// app.use(logger);
+
+// Handle options credentials check - before CORS!
+// and fetch cookies credentials requirement
+app.use(credentials);
 
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
@@ -35,6 +48,15 @@ app.use('/documentations', require('./routes/api/documentations'));
 app.use('/chapters', require('./routes/api/chapters'));
 app.use('/sections', require('./routes/api/sections'));
 
+// Authentication
+app.use('/register', require('./routes/register'));
+app.use('/auth', require('./routes/auth'));
+app.use('/refresh', require('./routes/refresh'));
+app.use('/logout', require('./routes/logout'));
+
+// app.use(verifyJWT);
+app.use('/users', require('./routes/api/users'));
+
 app.all('*', (req, res) => {
     res.status(404);
     if (req.accepts('html')) {
@@ -46,7 +68,7 @@ app.all('*', (req, res) => {
     }
 });
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.listen(port, () => {
     console.log('Connected to MongoDB');

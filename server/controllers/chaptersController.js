@@ -3,7 +3,7 @@ const sectionsDB = require('../model/sections')
 const documentationDB = require('../model/documentations')
 const mongo = require('mongodb')
 
-// Get all sections info
+// Get all chapters info
 const getAllChapters = async (req, res) => {
     const Chapters = await chapterDB()
     if (!Chapters) return res.status(204).json({ 'message': 'No chapter found.' });
@@ -11,7 +11,7 @@ const getAllChapters = async (req, res) => {
     res.status(200).send(await Chapters.find({}).toArray())
 }
 
-// Get specified sections info
+// Get specified chapters info
 const getChaptersById = async (req, res) => {
     if (!req?.params?.id) return res.status(400).json({ 'message': 'Chapters ID required.' });
 
@@ -25,24 +25,20 @@ const getChaptersById = async (req, res) => {
     res.status(200).send(await Chapters.find({_id : objectId}).toArray())
 }
 
-// Create documentation info
+// Create chapters info
 const createNewChapter = async (req, res) => {
     // check all field required
-    if (!req?.body?.title || !req?.body?.documentation || !req?.body?.version) {
-        return res.status(400).json({ 'message': 'Title, documentation, and version is required' });
+    if (!req?.body?.title || !req?.body?.version) {
+        return res.status(400).json({ 'message': 'Title, and version is required' });
     }
 
-    const Chapters = await chapterDB()
+    const Chapters = await chapterDB();
     const Documentation = await documentationDB();
-
-    // convert chapter id from string into object id
-    req.body.chapter._id = new mongo.ObjectId(req.body.chapter._id)
 
     try {
         // insert new chapters
         const insertedChapter = await Chapters.insertOne({
             title: req.body.title,
-            documentation: req.body.documentation,
             version: req.body.version,
             createdAt: new Date(),
             updatedAt: new Date() 
@@ -67,8 +63,74 @@ const createNewChapter = async (req, res) => {
     }
 }
 
+const updateChapter = async (req, res) => {
+    if (!req?.body?.id) return res.status(400).json({ 'message': 'Chapters ID required.' });
+
+    if (!req?.body?.title) {
+        return res.status(400).json({ 'message': 'Title is required' });
+    }
+
+    let chapterId = new mongo.ObjectId(req.body.id)
+
+    const Chapters = await chapterDB();
+    const Documentation = await documentationDB();
+
+    const chapter = {
+        title: req.body.title,
+        updatedAt: new Date() 
+    }
+
+    try {
+        // update chapter in chapter collections
+        await Chapters.updateOne(
+            { _id: chapterId },
+            { $set: chapter }
+        )
+        
+        // updating chapter title in documentation content
+        await Documentation.updateOne(
+            {},
+            { $set: { "content.$[].chapter.$[ch].title": `${chapter.title}` } },
+            { arrayFilters: [ { "ch._id": chapterId } ] }
+        )
+    } catch (error) {
+        res.status(400).send({ message: error.message })
+    }
+
+    res.status(201).send({ message : "Chapters Data Updated!" })
+}
+
+const deleteChapter = async (req, res) => {
+    if (!req?.body?.id || !req?.body?.version) return res.status(400).json({ 'message': 'Chapters ID and version required.' });
+
+    let chapterId = new mongo.ObjectId(req.body.id)
+
+    const Chapters = await chapterDB()
+    const Documentation = await documentationDB();
+
+    try {
+        // update chapter in section collections
+        await Chapters.deleteOne(
+            { _id: chapterId }
+        )
+        
+        // updating chapter title in documentation content
+        await Documentation.updateOne(
+            {},
+            { $pull: { "content.$[ct].chapter": { "_id": chapterId } } },
+            { arrayFilters: [ { "ct.version":  req.body.version[0]} ] }
+        )
+    } catch (error) {
+        res.status(400).send({ message: error.message })
+    }
+
+    res.status(201).send({ message : "Chapters Data Deleted!" })
+}
+
 module.exports = {
     getAllChapters,
     getChaptersById,
-    createNewChapter
+    createNewChapter,
+    updateChapter,
+    deleteChapter
 }
