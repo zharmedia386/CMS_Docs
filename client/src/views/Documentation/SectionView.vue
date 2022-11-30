@@ -27,9 +27,13 @@ export default {
 }
 
 .content > pre{
-    padding: 5px 10px;
+    padding: 10px 15px 10px 15px;
     background-color: rgba(0, 0, 0, 0.875);
-    color: white;
+    border-radius: 25px;
+    color: yellowgreen;
+    font-family: "Consolas";
+    font-size: 13px;
+    white-space: pre-wrap;  
 }
 
 .content > ol{
