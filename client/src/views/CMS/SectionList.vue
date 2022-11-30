@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { store } from '../../store'
 export default {
   data(){
     return {
@@ -39,7 +40,16 @@ export default {
     }
   },
   beforeCreate(){
-    this.axios.get(`${this.$apiuri}/sections`)
+    const token = store.getters.getTokens
+    this.axios.get(`${this.$apiuri}/sections`,
+    {
+        headers: {
+            "Authorization": 'Bearer ' + token,
+            "x-access-token": token ,
+            "Content-type": "application/json"
+        },
+    }
+    )
       .then(response => {
         this.sections = response.data
       })

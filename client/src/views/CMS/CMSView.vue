@@ -4,11 +4,10 @@
       <v-main>
       <v-card max-width="500" class="container">
         <v-card-title>Login</v-card-title>
-        <v-form v-model="form.valid" lazy-validation>
+        <v-form v-model="form.valid" @submit.prevent="loginUser()" lazy-validation>
           <v-text-field
-            v-model="form.email"
-            label="E-mail"
-            :rules="form.emailRules"
+            v-model="form.username"
+            label="Username"
             required
           ></v-text-field>
           <v-text-field
@@ -17,7 +16,7 @@
             :rules="form.passwordRules"
             required
           ></v-text-field>
-          <v-btn>
+          <v-btn type="submit">
             login
           </v-btn>
         </v-form>
@@ -47,6 +46,8 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+import { store } from '../../store'
 export default {
   data(){
     return {
@@ -80,22 +81,73 @@ export default {
           icon: 'mdi-folder'
         }
       ],
+      // user : store.getters.getAuthorization,
       user : false,
       form : {
-        email : "",
-        emailRules: [
-          v => !!v || 'E-mail is required',
-          v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-        ],
+        username : "",
+        // usernameRules: [
+        //   v => !!v || 'Username is required',
+        //   v => /.+@.+\..+/.test(v) || 'Username must be valid'
+        // ],
         password : "",
         passwordRules: [
           v => !!v || 'Password is required',
-          v => v.length >= 8 || 'Min 8 characters'
+          v => v.length >= 4 || 'Min 4 characters'
         ],
         valid : true
-      }
+      },
+      accessToken: '',
     }
   },
+  methods: {
+        ...mapMutations(["setUser", "setToken"]),
+        
+        async loginUser() {
+            // const token = store.getters.getTokens
+            // console.log("Access Token: ", token);
+
+            this.axios.post(`${this.$apiuri}/auth`, 
+              { user: this.form.username, pwd: this.form.password }, 
+              { headers: {
+                  "Content-Type": "application/json"
+                },
+              },
+              )
+            .then(response => {
+              // send flash message
+              console.log("RESPONSE NYA: ", response.data)
+
+              this.accessToken = response.data.accessToken
+              console.log(`AccessToken: ` + this.accessToken);
+              // this.setToken(this.accessToken);
+              store.dispatch('setAccessTokens', this.accessToken)
+              // this.trigger_alert(true, 'Login berhasil Berhasil')
+              // this.$router.push("/")
+              // store.dispatch('setUsersAuthorization', true)
+            })
+            .catch(error => {
+              // send flash message
+              this.trigger_alert(true, `Terjadi error ${error.message}`)
+            })
+            
+            // const { accessToken } = await response.json();
+            // console.log(refreshToken);
+
+            window.setTimeout(() => {
+              this.$router.push("/");
+          }, 3000)    
+        },
+
+        trigger_alert(status, message) {
+          this.alert.value = true
+          this.alert.status = status
+          this.alert.message = message
+          // `event` is the native DOM event
+          window.setTimeout(() => {
+            this.alert.value = false;
+          }, 3000)    
+        },
+    },
   created(){
     if(this.user){
       this.$router.push("/cms/metadata")

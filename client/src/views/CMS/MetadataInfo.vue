@@ -50,6 +50,9 @@
 
 
 <script>
+// import this.axios from "../../this.axios-common";
+import { store } from '../../store'
+
 export default {
   data(){
     return {
@@ -70,7 +73,16 @@ export default {
       }
 
       console.log(JSON.stringify(metadata))
-      this.axios.post(`${this.$apiuri}/documentations/metadata`, metadata)
+      const token = store.getters.getTokens
+      this.axios.post(`${this.$apiuri}/documentations/metadata`, metadata,
+      {
+          headers: {
+              "Authorization": 'Bearer ' + token,
+              "x-access-token": token ,
+              "Content-type": "application/json"
+          },
+      }
+      )
         .then(response => {
           // send flash message
           console.log(response.data)
@@ -92,7 +104,16 @@ export default {
     }
   },
   beforeCreate(){
-    this.axios.get(`${this.$apiuri}/documentations/metadata`)
+    const token = store.getters.getTokens
+    this.axios.get(`${this.$apiuri}/documentations/metadata`,
+    {
+        headers: {
+            "Authorization": 'Bearer ' + token,
+            "x-access-token": token ,
+            "Content-type": "application/json"
+        },
+    }
+    )
       .then(response => {
           this.title = response.data[0].title
           this.logo = response.data[0].logo

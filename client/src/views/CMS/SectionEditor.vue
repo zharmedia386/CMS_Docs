@@ -39,6 +39,7 @@
 
 <script>
 import { VueEditor } from "vue2-editor";
+import { store } from '../../store'
 export default {
   components: {
     VueEditor
@@ -68,7 +69,16 @@ export default {
       }
       else{
         console.log(JSON.stringify(section))
-        this.axios.post(`${this.$apiuri}/sections`, section)
+        const token = store.getters.getTokens
+        this.axios.post(`${this.$apiuri}/sections`, section,
+        {
+            headers: {
+                "Authorization": 'Bearer ' + token,
+                "x-access-token": token ,
+                "Content-type": "application/json"
+            },
+        }
+        )
           .then(response => {
             // send flash message
             console.log(response.data)
@@ -82,7 +92,16 @@ export default {
       }      
     },
     updateChapterList(){
-      this.axios.get(`${this.$apiuri}/documentations/${this.choosenVersion}`)
+      const token = store.getters.getTokens
+      this.axios.get(`${this.$apiuri}/documentations/${this.choosenVersion}`,
+      {
+          headers: {
+              "Authorization": 'Bearer ' + token,
+              "x-access-token": token ,
+              "Content-type": "application/json"
+          },
+      }
+      )
         .then(response => {
           // update chapter list within version
           this.chapters = response.data[0].content[0].chapter.map(ch => ({ '_id': ch._id, 'title': ch.title }))
@@ -105,7 +124,16 @@ export default {
   },
   beforeCreate(){
     if(this.$route.params.id != "create"){
-      this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
+      const token = store.getters.getTokens
+      this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`,
+      {
+          headers: {
+              "Authorization": 'Bearer ' + token,
+              "x-access-token": token ,
+              "Content-type": "application/json"
+          },
+      }
+      )
         .then(response => {
           this.content = response.data[0].content
           this.title = response.data[0].title
@@ -113,7 +141,16 @@ export default {
     }
 
     // get all version list
-    this.axios.get(`${this.$apiuri}/documentations/version`)
+    const token = store.getters.getTokens
+    this.axios.get(`${this.$apiuri}/documentations/version`,
+    {
+        headers: {
+            "Authorization": 'Bearer ' + token,
+            "x-access-token": token ,
+            "Content-type": "application/json"
+        },
+    }
+    )
       .then((response) => {
           response.data[0].content.forEach(v => {
               this.versions.push(v.version)

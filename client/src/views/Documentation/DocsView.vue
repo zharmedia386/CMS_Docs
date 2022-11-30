@@ -60,6 +60,8 @@
 
 <script>
 import router from '@/router' 
+// import http from "../../http-common";
+import { store } from '../../store'
 
 export default {
     data(){
@@ -72,7 +74,16 @@ export default {
     },
     methods : {
         getVersion(){
-            this.axios.get(`${this.$apiuri}/documentations/${this.choosenVersion}`).then(response => {
+            const token = store.getters.getTokens
+            this.axios.get(`${this.$apiuri}/documentations/${this.choosenVersion}`,
+            {
+                headers: {
+                    "Authorization": 'Bearer ' + token,
+                    "x-access-token": token ,
+                    "Content-type": "application/json"
+                },
+            }
+            ).then(response => {
                 this.chapters = response.data[0].content[0].chapter
                 router.push(`/docs/${this.chapters[0].section[0]._id}`)
             }).catch(message => {
@@ -81,8 +92,17 @@ export default {
         }
     },
     created(){
+        const token = store.getters.getTokens
         // let temp = JSON.parse(JSON.stringify(this.versions))
-        this.axios.get(`${this.$apiuri}/documentations/version`)
+        this.axios.get(`${this.$apiuri}/documentations/version`,
+            {
+                headers: {
+                    "Authorization": 'Bearer ' + token,
+                    "x-access-token": token ,
+                    "Content-type": "application/json"
+                },
+            }
+        )
             .then((response) => {
                 response.data[0].content.forEach(v => {
                     this.versions.push(v.version)

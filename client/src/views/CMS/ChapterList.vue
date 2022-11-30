@@ -104,6 +104,8 @@
 </template>
 
 <script>
+import { store } from '../../store'
+
 export default {
   data(){
     return {
@@ -124,7 +126,16 @@ export default {
         version: [ this.choosenVersion ]
       }
 
-      this.axios.post(`${this.$apiuri}/chapters`, chapter)
+      const token = store.getters.getTokens
+      this.axios.post(`${this.$apiuri}/chapters`, chapter,
+      {
+          headers: {
+              "Authorization": 'Bearer ' + token,
+              "x-access-token": token ,
+              "Content-type": "application/json"
+          },
+      }
+      )
         .then(response => {
           // send flash message
           console.log(response.data)
@@ -148,7 +159,16 @@ export default {
         title: this.title
       }
 
-      this.axios.put(`${this.$apiuri}/chapters`, chapter)
+      const token = store.getters.getTokens
+      this.axios.put(`${this.$apiuri}/chapters`, chapter,
+      {
+          headers: {
+              "Authorization": 'Bearer ' + token,
+              "x-access-token": token ,
+              "Content-type": "application/json"
+          },
+      }
+      )
         .then(response => {
           // send flash message
           console.log(response.data)
@@ -174,7 +194,16 @@ export default {
       }, 3000)    
     },
     updateChapter(){
-      this.axios.get(`${this.$apiuri}/chapters`)
+      const token = store.getters.getTokens
+      this.axios.get(`${this.$apiuri}/chapters`,
+      {
+          headers: {
+              "Authorization": 'Bearer ' + token,
+              "x-access-token": token ,
+              "Content-type": "application/json"
+          },
+      }
+      )
       .then(response => {
         this.chapters = response.data
       })
@@ -185,7 +214,16 @@ export default {
   },
   beforeCreate(){
     // get all version list
-    this.axios.get(`${this.$apiuri}/documentations/version`)
+    const token = store.getters.getTokens
+    this.axios.get(`${this.$apiuri}/documentations/version`,
+    {
+        headers: {
+            "Authorization": 'Bearer ' + token,
+            "x-access-token": token ,
+            "Content-type": "application/json"
+        },
+    }
+    )
       .then((response) => {
           response.data[0].content.forEach(v => {
               this.versions.push(v.version)

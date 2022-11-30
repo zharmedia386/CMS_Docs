@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import { store } from '../../store'
+
 export default {
     data(){
         return {
@@ -130,8 +132,16 @@ export default {
         reorder(){
             console.log(this.content)
             let content = this.content
-
-            this.axios.put(`${this.$apiuri}/documentations/reorder`, {content})
+            const token = store.getters.getTokens
+            this.axios.put(`${this.$apiuri}/documentations/reorder`, {content},
+            {
+                headers: {
+                    "Authorization": 'Bearer ' + token,
+                    "x-access-token": token ,
+                    "Content-type": "application/json"
+                },
+            }
+            )
                 .then(response => {
                 // send flash message
                 console.log(response.data)
@@ -154,11 +164,20 @@ export default {
         }
     },
     created(){
-        this.axios.get(`${this.$apiuri}/documentations`)
-            .then(response => {
-                this.content = response.data[0].content
-                this.selectedVersion = response.data[0].content[0]
-            })
+        const token = store.getters.getTokens
+        this.axios.get(`${this.$apiuri}/documentations`,
+        {
+            headers: {
+                "Authorization": 'Bearer ' + token,
+                "x-access-token": token ,
+                "Content-type": "application/json"
+            },
+        }
+        )
+        .then(response => {
+            this.content = response.data[0].content
+            this.selectedVersion = response.data[0].content[0]
+        })
     }
 
 }
