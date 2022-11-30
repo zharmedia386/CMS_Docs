@@ -18,7 +18,41 @@ const createVersion = async (req, res) => {
         res.status(400).send({ message: error.message })
     }
 
-    res.status(200).send({ message: "Version created" })
+    res.status(201).send({ message: "Berhasil membuat version" })
+}
+
+const deleteVersion = async (req, res) => {
+    let content = req.body.content
+
+    // Extract only _id of content (chapter, section) and covert it into object id
+    content = content.map( ct => ({ 
+            version: ct.version, 
+            chapter: ct.chapter.map( ch => ({
+                    _id: new mongo.ObjectId(ch._id), 
+                    section: ch.section.map( sc => ({ 
+                            _id: new mongo.ObjectId(sc._id) 
+                        }) 
+                    )
+                }) 
+            ) 
+        }) 
+    )
+
+    const version = content.map(ct => ct.version)
+    const chapterId = content.map(ct => ({ version: ct.version, chapter: ct.chapter.map(ch => ch._id) }))
+    const sectionId = content.map(ct => ({ version: ct.version, section: ct.chapter.map(ch => ch.section.map(sc => sc._id)).flat() }))
+    console.log(version)
+    console.log(chapterId)
+    console.log(sectionId)
+
+    // console.log(JSON.stringify(content, null, 2))
+    // console.log('id', content[0].chapter[0]._id)
+
+    const Sections = await sectionsDB();
+    const Chapter = await chapterDB();
+    const Documentation = await documentationDB();
+
+    res.status(201).send({ message: "Berhasil menghapus version" })
 }
 
 const reorderDocumentationsContent = async (req, res) => {
@@ -48,7 +82,7 @@ const reorderDocumentationsContent = async (req, res) => {
         res.status(400).send({ message: error.message })
     }
     
-    res.status(200).send({ message: "Documentation content updated" })
+    res.status(201).send({ message: "Berhasil mengubah urutan konten dokumentasi" })
 }
 
 const addSection = async (req, res) => {
@@ -81,7 +115,7 @@ const addSection = async (req, res) => {
         res.status(400).send({ message: error.message })
     }
 
-    res.status(201).send({ message : "Sections version updated!" })
+    res.status(201).send({ message : "Berhasil menambahkan section" })
 }
 
 const deleteSection = async (req, res) => {
@@ -112,7 +146,7 @@ const deleteSection = async (req, res) => {
         res.status(400).send({ message: error.message })
     }
 
-    res.status(200).send({ message : "Sections deleted" })
+    res.status(201).send({ message : "Berhasil menghapus section" })
 }
 
 const addChapter = async (req, res) => {
@@ -148,7 +182,7 @@ const addChapter = async (req, res) => {
         res.status(400).send({ message: error.message })
     }
 
-    res.status(201).send({ message : "Chapter version updated!" })
+    res.status(201).send({ message : "Berhasil menambahkan chapter" })
 }
 
 const deleteChapter = async (req, res) => {
@@ -187,11 +221,12 @@ const deleteChapter = async (req, res) => {
         res.status(400).send({ message: error.message })
     }
 
-    res.status(200).send({ message : "Sections deleted" })
+    res.status(201).send({ message : "Berhasil menghapus chapter" })
 }
 
 module.exports = {
     createVersion,
+    deleteVersion,
     reorderDocumentationsContent,
     addSection,
     deleteSection,

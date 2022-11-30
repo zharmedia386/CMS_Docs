@@ -9,7 +9,10 @@
       >{{ alert.message }}</v-alert>
     <v-card-title class="d-flex justify-space-between px-5">
         Versioning
-        <v-btn @click="() => { createDialog = true ;}">Create New Version</v-btn>
+        <v-container>
+            <v-btn class="mr-5" @click="() => { deleteDialog = true ;}">Delete Version</v-btn>
+            <v-btn @click="() => { createDialog = true ;}">Create Version</v-btn>
+        </v-container>
     </v-card-title>
     <v-row class="d-flex justify-space-between px-5">
         <v-col cols="9">
@@ -212,6 +215,37 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Delete Dialog -->
+    <v-dialog
+      v-model="deleteDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Delete Version
+        </v-card-title>
+        <v-list>
+            <v-list-item v-for="(ct, index) in content" :key="index">
+                <v-checkbox v-model="deletedVersion" :value="ct" multiple/>
+                {{ ct.version }}
+            </v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="deleteVersion"
+          >
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -223,6 +257,9 @@ export default {
             dialog: false,
             chapterDialog: false,
             createDialog: false,
+            deleteDialog: false,
+
+            deletedVersion: [],
 
             versionName: '',
 
@@ -258,6 +295,30 @@ export default {
                     this.updateDocumentationContent()
                 })
         },
+        deleteVersion(){
+            const content = this.deletedVersion;
+
+            this.axios.put(`${this.$apiuri}/versioning/delete`, {content})
+                .then(response => {
+                    // send flash message
+                    console.log(response.data)
+                    // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                })
+                .catch(error => {
+                    // send flash message
+                    console.log(error.message)
+                    // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                })
+                .finally(() => {
+                    this.versionName = ''
+                    this.createDialog = false
+                    this.updateDocumentationContent()
+                })
+
+            this.deletedVersion = []
+            this.deleteDialog = false
+            this.updateDocumentationContent
+        },
         findVersionIndex() {
             let versionIdx = this.content.findIndex(object => {
                 return object.version === this.selectedVersion.version;
@@ -274,13 +335,13 @@ export default {
             this.axios.put(`${this.$apiuri}/versioning/section`, {sections, chapter, version})
                 .then(response => {
                 // send flash message
-                console.log(response.data)
-                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                // console.log(response.data)
+                this.trigger_alert(true, response.data.message)
                 })
                 .catch(error => {
-                // send flash message
-                console.log(error.message)
-                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                    // send flash message
+                    console.log(error.message)
+                    this.trigger_alert(false, `Gagal menambahkan section, terjadi error ${error.message}`)
                 })
                 .finally(() => {
                     this.dialog = false;
@@ -293,14 +354,14 @@ export default {
             const sectionId = section._id;
             this.axios.put(`${this.$apiuri}/versioning/section/delete`, {sectionId, version})
                 .then(response => {
-                // send flash message
-                    console.log(response.data)
-                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                    // send flash message
+                    // console.log(response.data)
+                    this.trigger_alert(true, response.data.message)
                 })
                 .catch(error => {
-                // send flash message
+                    // send flash message
                     console.log(error.message)
-                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                    this.trigger_alert(false, `Gagal menghapus section, terjadi error ${error.message}`)
                 }).finally(() => {
                     this.updateDocumentationContent()
                 })
@@ -312,14 +373,14 @@ export default {
             
             this.axios.put(`${this.$apiuri}/versioning/chapter`, {chapters, version})
                 .then(response => {
-                // send flash message
-                console.log(response.data)
-                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                    // send flash message
+                    // console.log(response.data)
+                    this.trigger_alert(true, response.data.message)
                 })
                 .catch(error => {
-                // send flash message
-                console.log(error.message)
-                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                    // send flash message
+                    // console.log(error.message)
+                    this.trigger_alert(false, `Gagal menambahkan chapter, terjadi error ${error.message}`)
                 })
                 .finally(() => {
                     this.chapterDialog = false;
@@ -336,12 +397,12 @@ export default {
                 .then(response => {
                 // send flash message
                     console.log(response.data)
-                // this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                    this.trigger_alert(true, response.data.message)
                 })
                 .catch(error => {
                 // send flash message
                     console.log(error.message)
-                // this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                    this.trigger_alert(false, `Gagal menghapus chapter, terjadi error ${error.message}`)
                 }).finally(() => {
                     this.updateDocumentationContent()
                 })
@@ -380,14 +441,14 @@ export default {
 
             this.axios.put(`${this.$apiuri}/versioning/reorder`, {content})
                 .then(response => {
-                // send flash message
-                console.log(response.data)
-                this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
+                    // send flash message
+                    console.log(response.data)
+                    this.trigger_alert(true, 'urutan Documentation Content berhasil diubah')
                 })
                 .catch(error => {
-                // send flash message
-                console.log(error.message)
-                this.trigger_alert(true, `Gagal mengubah urutan content, terjadi error ${error.message}`)
+                    // send flash message
+                    console.log(error.message)
+                    this.trigger_alert(false, `Gagal mengubah urutan content, terjadi error ${error.message}`)
                 })
         },
         updateSection() {
