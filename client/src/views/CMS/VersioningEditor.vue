@@ -9,16 +9,12 @@
       >{{ alert.message }}</v-alert>
     <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Versioning
-<<<<<<< HEAD
-        <v-btn class="mt-1 blue darken-4 white--text">Create New Version</v-btn>
-=======
-        <v-container>
+        <v-container class="d-flex justify-end">
             <v-btn class="mr-5" @click="() => { deleteDialog = true ;}">Delete Version</v-btn>
             <v-btn @click="() => { createDialog = true ;}">Create Version</v-btn>
         </v-container>
->>>>>>> Fauzi
     </v-card-title>
-    <v-row class="d-flex justify-space-between px-5">
+    <v-row class="d-flex justify-space-between px-5 mt-5">
         <v-col cols="9">
             <v-select
                 v-model="selectedVersion" 
