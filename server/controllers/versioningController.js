@@ -41,16 +41,35 @@ const deleteVersion = async (req, res) => {
     const version = content.map(ct => ct.version)
     const chapterId = content.map(ct => ({ version: ct.version, chapter: ct.chapter.map(ch => ch._id) }))
     const sectionId = content.map(ct => ({ version: ct.version, section: ct.chapter.map(ch => ch.section.map(sc => sc._id)).flat() }))
-    console.log(version)
-    console.log(chapterId)
-    console.log(sectionId)
-
-    // console.log(JSON.stringify(content, null, 2))
-    // console.log('id', content[0].chapter[0]._id)
+    // console.log(version)
+    // console.log(chapterId)
+    // console.log(sectionId)
 
     const Sections = await sectionsDB();
     const Chapter = await chapterDB();
     const Documentation = await documentationDB();
+
+    for(let [verIdx, ver] of version.entries()){
+        // Delete version in section
+        const sectionInVersion = sectionId[verIdx].section
+        await Sections.updateMany(
+            { _id: { $in: sectionInVersion} },
+            { $pull: { version: ver } }
+        )
+
+        // Delete version in chapter
+        const chapterInVersion = chapterId[verIdx].chapter
+        await Chapter.updateMany(
+            { _id: { $in: chapterInVersion } },
+            { $pull: { version: ver } }
+        )
+
+        // Delete version in documentation
+        await Documentation.updateOne(
+            {},
+            { $pull: { content: { version: ver } } }
+        )
+    }
 
     res.status(201).send({ message: "Berhasil menghapus version" })
 }
