@@ -9,10 +9,10 @@
       top
       centered
     >
-      <v-icon>mdi-check-circle</v-icon>
+      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
+      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
       {{ snackbar.text }}
     </v-snackbar>
-
     <!-- Manage Content Version -->
     <v-card class="mx-auto mb-5">
       <v-toolbar color="primary" class="font-weight-medium" dark>
@@ -255,41 +255,44 @@
       transition="dialog-bottom-transition"
       persistent
     >
-      <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
-          Create New Version
-        </v-toolbar>
+      <v-form v-model="createFormValid">
+        <v-card>
+          <v-toolbar color="primary" class="font-weight-bold" dark>
+            Create New Version
+          </v-toolbar>
 
-        <v-card-text style="max-height: 500px; padding:0;" class="mt-7 tb-2">
-        <v-text-field
-          v-model="versionName"
-          label="Version Name"
-          :rules="[rules.required]"
-          class="pl-5 pr-5"
-          outlined
-        ></v-text-field>
-        </v-card-text>
-        <v-divider></v-divider>
+          <v-card-text style="max-height: 500px; padding:0;" class="mt-7 tb-2">
+          <v-text-field
+            v-model="versionName"
+            label="Version Name"
+            :rules="[rules.required]"
+            class="pl-5 pr-5"
+            outlined
+          ></v-text-field>
+          </v-card-text>
+          <v-divider></v-divider>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="() => {createDialog = false}"
-          >
-            Cancel
-          </v-btn>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              text
+              @click="() => {createDialog = false; versionName = ''}"
+            >
+              Cancel
+            </v-btn>
 
-          <v-btn
-            color="primary"
-            text
-            @click="createVersion"
-          >
-            Create
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+            <v-btn
+              color="primary"
+              text
+              :disabled="!createFormValid"
+              @click="createVersion"
+            >
+              Create
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
 
     <!-- Edit Version Dialog -->
@@ -299,49 +302,53 @@
       transition="dialog-bottom-transition"
       persistent
     >
-      <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
-          Edit Version
-        </v-toolbar>
+      <v-form v-model="editFormValid">
+        <v-card>
+          <v-toolbar color="primary" class="font-weight-bold" dark>
+            Edit Version
+          </v-toolbar>
 
-        <v-card-text class="mt-10">
-          <v-select
-              v-model="editedVersion" 
-              :items="content"
+          <v-card-text class="mt-10">
+            <v-select
+                v-model="editedVersion" 
+                :items="content"
+                :rules="[rules.required]"
+                label="Choose Version"
+                item-text="version"
+                outlined
+                return-object
+            ></v-select>
+            <v-text-field
+              v-model="newVersionName"
+              label="New Version Name"
               :rules="[rules.required]"
-              label="Choose Version"
-              item-text="version"
               outlined
-              return-object
-          ></v-select>
-          <v-text-field
-            v-model="newVersionName"
-            label="New Version Name"
-            :rules="[rules.required]"
-            outlined
-          ></v-text-field>
-        </v-card-text>
+            ></v-text-field>
+          </v-card-text>
 
-        <v-divider></v-divider>
+          <v-divider></v-divider>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="() => {editDialog = false}"
-          >
-            Cancel
-          </v-btn>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              text
+              @click="() => {editDialog = false; editedVersion = ''; newVersionName = ''}"
+            >
+              Cancel
+            </v-btn>
 
-          <v-btn
-            color="primary"
-            text
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+            <v-btn
+              color="primary"
+              text
+              @click="editVersion()"
+              :disabled="!editFormValid"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
 
     <!-- Delete Dialog -->
@@ -380,6 +387,7 @@
           <v-btn
             color="primary"
             text
+            :disabled="!(!!this.deletedVersion.length)"
             @click="deleteVersion"
           >
             Delete
@@ -399,6 +407,9 @@ export default {
       createDialog: false,
       editDialog: false,
       deleteDialog: false,
+
+      createFormValid: false,
+      editFormValid: false,
 
       editedVersion: '',
       newVersionName: '',
@@ -433,7 +444,7 @@ export default {
   methods : {
     createVersion(){
       // Validate forms
-      if(!this.versionName) {
+      if(!this.createFormValid) {
         this.trigger_notification('Failed to create a version, please fill in the version name first', 'error')
         return
       }
@@ -441,10 +452,10 @@ export default {
       const versionName = this.versionName;
       this.axios.put(`${this.$apiuri}/versioning/create`, {versionName})
         .then(response => {
-          this.trigger_notification(true, response.data.message, 'success')
+          this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
-          this.trigger_notification(true, `Failed to create a version, an error occurred ${error.message}`, 'error')
+          this.trigger_notification(`Failed to create a version, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
           this.versionName = ''
@@ -452,15 +463,44 @@ export default {
           this.updateDocumentationContent()
         })
     },
+    editVersion(){
+      // Validate Forms
+      if(!this.editFormValid) {
+        this.trigger_notification('Failed to edit version, please fill all available form input', 'error')
+        return
+      }
+
+      const editedVersion = this.editedVersion.version;
+      const newVersionName = this.newVersionName;
+
+      this.axios.put(`${this.$apiuri}/versioning/edit`, {editedVersion, newVersionName})
+        .then(response => {
+          this.trigger_notification(response.data.message, 'success')
+        })
+        .catch(error => {
+          this.trigger_notification(`Failed to edit a version, an error occurred ${error.message}`, 'error')
+        })
+        .finally(() => {
+          this.editedVersion = ''
+          this.newVersionName = ''
+          this.editDialog = false
+          this.updateDocumentationContent()
+        })
+    },
     deleteVersion(){
+      if(this.deletedVersion.length==0){
+        this.trigger_notification('Failed to delete version, please choose at least one version', 'error')
+        return
+      }
+
       const content = this.deletedVersion;
 
       this.axios.put(`${this.$apiuri}/versioning/delete`, {content})
         .then(response => {
-          this.trigger_notification(true, response.data.message, 'success')
+          this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
-          this.trigger_notification(true, `Failed to remove version, an error occurred ${error.message}`, 'error')
+          this.trigger_notification(`Failed to remove version, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
           this.updateDocumentationContent()
@@ -531,7 +571,7 @@ export default {
     removeChapter(chapter){
       const version = this.selectedVersion.version;
       const chapterId = chapter._id
-      const sectionsId = chapter.section.map(sc => sc._id)
+      const sectionsId = (chapter?.section) ? chapter?.section.map(sc => sc._id) : []
 
       this.axios.put(`${this.$apiuri}/versioning/chapter/delete`, {chapterId, sectionsId, version})
         .then(response => {

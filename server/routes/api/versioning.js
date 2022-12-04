@@ -5,6 +5,9 @@ const versioningController = require('../../controllers/versioningController')
 router.route('/create')
     .put(versioningController.createVersion)
 
+router.route('/edit')
+    .put(versioningController.editVersion)
+
 router.route('/delete')
     .put(versioningController.deleteVersion)
 
