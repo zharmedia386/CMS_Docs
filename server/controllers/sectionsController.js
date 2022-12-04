@@ -35,12 +35,14 @@ const createNewSection = async (req, res) => {
 
     try {
         // insert new sections
-        const insertedSection = await Sections.insertOne({
+        let section = {
             title: req.body.title,
             content: req.body.content,
             createdAt: new Date(),
             updatedAt: new Date() 
-        })
+        }
+        if(req.body.alias && req.body.alias.length != 0) section.alias = req.body.alias;
+        const insertedSection = await Sections.insertOne(section)
         console.log(insertedSection)
 
         res.status(200).send({ message : "Sections Data Created!" })
@@ -60,10 +62,12 @@ const updateSection = async (req, res) => {
 
     const Sections = await sectionsDB()
 
-    const section = {
+    let section = {
         title: req.body.title,
         content: req.body.content
     }
+
+    if(req.body.alias && req.body.alias.length != 0) section.alias = req.body.alias;
 
     try {
         // update section in section collections

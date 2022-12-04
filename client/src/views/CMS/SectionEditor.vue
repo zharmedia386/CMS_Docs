@@ -1,16 +1,48 @@
 <template>
   <v-form @submit.prevent="saveData()">
     <v-container>
-      <v-alert
-        :value="alert.value"
-        :type="alert.status ? 'success' : 'error'"
-        transition="slide-y-transition"
-      >{{ alert.message }}</v-alert>
+      <v-snackbar
+      v-model="snackbar.isShow"
+      :timeout="snackbar.timeout"
+      :color="snackbar.type"
+      elevation="8"
+      top
+      centered
+    >
+      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
+      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
+      {{ snackbar.text }}
+    </v-snackbar>
+      <v-card v-if="create">
+        <v-card-title>
+          Load Section
+          <v-spacer></v-spacer>
+          <v-select
+          v-model="selectedSection"
+          :items="sections"
+          :item-text="section => `${section.title} ${section.alias ? '- ' + section.alias : ''}`"
+          :item-value="section => section._id"
+          label="Select Section"
+          @change="loadSection()"
+        >
+        </v-select>
+        </v-card-title>
+        
+      </v-card>
       <v-card>
         <v-card-title>Section Title</v-card-title>
         <v-text-field
           v-model="title"
           placeholder="Input Title"
+          class="pl-5 pr-5"
+          required
+        ></v-text-field>
+      </v-card>
+      <v-card>
+        <v-card-title>Section Alias (Optional)</v-card-title>
+        <v-text-field
+          v-model="alias"
+          placeholder="Input Alias"
           class="pl-5 pr-5"
         ></v-text-field>
       </v-card>
@@ -29,21 +61,31 @@ export default {
   },
   data(){
     return {
-      alert: {value: false, status: true, message: ''},
+      snackbar: { 
+        isShow: false, 
+        text: '', 
+        type: '', 
+        timeout: 2000 
+      },
       content : "",
+      alias : "",
       title : "",
-      create: true
+      create: true,
+      sections : [],
+      selectedSection : ""
     }
   },
   methods: {
     saveData(){
-      const section = {
+      let section = {
         title: this.title,
         content: this.content
       }
 
+      if(this.alias.length != 0) section.alias = this.alias;
+
       if(this.title == "" || this.content == ""){
-        this.trigger_alert(false, 'Harap isi semua field')
+        this.trigger_notification(`Error : Please Input Title and Content`, 'error')
       }
       else{
         console.log(JSON.stringify(section))
@@ -52,11 +94,11 @@ export default {
             .then(response => {
               // send flash message
               console.log(response.data)
-              this.trigger_alert(true, 'Section berhasil dibuat')
+              this.$router.push({name: "sectionList", params: {message: "Section created!", status: true}})
             })
             .catch(error => {
               // send flash message
-              this.trigger_alert(false, `Terjadi error ${error.message}`)
+              this.trigger_notification(`Error : ${error.message}`, 'error')
             })
         }
         else{
@@ -65,24 +107,36 @@ export default {
           .then(response => {
               // send flash message
               console.log(response.data)
-              this.trigger_alert(true, 'Section berhasil diupdate')
+              this.$router.push({name: "sectionList", params: {message: "Section updated!", status: true}})
             })
             .catch(error => {
               // send flash message
-              this.trigger_alert(false, `Terjadi error ${error.message}`)
+              this.trigger_notification(`Error : ${error.message}`, 'error')
             })
         }
         
       }      
     },
-    trigger_alert(status, message) {
-      this.alert.value = true
-      this.alert.status = status
-      this.alert.message = message
-      // `event` is the native DOM event
-      window.setTimeout(() => {
-        this.alert.value = false;
-      }, 3000)    
+    trigger_notification(text, type, timeout=2000){
+      this.snackbar = { isShow:true, text, type, timeout }
+    },
+    loadSection(){
+      console.log(this.selectedSection)
+      this.axios.get(`${this.$apiuri}/sections/${this.selectedSection}`)
+        .then(response => {
+          this.title = response.data[0].title
+          this.content = response.data[0].content
+          if(response.data[0].alias){
+            this.alias = response.data[0].alias
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.selectedSection = ""
+          this.title = ""
+          this.alias = ""
+          this.content = ""
+        })
     }
   },
   beforeCreate(){
@@ -91,7 +145,14 @@ export default {
         .then(response => {
           this.content = response.data[0].content
           this.title = response.data[0].title
+          if(response.data[0].alias) this.alias = response.data[0].alias;
           this.create = false
+        })
+    }
+    else{
+      this.axios.get(`${this.$apiuri}/sections`)
+        .then(response => {
+          this.sections = response.data
         })
     }
   }
