@@ -24,9 +24,9 @@
     </v-app-bar> 
     <!-- Header Stop Here -->
     <!-- Sidebar Starts Here -->
-    <v-navigation-drawer app class="fontstyle">
+    <v-navigation-drawer app class="fontstyle px-0 py-0">
         <v-card v-for="(chapter,i) in chapters" :key="i">
-            <v-card-title class="d-flex justify-center font-weight-bold">{{ chapter.title }}</v-card-title>
+            <v-card-title class="d-flex justify-center font-weight-bold" style="white-space: pre-wrap; word-wrap: break-word;" v-text="chapter.title"></v-card-title>
             <v-list-item-group class="text-left">
                 <v-list-item class="font-weight-thin" v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
                     <v-list-item-content>
