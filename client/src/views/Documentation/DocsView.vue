@@ -2,6 +2,7 @@
   <v-app>
     <!-- Header Starts Here -->
     <v-app-bar app style>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <img :src="metadata.logo" style="max-height: 50%">
         <v-toolbar-title style="padding-left: 10px" v-text="metadata.title"></v-toolbar-title>
         <v-btn 
@@ -24,7 +25,7 @@
     </v-app-bar> 
     <!-- Header Stop Here -->
     <!-- Sidebar Starts Here -->
-    <v-navigation-drawer app class="fontstyle px-0 py-0">
+    <v-navigation-drawer app class="fontstyle px-0 py-0" v-model="drawer">
         <v-card v-for="(chapter,i) in chapters" :key="i">
             <v-card-title class="d-flex justify-center font-weight-bold" style="white-space: pre-wrap; word-wrap: break-word;" v-text="chapter.title"></v-card-title>
             <v-list-item-group class="text-left">
@@ -72,7 +73,8 @@ export default {
                 logo : "",
                 githubLink : "",
                 footer : ""
-            }
+            },
+            drawer: true
         }
     },
     methods : {
