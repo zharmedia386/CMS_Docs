@@ -25,7 +25,9 @@
     </v-main>
   </div>
     <v-app v-else>
-      <v-navigation-drawer app>
+      <v-navigation-drawer 
+        app
+      >
         <v-list-item-group>
           <v-list-item v-for="(menu,index) in menus" v-bind:key="index" :to="menu.ref">
                 <v-list-item-icon>
@@ -73,7 +75,7 @@ export default {
           icon: 'mdi-file-document'
         },
         {
-          title: 'Versioning',
+          title: 'Manage Content',
           ref: {
             name: 'version'
           },
