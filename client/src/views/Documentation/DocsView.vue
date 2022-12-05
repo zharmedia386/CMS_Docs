@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- Header Starts Here -->
-    <v-app-bar app style>
+    <v-app-bar app>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <img :src="metadata.logo" style="max-height: 50%">
         <v-toolbar-title style="padding-left: 10px" v-text="metadata.title"></v-toolbar-title>

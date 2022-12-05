@@ -25,24 +25,28 @@
     </v-main>
   </div>
     <v-app v-else>
-      <v-navigation-drawer 
+      <v-app-bar app style="right: auto; box-shadow: none; padding: 0;">
+        <v-btn @click="(drawer = !drawer)">
+          <v-icon v-text="`${drawer ? 'mdi-chevron-left' : 'mdi-chevron-right'}`"></v-icon>
+        </v-btn>
+      </v-app-bar>
+      <v-navigation-drawer
+        v-model="drawer"
         app
       >
-        <v-list-item-group>
+        <v-list>
           <v-list-item v-for="(menu,index) in menus" v-bind:key="index" :to="menu.ref">
                 <v-list-item-icon>
-                  <v-icon>{{ menu.icon }}</v-icon>
+                  <v-icon v-text="menu.icon"></v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                     <v-list-item-title v-text="menu.title"></v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-        </v-list-item-group>
+        </v-list>
       </v-navigation-drawer>
-      <v-main>
-        <v-container>
+      <v-main class="py-0">
             <router-view></router-view>
-        </v-container>
       </v-main>
     </v-app>
   </div>
@@ -52,6 +56,7 @@
 export default {
   data(){
     return {
+      drawer: true,
       menus : [
         {
           title: 'Metadata',
