@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <!-- Notification -->
     <v-snackbar
       v-model="snackbar.isShow"
@@ -66,7 +66,7 @@
 
                 <!-- List Section -->
                 <v-list-item v-for="(section, j) in chapter.section" :key="j">
-                  <v-list-item-title v-text="section.title"></v-list-item-title>
+                  <v-list-item-title v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-list-item-title>
                   <!-- Remove Section -->
                   <v-btn 
                       small 
@@ -175,7 +175,7 @@
           <v-list>
             <v-list-item v-for="(section, index) in sections" :key="index">
               <v-checkbox v-model="selectedSections" :value="section" multiple/>
-              {{ section.title }}
+              {{ `${section.title} ${section.alias ? '- ' + section.alias : ''}` }}
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -395,7 +395,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -520,7 +520,10 @@ export default {
       const version = this.selectedVersion.version;
       const chapter = this.sectionChapter._id
       const sections = this.selectedSections
-        .map(section => ({_id: section._id, title: section.title}))
+        .map(section => (!section?.alias) ? 
+          ({_id: section._id, title: section.title}) : 
+          ({_id: section._id, title: section.title, alias: section.alias})
+        )
 
       this.axios.put(`${this.$apiuri}/versioning/section`, {sections, chapter, version})
         .then(response => {

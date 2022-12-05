@@ -130,7 +130,11 @@ const reorderDocumentationsContent = async (req, res) => {
 }
 
 const addSection = async (req, res) => {
-    const sections = req.body.sections.map(section => ({_id: new mongo.ObjectId(section._id), title: section.title}));
+    const sections = req.body.sections
+        .map(section => (!section?.alias) ? 
+            ({_id: new mongo.ObjectId(section._id), title: section.title}) : 
+            ({_id: new mongo.ObjectId(section._id), title: section.title, alias: section.alias})
+        );
     const sectionsId = sections.map(section => section._id)
     const chapterId = new mongo.ObjectId(req.body.chapter)
     let version = req.body.version;
