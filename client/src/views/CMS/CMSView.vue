@@ -25,7 +25,7 @@
     </v-main>
   </div>
     <v-app v-else>
-      <v-app-bar app style="right: auto; box-shadow: none; padding: 0;">
+      <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: white;">
         <v-btn @click="(drawer = !drawer)">
           <v-icon v-text="`${drawer ? 'mdi-chevron-left' : 'mdi-chevron-right'}`"></v-icon>
         </v-btn>
@@ -40,7 +40,7 @@
                   <v-icon v-text="menu.icon"></v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                    <v-list-item-title v-text="menu.title"></v-list-item-title>
+                    <v-list-item-title style="white-space: break-spaces;" v-text="menu.title"></v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
         </v-list>
