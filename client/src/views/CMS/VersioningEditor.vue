@@ -15,9 +15,9 @@
     </v-snackbar>
     <!-- Manage Content Version -->
     <v-card class="mx-auto mb-5 ">
-      <v-toolbar class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
+      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Content Version
-      </v-toolbar>
+      </v-card-title>
       <v-container class="d-flex justify-start pt-5 pb-5">
           <v-btn class="blue darken-4 white--text mr-5" @click="() => { deleteDialog = true }">Delete Version</v-btn>
           <v-btn class="blue darken-4 white--text mr-5" @click="() => { editDialog = true }">Edit Version</v-btn>
@@ -27,9 +27,9 @@
 
     <!-- Manage Content Structure -->
     <v-card class="mx-auto">
-      <v-toolbar class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
+      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Content Structure
-      </v-toolbar>
+      </v-card-title>
 
       <!-- Reorder Content -->
       <v-row class="d-flex px-5 mt-5 ">
