@@ -12,7 +12,7 @@ Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false
 
-Vue.prototype.$apiuri = "http://localhost:3500"
+Vue.prototype.$apiuri = "https://cmsdocs-production.up.railway.app"
 
 new Vue({
   vuetify,

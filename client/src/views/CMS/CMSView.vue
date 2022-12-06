@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-app v-if="!user">
+    <div v-if="!user">
       <v-main>
-      <v-card max-width="500" class="mx-auto px-3 pb-1">
+      <v-card max-width="500" class="container">
         <v-card-title>Login</v-card-title>
         <v-form v-model="form.valid" lazy-validation>
           <v-text-field
@@ -23,24 +23,30 @@
         </v-form>
       </v-card>
     </v-main>
-  </v-app>
+  </div>
     <v-app v-else>
-      <v-navigation-drawer app>
-        <v-list-item-group>
+      <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: white;">
+        <v-btn @click="(drawer = !drawer)">
+          <v-icon v-text="`${drawer ? 'mdi-chevron-left' : 'mdi-chevron-right'}`"></v-icon>
+        </v-btn>
+      </v-app-bar>
+      <v-navigation-drawer
+        v-model="drawer"
+        app
+      >
+        <v-list>
           <v-list-item v-for="(menu,index) in menus" v-bind:key="index" :to="menu.ref">
                 <v-list-item-icon>
-                  <v-icon>{{ menu.icon }}</v-icon>
+                  <v-icon v-text="menu.icon"></v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                    <v-list-item-title v-text="menu.title"></v-list-item-title>
+                    <v-list-item-title style="white-space: break-spaces;" v-text="menu.title"></v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-        </v-list-item-group>
+        </v-list>
       </v-navigation-drawer>
-      <v-main>
-        <v-container>
+      <v-main class="py-0">
             <router-view></router-view>
-        </v-container>
       </v-main>
     </v-app>
   </div>
@@ -50,6 +56,7 @@
 export default {
   data(){
     return {
+      drawer: true,
       menus : [
         {
           title: 'Metadata',
@@ -73,7 +80,7 @@ export default {
           icon: 'mdi-file-document'
         },
         {
-          title: 'Versioning',
+          title: 'Manage Content',
           ref: {
             name: 'version'
           },
@@ -105,5 +112,7 @@ export default {
 </script>
 
 <style>
-
+.container{
+  margin: auto;
+}
 </style>
