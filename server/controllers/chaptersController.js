@@ -100,31 +100,88 @@ const updateChapter = async (req, res) => {
     res.status(201).send({ message : "Chapters Data Updated!" })
 }
 
+// const deleteChapter = async (req, res) => {
+//     if (!req?.body?.id || !req?.body?.version) return res.status(400).json({ 'message': 'Chapters ID and version required.' });
+
+//     let chapterId = new mongo.ObjectId(req.body.id)
+
+//     const Chapters = await chapterDB()
+//     const Documentation = await documentationDB();
+
+//     try {
+//         // update chapter in section collections
+//         await Chapters.deleteOne(
+//             { _id: chapterId }
+//         )
+        
+//         // updating chapter title in documentation content
+//         await Documentation.updateOne(
+//             {},
+//             { $pull: { "content.$[ct].chapter": { "_id": chapterId } } },
+//             { arrayFilters: [ { "ct.version":  req.body.version[0]} ] }
+//         )
+//     } catch (error) {
+//         res.status(400).send({ message: error.message })
+//     }
+
+//     res.status(201).send({ message : "Chapters Data Deleted!" })
+// }
+
 const deleteChapter = async (req, res) => {
-    if (!req?.body?.id || !req?.body?.version) return res.status(400).json({ 'message': 'Chapters ID and version required.' });
+    //Versi 1 Butuh content, version, dan chapterId(Parameter) 
+    //sectionId (Cari sendiri berdasarkan chapterId)
+    let content = req.body.content;
+    const version = req.body.version;
+    const chapterId = new mongo.ObjectId(req.body.chapterId);
 
-    let chapterId = new mongo.ObjectId(req.body.id)
+    // Extract only _id of content (chapter, section) and covert it into object id
+    content = content.map( ct => ({ 
+            version: ct.version, 
+            chapter: ct.chapter.map( ch => ({
+                    _id: new mongo.ObjectId(ch._id), 
+                    section: ch.section.map( sc => ({ 
+                            _id: new mongo.ObjectId(sc._id) 
+                        }) 
+                    )
+                }) 
+            ) 
+        }) 
+    )
 
-    const Chapters = await chapterDB()
+    //Mencari sectionId dari chapter id tersebut
+    const sectionId = content.map(ct => ({ version: ct.version, section: ct.chapter.map(ch => { if(ch._id==chapterId){ch.section.map(sc => sc._id)}}).flat() }))
+
+    const Sections = await sectionsDB();
+    const Chapter = await chapterDB();
     const Documentation = await documentationDB();
 
     try {
-        // update chapter in section collections
-        await Chapters.deleteOne(
+        let result = await Chapter.deleteOne(
             { _id: chapterId }
         )
-        
-        // updating chapter title in documentation content
-        await Documentation.updateOne(
+        console.log('delete ke chapter collection')
+        console.log(result)
+
+        result = await Documentation.updateOne(
             {},
-            { $pull: { "content.$[ct].chapter": { "_id": chapterId } } },
-            { arrayFilters: [ { "ct.version":  req.body.version[0]} ] }
+            { $pull: { "content.$[ct].chapter": { _id: chapterId } } },
+            { arrayFilters: [ { "ct.version": version } ] }
         )
+        console.log('update ke documentation section')
+        console.log(result)
+
+        result = await Sections.updateMany(
+            { _id: { $in: sectionId } },
+            { $pull: { version: version } }
+        )
+        console.log('update ke section collection')
+        console.log(result)
+
     } catch (error) {
         res.status(400).send({ message: error.message })
     }
 
-    res.status(201).send({ message : "Chapters Data Deleted!" })
+    res.status(201).send({ message : "Berhasil menghapus chapter" })
 }
 
 module.exports = {
