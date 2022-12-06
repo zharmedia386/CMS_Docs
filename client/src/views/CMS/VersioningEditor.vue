@@ -257,7 +257,7 @@
     >
       <v-form v-model="createFormValid">
         <v-card>
-          <v-toolbar color="primary" class="font-weight-bold" dark>
+          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
             Create New Version
           </v-toolbar>
 
@@ -304,7 +304,7 @@
     >
       <v-form v-model="editFormValid">
         <v-card>
-          <v-toolbar color="primary" class="font-weight-bold" dark>
+          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
             Edit Version
           </v-toolbar>
 
@@ -360,7 +360,7 @@
       persistent
     >
       <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
+        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
           Delete Version
         </v-toolbar>
 
