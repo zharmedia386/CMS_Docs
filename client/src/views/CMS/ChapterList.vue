@@ -137,12 +137,12 @@ export default {
         .then(response => {
           // send flash message
           console.log(response.data)
-          this.trigger_alert(true, 'Chapter berhasil dibuat')
+          this.trigger_alert(true, 'Chapter changed successfully')
           this.updateChapter()
         })
         .catch(error => {
           // send flash message
-          this.trigger_alert(true, `Gagal membuat chapter, terjadi error ${error.message}`)
+          this.trigger_alert(true, `Failed to create a chapter, an error has occured ${error.message}`)
         })
 
       console.log(JSON.stringify(chapter))
@@ -161,12 +161,12 @@ export default {
         .then(response => {
           // send flash message
           console.log(response.data)
-          this.trigger_alert(true, 'Chapter berhasil diubah')
+          this.trigger_alert(true, 'Chapter changed successfully')
           this.updateChapter()
         })
         .catch(error => {
           // send flash message
-          this.trigger_alert(true, `Gagal membuat chapter, terjadi error ${error.message}`)
+          this.trigger_alert(true, `Failed to create a chapter, an error has occured ${error.message}`)
         })
 
         this.updateDialog = false
