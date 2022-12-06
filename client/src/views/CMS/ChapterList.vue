@@ -21,7 +21,7 @@
         <!-- <v-icon>{{chapter.icon}}</v-icon> {{chapter.title}} -->
         {{ chapter.title }}
         <div>
-          <v-btn class="light-blue lighten-4" outlined fab small
+          <v-btn class="light-blue lighten-4 mr-1" outlined fab small
           @click="() => { updateDialog = true; choosenChapter = chapter; title = chapter.title }"
           >
             <v-icon>mdi-pencil</v-icon>
@@ -36,38 +36,47 @@
       v-model="dialog"
       width="500"
     >
-      <v-card>
-        <v-card-title class="light-blue lighten-4 text-h5">
-          Create New Chapter
-        </v-card-title>
-
-        <v-text-field
-          v-model="title"
-          placeholder="Input Title"
-          class="pl-5 pr-5"
-        ></v-text-field>
-
-        <v-select
-            v-model="choosenVersion"
-            :items="versions"
-            outlined
-            placeholder="Choose Version"
+      <v-form>
+        <v-card>
+          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium">
+            Create New Chapter
+          </v-toolbar>
+          <br>
+          <v-text-field
+            v-model="title"
+            label="Input Title"
             class="pl-5 pr-5"
-        ></v-select>
+            :rules="[v => !!v || 'Chapter title is required']"
+            outlined
+            required
+          ></v-text-field>
 
-        <v-divider></v-divider>
+          <v-select
+              v-model="choosenVersion"
+              :items="versions"
+              outlined
+              label="Choose Version"
+              class="pl-5 pr-5"
+              :rules="[v => !!v || 'Please choose version']"
+              required
+          ></v-select>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="save"
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :disabled="title.length == 0 || choosenVersion.length == 0"
+              color="primary"
+              text
+              @click="save"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+      
     </v-dialog>
 
     <!-- Update dialog -->
