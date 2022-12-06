@@ -8,7 +8,7 @@
     <br>
     <v-card>
       <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
-        Chapter List
+        Chapters List
         <v-btn 
         @click="dialog = true"
         class="blue darken-4 white--text d-flex align-start flex-column"
@@ -17,7 +17,7 @@
         </v-btn>
       </v-card-title>
       <br>
-      <v-card-text class="d-flex justify-space-between px-5" v-for="(chapter, index) in chapters" v-bind:key="index">
+      <v-card-text class="d-flex justify-space-between px-5 font-weight-medium black--text" v-for="(chapter, index) in chapters" v-bind:key="index">
         <!-- <v-icon>{{chapter.icon}}</v-icon> {{chapter.title}} -->
         {{ chapter.title }}
         <div>
@@ -37,7 +37,7 @@
       width="500"
     >
       <v-card>
-        <v-card-title class="blue darken-4 text-h5 grey lighten-2  ">
+        <v-card-title class="light-blue lighten-4 text-h5">
           Create New Chapter
         </v-card-title>
 

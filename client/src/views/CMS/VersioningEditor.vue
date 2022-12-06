@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <!-- Notification -->
     <v-snackbar
       v-model="snackbar.isShow"
@@ -14,25 +14,25 @@
       {{ snackbar.text }}
     </v-snackbar>
     <!-- Manage Content Version -->
-    <v-card class="mx-auto mb-5">
-      <v-toolbar color="primary" class="font-weight-medium" dark>
+    <v-card class="mx-auto mb-5 ">
+      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Content Version
-      </v-toolbar>
+      </v-card-title>
       <v-container class="d-flex justify-start pt-5 pb-5">
-          <v-btn class="mr-5" @click="() => { deleteDialog = true }">Delete Version</v-btn>
-          <v-btn class="mr-5" @click="() => { editDialog = true }">Edit Version</v-btn>
-          <v-btn @click="() => { createDialog = true }">Create Version</v-btn>
+          <v-btn class="blue darken-4 white--text mr-5" @click="() => { deleteDialog = true }">Delete Version</v-btn>
+          <v-btn class="blue darken-4 white--text mr-5" @click="() => { editDialog = true }">Edit Version</v-btn>
+          <v-btn class="blue darken-4 white--text mr-5" @click="() => { createDialog = true }">Create Version</v-btn>
       </v-container>
     </v-card>
 
     <!-- Manage Content Structure -->
     <v-card class="mx-auto">
-      <v-toolbar color="primary" class="font-weight-medium" dark>
+      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Content Structure
-      </v-toolbar>
+      </v-card-title>
 
       <!-- Reorder Content -->
-      <v-row class="d-flex px-5 mt-5">
+      <v-row class="d-flex px-5 mt-5 ">
         <v-col cols="9">
           <v-select
               v-model="selectedVersion" 
@@ -66,7 +66,7 @@
 
                 <!-- List Section -->
                 <v-list-item v-for="(section, j) in chapter.section" :key="j">
-                  <v-list-item-title v-text="section.title"></v-list-item-title>
+                  <v-list-item-title v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-list-item-title>
                   <!-- Remove Section -->
                   <v-btn 
                       small 
@@ -175,7 +175,7 @@
           <v-list>
             <v-list-item v-for="(section, index) in sections" :key="index">
               <v-checkbox v-model="selectedSections" :value="section" multiple/>
-              {{ section.title }}
+              {{ `${section.title} ${section.alias ? '- ' + section.alias : ''}` }}
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -257,7 +257,7 @@
     >
       <v-form v-model="createFormValid">
         <v-card>
-          <v-toolbar color="primary" class="font-weight-bold" dark>
+          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
             Create New Version
           </v-toolbar>
 
@@ -304,7 +304,7 @@
     >
       <v-form v-model="editFormValid">
         <v-card>
-          <v-toolbar color="primary" class="font-weight-bold" dark>
+          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
             Edit Version
           </v-toolbar>
 
@@ -360,7 +360,7 @@
       persistent
     >
       <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
+        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
           Delete Version
         </v-toolbar>
 
@@ -395,7 +395,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -520,7 +520,10 @@ export default {
       const version = this.selectedVersion.version;
       const chapter = this.sectionChapter._id
       const sections = this.selectedSections
-        .map(section => ({_id: section._id, title: section.title}))
+        .map(section => (!section?.alias) ? 
+          ({_id: section._id, title: section.title}) : 
+          ({_id: section._id, title: section.title, alias: section.alias})
+        )
 
       this.axios.put(`${this.$apiuri}/versioning/section`, {sections, chapter, version})
         .then(response => {

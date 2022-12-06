@@ -48,7 +48,7 @@
       </v-card>
       <div class="my-8" v-html="content"></div>
       <vue-editor v-model="content"></vue-editor>
-      <v-btn type="submit" v-text="this.create ? 'Create' : 'Save' "></v-btn>
+      <v-btn class="mt-1 blue darken-4 white--text" type="submit" v-text="this.create ? 'Create' : 'Save' "></v-btn>
     </v-container>
   </v-form>
 </template>
