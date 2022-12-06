@@ -399,7 +399,6 @@
 20221118	19:06:10	8c1cb3e4-4702-4cd0-b4da-5ff96991bc6a	GET	undefined	/documentations/v1.2
 20221118	19:07:02	773e27b7-bed8-4bcd-b7dc-b2696588c696	GET	undefined	/documentations/version
 20221118	19:07:09	fa1d01e6-1b62-4126-b79a-a44b450d8024	GET	undefined	/documentations/v1.1
-<<<<<<< HEAD
 20221122	23:45:42	02ba557a-c9c8-484f-9244-020babe6b689	GET	http://localhost:8080	/documentations/version
 20221122	23:45:45	7ce6eef5-ebae-455d-ba44-f86a78db6926	GET	http://localhost:8080	/documentations/v1.1
 20221122	23:45:46	fa4f74ca-a3f5-413b-824b-a439633a35ec	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
@@ -534,7 +533,6 @@
 20221123	09:51:46	52f475cd-100d-440f-8125-c4fac74f9d37	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
 20221123	09:51:52	a5c18a2f-007c-4f9c-8c93-4130c4f65973	GET	http://localhost:8080	/sections/637d7ca913c31ea41366dc24
 20221123	09:51:53	a5e658ab-b5bf-463f-8a7f-531b306d246d	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
-=======
 20221118	19:07:15	3758d4ef-ec6e-40a1-b89a-be14cbc05586	GET	undefined	/sections20221120	14:52:02	3e4da037-c8fc-427c-9fdd-c51226ea082a	GET	undefined	/users
 20221120	14:52:55	dde51351-cb7a-4195-a28c-7f0d5369b5a9	POST	undefined	/register
 20221120	14:54:49	ff4c1a38-bd15-47e9-8eab-5328c44c1781	POST	undefined	/register
@@ -1463,6 +1461,16 @@
 20221123	08:52:02	36d490ac-b1ef-4797-aa40-00b80561dbad	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
 20221123	09:15:37	e2f1a50c-1ccc-4b7d-b8ad-3aaae4bd2bbc	GET	http://localhost:8080	/documentations/version
 20221123	09:15:37	ac8c0ea1-14bb-4f60-b0b9-d4f500ec8f90	GET	http://localhost:8080	/chapters
+20221123	09:22:25	60f48a6b-a25b-4287-b854-277cbb77e3bc	GET	http://localhost:8080	/documentations/version
+20221123	09:22:25	596f3e6e-ce6f-44fe-80a8-fd5c2fc5c64e	GET	http://localhost:8080	/chapters
+20221123	09:22:27	e104b435-66da-4cc7-85ea-6418ee27bade	GET	http://localhost:8080	/sections
+20221123	09:22:32	4699eb9b-182b-45ca-ab61-60ac86b0e8ff	GET	http://localhost:8080	/documentations/version
+20221123	09:22:32	2b001bc3-0ae5-48ad-aef8-2757ac0a0f61	GET	http://localhost:8080	/chapters
+20221123	09:22:36	f715330b-63d7-4ab4-aae8-ac9b9e7ebcbb	GET	http://localhost:8080	/sections
+20221123	09:26:25	0fe998c2-cf6b-47fb-94e0-e09cf71b4890	GET	http://localhost:8080	/documentations/version
+20221123	09:26:29	fbb3b7c8-40cb-4139-8860-208e6c02c054	GET	http://localhost:8080	/documentations/version
+20221123	09:26:30	43d92bb4-d6af-4f6e-9f59-ee5dd955aa11	GET	http://localhost:8080	/chapters
+20221123	09:42:31	2bb0655c-df4e-481d-84db-37e8703732b7	GET	http://localhost:8080	/sections
 20221123	09:38:26	651a4e95-5e6b-47a3-aedd-81e4c10b350f	GET	http://localhost:8080	/documentations/version
 20221123	09:46:05	46eb9ab8-52a6-4199-a166-10229a54ccc9	GET	http://localhost:8080	/documentations/version
 20221123	09:46:05	b504041d-2012-477a-83ea-f50e9d45277e	GET	http://localhost:8080	/documentations/version
@@ -1494,10 +1502,18 @@
 20221123	09:46:25	2813177d-1d04-48a2-9509-ac460ad9e310	GET	http://localhost:8080	/documentations/version
 20221123	09:46:26	ef0ffb2e-86c6-4a60-acfc-8afc56b6a297	GET	http://localhost:8080	/documentations/v1.1
 20221123	09:46:27	a50bde72-0af6-4532-9547-fc3dea50ae49	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
->>>>>>> b21e0efcf77501fb8d7ceb0738533fecf1acc325
 20221123	10:02:43	da51867c-e7f7-41fc-b36b-5dd4fb4b2895	GET	http://localhost:8080	/documentations/version
 20221123	10:02:44	096ffb06-37c0-491d-99e8-1eefb0848365	GET	http://localhost:8080	/sections/636dec8a766ae4515fc21185
 20221123	10:02:44	17a0da81-10c9-4522-a58f-9bf9bcbdbc6b	GET	http://localhost:8080	/documentations/v1.1
 20221123	10:02:45	1a56c023-d78d-4f3f-845a-d3321cbec02c	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
 20221123	10:02:49	205f59b2-d6c1-45af-a2a6-b3c7d08d6c84	GET	http://localhost:8080	/sections/636dec8a766ae4515fc21185
 20221123	10:02:51	8f333079-237e-4d08-872e-b6a84dfc9b33	GET	http://localhost:8080	/sections/637d7ca913c31ea41366dc24
+20221123	10:18:15	71227dfb-6311-4064-938e-4f24f3fb5cdd	GET	http://localhost:8080	/documentations/version
+20221123	10:18:16	2c53fd5a-b39e-4ec0-a429-4b417ecd0f71	GET	http://localhost:8080	/documentations/v1.1
+20221123	10:18:16	fb59b507-2aea-465c-994f-9c12486346e7	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
+20221123	10:37:43	3ac60362-f4c5-4bde-a461-f8d4c41e7eb3	GET	http://localhost:8080	/documentations/version
+20221123	10:37:44	cdc41269-3144-41be-af27-613c9726a927	GET	http://localhost:8080	/documentations/v1.1
+20221123	10:37:45	15c65365-fe27-4ce4-b85e-5b4a2256a0d9	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
+20221123	10:38:08	f5eaa9d3-f553-4195-a5e2-b220193b66cd	GET	http://localhost:8080	/documentations/version
+20221123	10:38:08	dc4ea637-8b3c-4e5f-bf98-de3b4bc73bb8	GET	http://localhost:8080	/sections/636deaab766ae4515fc21183
+20221123	10:38:08	f1785703-01c1-4fac-a664-c8284124c8e9	GET	http://localhost:8080	/documentations/v1.1

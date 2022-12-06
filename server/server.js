@@ -7,8 +7,8 @@ const corsOptions = require('./config/corsOptions');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
-const { logger } = require('./middleware/logEvents');
-const errorHandler = require('./middleware/errorHandler');
+// const { logger } = require('./middleware/logEvents');
+// const errorHandler = require('./middleware/errorHandler');
 const port = process.env.PORT || 5000
 
 const app = express()
@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // custom middleware logger
-app.use(logger);
+// app.use(logger);
 
 // Handle options credentials check - before CORS!
 // and fetch cookies credentials requirement
@@ -45,6 +45,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 // routes
 app.use('/', require('./routes/root'));
 app.use('/documentations', require('./routes/api/documentations'));
+app.use('/versioning', require('./routes/api/versioning'))
 app.use('/chapters', require('./routes/api/chapters'));
 app.use('/sections', require('./routes/api/sections'));
 
@@ -68,7 +69,7 @@ app.all('*', (req, res) => {
     }
 });
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.listen(port, () => {
     console.log('Connected to MongoDB');

@@ -4,6 +4,7 @@ const usersController = require('../../controllers/usersController');
 
 router.route('/')
     .get(usersController.getAllUsers)
+    .post(usersController.resetPassword)
     .delete(usersController.deleteUser);
 
 router.route('/:id')

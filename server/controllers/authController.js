@@ -7,7 +7,7 @@ const handleLogin = async (req, res) => {
     const { user, pwd } = req.body;
     if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
     
-    const foundUser = await Users.find({ username: user }).toArray();
+    let foundUser = await Users.find({ username: user }).toArray();
     if (!foundUser) return res.sendStatus(401); //Unauthorized 
     
     // evaluate password 
@@ -17,20 +17,26 @@ const handleLogin = async (req, res) => {
     if (match) {
         // create JWTs
         const accessToken = jwt.sign(
-            { "username": foundUser.username },
+            { "username": foundUser[0].username },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '30m' }
         );
         const refreshToken = jwt.sign(
-            { "username": foundUser.username },
+            { "username": foundUser[0].username },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
 
         // Saving refreshToken with current user
-        foundUser.refreshToken = refreshToken;
-        const result = await foundUser[0].save();
+        // foundUser[0].refreshToken = refreshToken;
+        const result = await Users.updateOne({}, {$set: {
+            refreshToken: refreshToken
+        }});
         console.log(result);
+
+        // Users.refreshToken = refreshToken;
+        // const result = await Users.updateOne();
+        // console.log(result);
         
         // Creates Secure Cookie with refresh token
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });

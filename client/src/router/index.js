@@ -20,8 +20,7 @@ const routes = [
       {
         path: 'docs/:id',
         name: 'section',
-        component: SectionView,
-        props: true
+        component: SectionView
       }
     ]
   },
@@ -33,7 +32,8 @@ const routes = [
       {
         path: 'section',
         name: 'sectionList',
-        component: SectionList
+        component: SectionList,
+        props : true
       },
       {
         path: 'section/:id',
