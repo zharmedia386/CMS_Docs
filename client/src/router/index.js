@@ -8,6 +8,7 @@ import ChapterList from '../views/CMS/ChapterList.vue'
 import Metadata from '../views/CMS/MetadataInfo.vue'
 import SectionEditor from '../views/CMS/SectionEditor.vue'
 import Versioning from '../views/CMS/VersioningEditor.vue'
+import Login from '../views/Auth/LoginView.vue'
 
 Vue.use(VueRouter)
 
@@ -56,6 +57,11 @@ const routes = [
         component: Versioning
       }
     ]
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login
   }
 ]
 
