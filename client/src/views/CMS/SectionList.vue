@@ -14,11 +14,11 @@
     </v-snackbar>
     <v-card>
       <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
-        Section List
+        Sections List
         <v-btn class="blue darken-4 white--text" to="/cms/section/create">Create New Section</v-btn>
       </v-card-title>
       <br>
-      <v-card-text class="d-flex justify-space-between px-5 text-left" v-for="(section, index) in sections" v-bind:key="index">
+      <v-card-text class="d-flex justify-space-between px-5 font-weight-medium black--text" v-for="(section, index) in sections" v-bind:key="index">
         <v-card-subtitle v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-card-subtitle>
         <div>
           <v-btn class="light-blue lighten-4" outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
