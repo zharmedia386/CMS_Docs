@@ -25,7 +25,7 @@
     </v-main>
   </div>
     <v-app v-else>
-      <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: white;">
+      <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: transparent;">
         <v-btn @click="(drawer = !drawer)">
           <v-icon v-text="`${drawer ? 'mdi-chevron-left' : 'mdi-chevron-right'}`"></v-icon>
         </v-btn>
