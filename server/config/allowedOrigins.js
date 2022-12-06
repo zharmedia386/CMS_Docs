@@ -4,6 +4,7 @@ const allowedOrigins = [
     'http://localhost:3500',
     'http://localhost:3000',
     'http://localhost:8080',
+    'https://topoci-nasution.com'
 ];
 
 module.exports = allowedOrigins;
