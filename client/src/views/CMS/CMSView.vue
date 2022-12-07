@@ -1,30 +1,5 @@
 <template>
-  <div>
-    <div v-if="!user">
-      <v-main>
-      <v-card max-width="500" class="container">
-        <v-card-title>Login</v-card-title>
-        <v-form v-model="form.valid" lazy-validation>
-          <v-text-field
-            v-model="form.email"
-            label="E-mail"
-            :rules="form.emailRules"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="form.password"
-            label="Password"
-            :rules="form.passwordRules"
-            required
-          ></v-text-field>
-          <v-btn>
-            login
-          </v-btn>
-        </v-form>
-      </v-card>
-    </v-main>
-  </div>
-    <v-app v-else>
+    <v-app>
       <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: transparent;">
         <v-btn @click="(drawer = !drawer)">
           <v-icon v-text="`${drawer ? 'mdi-chevron-left' : 'mdi-chevron-right'}`"></v-icon>
@@ -49,7 +24,6 @@
             <router-view></router-view>
       </v-main>
     </v-app>
-  </div>
 </template>
 
 <script>
@@ -87,25 +61,19 @@ export default {
           icon: 'mdi-folder'
         }
       ],
-      user : true,
-      form : {
-        email : "",
-        emailRules: [
-          v => !!v || 'E-mail is required',
-          v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-        ],
-        password : "",
-        passwordRules: [
-          v => !!v || 'Password is required',
-          v => v.length >= 8 || 'Min 8 characters'
-        ],
-        valid : true
-      }
+      user : true
     }
   },
   created(){
+    this.axios.get(`${this.$apiuri}/documentations/metadata`)
+      .then(res => {
+        document.title = "CMS - " + res.data.title
+      })
     if(this.user){
       this.$router.push("/cms/metadata")
+    }
+    else{
+      this.$router.push("/login")
     }
   }
 }

@@ -8,15 +8,21 @@
 export default {
     data: () => ({
         id : null,
+        title : "",
         content: ""
     }),
-    beforeCreate(){
+    created(){
         // console.log(this.$route.params.id)
+        
         this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
             .then(response => {
-                console.log(response.data)
                 this.content = response.data[0].content
+                this.axios.get(`${this.$apiuri}/documentations/metadata`)
+                    .then(res => {
+                        document.title = response.data[0].title + " - " + res.data.title
+                    })
             })
+        
     }
 }
 </script>

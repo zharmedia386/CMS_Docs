@@ -1,10 +1,17 @@
 <template>
   <v-container>
-    <v-alert
-        :value="alert.value"
-        :type="alert.status ? 'success' : 'error'"
-        transition="slide-y-transition"
-      >{{ alert.message }}</v-alert>
+    <v-snackbar
+      v-model="snackbar.isShow"
+      :timeout="snackbar.timeout"
+      :color="snackbar.type"
+      elevation="8"
+      top
+      centered
+    >
+      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
+      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
+      {{ snackbar.text }}
+    </v-snackbar>
     <br>
     <v-card>
       <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
@@ -26,7 +33,7 @@
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn class="red lighten-2" outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
+          <v-btn class="red lighten-2" outlined fab small @click="deleteChapter(chapter._id, chapter.version)"><v-icon>mdi-delete</v-icon></v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -116,7 +123,12 @@
 export default {
   data(){
     return {
-      alert: {value: false, status: true, message: ''},
+      snackbar: { 
+        isShow: false, 
+        text: '', 
+        type: '', 
+        timeout: 2000 
+      },
       dialog: false,
       updateDialog: false,
       chapters : [],
@@ -127,6 +139,27 @@ export default {
     }
   },
   methods: {
+    deleteChapter(id, version){
+      this.axios.get(`${this.$apiuri}/documentations`)
+        .then(res => {
+          this.axios.delete(`${this.$apiuri}/chapters`, {
+            chapterId : id,
+            version : version,
+            content : res.data[0].content
+          })
+          .then(() => {
+            this.trigger_notification('Chapter deleted successfully', 'success')
+            this.updateChapter()
+          })
+          .catch(error => {
+            this.trigger_notification(`Failed to delete chapter, an error has occured ${error.message}`, 'error')
+          })
+        })
+        .catch(err => {
+            this.trigger_notification(`Failed to delete chapter, an error has occured ${err.message}`, 'error')
+        })
+      
+    },
     save(){
       const chapter = {
         title: this.title,
@@ -137,12 +170,12 @@ export default {
         .then(response => {
           // send flash message
           console.log(response.data)
-          this.trigger_alert(true, 'Chapter changed successfully')
+          this.trigger_notification('Chapter created successfully', 'success')
           this.updateChapter()
         })
         .catch(error => {
           // send flash message
-          this.trigger_alert(true, `Failed to create a chapter, an error has occured ${error.message}`)
+          this.trigger_notification(`Failed to create a chapter, an error has occured ${error.message}`, 'error')
         })
 
       console.log(JSON.stringify(chapter))
@@ -161,26 +194,20 @@ export default {
         .then(response => {
           // send flash message
           console.log(response.data)
-          this.trigger_alert(true, 'Chapter changed successfully')
+          this.trigger_notification('Chapter changed successfully', 'success')
           this.updateChapter()
         })
         .catch(error => {
           // send flash message
-          this.trigger_alert(true, `Failed to create a chapter, an error has occured ${error.message}`)
+          this.trigger_notification(`Failed to create a chapter, an error has occured ${error.message}`, 'error')
         })
 
         this.updateDialog = false
         this.title = ''
         this.choosenChapter = ''
     },
-    trigger_alert(status, message) {
-      this.alert.value = true
-      this.alert.status = status
-      this.alert.message = message
-      // `event` is the native DOM event
-      window.setTimeout(() => {
-        this.alert.value = false;
-      }, 3000)    
+    trigger_notification(text, type, timeout=2000){
+      this.snackbar = { isShow:true, text, type, timeout }
     },
     updateChapter(){
       this.axios.get(`${this.$apiuri}/chapters`)
