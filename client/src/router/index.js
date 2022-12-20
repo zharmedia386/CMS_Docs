@@ -80,7 +80,6 @@ router.beforeEach(async (to, from, next) => {
       // axios.get(`https://cmsdocs-production.up.railway.app/auth/${localStorage.token}`)
       .then(res => {
         localStorage.setItem('token', res.data)
-        console.log(localStorage.token)
         next()
       })
       .catch(err => {

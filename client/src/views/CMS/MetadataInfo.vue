@@ -107,12 +107,28 @@ export default {
       })
     },
     updateMetadata(){
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
       if(this.$refs.form.validate()){
-        this.axios.put(`${this.$apiuri}/documentations/metadata`, this.metadata)
+        this.axios.put(`${this.$apiuri}/documentations/metadata`, this.metadata, header)
           .then(res => {
             this.trigger_notification(res.data.message, 'success')
           })
           .catch(err => {
+            if(err.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
             this.trigger_notification(err.message, 'error')
           })
       }

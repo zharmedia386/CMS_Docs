@@ -140,12 +140,18 @@ export default {
   },
   methods: {
     deleteChapter(id, version){
+      let header = {
+        'Authorization' : "Bearer " + localStorage.token
+      }
       this.axios.get(`${this.$apiuri}/documentations`)
         .then(res => {
-          this.axios.delete(`${this.$apiuri}/chapters`, {
-            chapterId : id,
-            version : version,
-            content : res.data[0].content
+          this.axios.delete(`${this.$apiuri}/chapters`, { 
+            data : {
+              chapterId : id,
+              version : version,
+              content : res.data[0].content
+            }, 
+            headers: header
           })
           .then(() => {
             this.trigger_notification('Chapter deleted successfully', 'success')
