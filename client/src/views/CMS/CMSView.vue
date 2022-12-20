@@ -19,6 +19,9 @@
                 </v-list-item-content>
             </v-list-item>
         </v-list>
+        <v-btn color="error" @click="logout()">
+          <v-icon>mdi-logout</v-icon>LOGOUT
+        </v-btn>
       </v-navigation-drawer>
       <v-main class="py-0">
             <router-view></router-view>
@@ -69,11 +72,14 @@ export default {
       .then(res => {
         document.title = "CMS - " + res.data.title
       })
-    if(this.user){
-      this.$router.push("/cms/metadata")
-    }
-    else{
-      this.$router.push("/login")
+    this.$router.push("/cms/metadata")
+  },
+  methods: {
+    logout(){
+      if(localStorage.token){
+        localStorage.removeItem('token')
+        this.$router.push({name: "login", params: {message: "Logout success!", status: true, msgtype: 'success'}})
+      }
     }
   }
 }

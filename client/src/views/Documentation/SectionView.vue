@@ -42,8 +42,4 @@ export default {
     white-space: pre-wrap;  
 }
 
-.content > ol{
-    
-}
-
 </style>

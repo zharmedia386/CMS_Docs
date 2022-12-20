@@ -53,15 +53,28 @@ export default {
   },
   methods :{
     deleteSection(id){
-      console.log(id)
-      this.axios.delete(`${this.$apiuri}/sections`, { data : {id} })
+      let header = {
+        'Authorization' : "Bearer " + localStorage.token
+      }
+      this.axios.delete(`${this.$apiuri}/sections`, { data : { id }, headers : header })
         .then(res => {
           console.log(res)
           this.trigger_notification(res.data.message, 'success')
           this.getSections()
         })
         .catch(err => {
-          this.trigger_alert(false, err.message)
+          if(err.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
+          this.trigger_notification(err.message, 'error')
         })
     },
     getSections(){

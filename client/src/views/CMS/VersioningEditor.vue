@@ -450,11 +450,27 @@ export default {
       }
 
       const versionName = this.versionName;
-      this.axios.put(`${this.$apiuri}/versioning/create`, {versionName})
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+      this.axios.put(`${this.$apiuri}/versioning/create`, {versionName}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+            }
           this.trigger_notification(`Failed to create a version, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
@@ -473,11 +489,28 @@ export default {
       const editedVersion = this.editedVersion.version;
       const newVersionName = this.newVersionName;
 
-      this.axios.put(`${this.$apiuri}/versioning/edit`, {editedVersion, newVersionName})
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+
+      this.axios.put(`${this.$apiuri}/versioning/edit`, {editedVersion, newVersionName}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
           this.trigger_notification(`Failed to edit a version, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
@@ -494,12 +527,28 @@ export default {
       }
 
       const content = this.deletedVersion;
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
 
-      this.axios.put(`${this.$apiuri}/versioning/delete`, {content})
+      this.axios.put(`${this.$apiuri}/versioning/delete`, {content}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
           this.trigger_notification(`Failed to remove version, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
@@ -525,11 +574,28 @@ export default {
           ({_id: section._id, title: section.title, alias: section.alias})
         )
 
-      this.axios.put(`${this.$apiuri}/versioning/section`, {sections, chapter, version})
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }  
+
+      this.axios.put(`${this.$apiuri}/versioning/section`, {sections, chapter, version}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
           this.trigger_notification(`Failed to add section, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
@@ -542,11 +608,27 @@ export default {
       const version = this.selectedVersion.version;
       const sectionId = section._id;
 
-      this.axios.put(`${this.$apiuri}/versioning/section/delete`, {sectionId, version})
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+      this.axios.put(`${this.$apiuri}/versioning/section/delete`, {sectionId, version}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
           this.trigger_notification(`Failed to remove section, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
@@ -558,11 +640,28 @@ export default {
       const chapters = this.selectedChapters
         .map(ch => ({ _id: ch._id, title: ch.title }))
       
-      this.axios.put(`${this.$apiuri}/versioning/chapter`, {chapters, version})
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+      
+      this.axios.put(`${this.$apiuri}/versioning/chapter`, {chapters, version}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
           this.trigger_notification(`Failed to add chapter, an error occurred ${error.message}`, 'error')
         })
         .finally(() => {
@@ -576,11 +675,27 @@ export default {
       const chapterId = chapter._id
       const sectionsId = (chapter?.section) ? chapter?.section.map(sc => sc._id) : []
 
-      this.axios.put(`${this.$apiuri}/versioning/chapter/delete`, {chapterId, sectionsId, version})
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+      this.axios.put(`${this.$apiuri}/versioning/chapter/delete`, {chapterId, sectionsId, version}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
           this.trigger_notification(`Failed to remove chapter, an error occurred ${error.message}`, 'error')
         }).finally(() => {
           this.updateDocumentationContent()
@@ -589,11 +704,28 @@ export default {
     reorder(){
       const content = this.content
 
-      this.axios.put(`${this.$apiuri}/versioning/reorder`, {content})
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+
+      this.axios.put(`${this.$apiuri}/versioning/reorder`, {content}, header)
         .then(response => {
           this.trigger_notification(response.data.message, 'success')
         })
         .catch(error => {
+          if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+            }
           this.trigger_notification(`Failed to modify content structure, an error occurred ${error.message}`, 'error')
         })
     },

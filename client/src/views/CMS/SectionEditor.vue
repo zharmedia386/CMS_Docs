@@ -82,6 +82,12 @@ export default {
         content: this.content
       }
 
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+
       if(this.alias.length != 0) section.alias = this.alias;
 
       if(this.title == "" || this.content == ""){
@@ -90,7 +96,7 @@ export default {
       else{
         console.log(JSON.stringify(section))
         if(this.$route.params.id == "create"){
-          this.axios.post(`${this.$apiuri}/sections`, section)
+          this.axios.post(`${this.$apiuri}/sections`, section, header)
             .then(response => {
               // send flash message
               console.log(response.data)
@@ -98,12 +104,23 @@ export default {
             })
             .catch(error => {
               // send flash message
+              if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
               this.trigger_notification(`Error : ${error.message}`, 'error')
             })
         }
         else{
           section.id = this.$route.params.id
-          this.axios.put(`${this.$apiuri}/sections`, section)
+          this.axios.put(`${this.$apiuri}/sections`, section, header)
           .then(response => {
               // send flash message
               console.log(response.data)
@@ -111,6 +128,17 @@ export default {
             })
             .catch(error => {
               // send flash message
+              if(error.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
               this.trigger_notification(`Error : ${error.message}`, 'error')
             })
         }
