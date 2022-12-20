@@ -92,20 +92,26 @@
       width="500"
     >
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
+        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium">
           Update Chapter
-        </v-card-title>
+        </v-toolbar>
+        <br>
 
         <v-text-field
           v-model="title"
-          placeholder="Input Title"
+          label="Input Title"
           class="pl-5 pr-5"
+          :rules="[v => !!v || 'Chapter title is required']"
+          outlined
+          required
         ></v-text-field>
+        
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
+            :disabled="title.length == 0"
             color="primary"
             text
             @click="update"
@@ -172,7 +178,13 @@ export default {
         version: [ this.choosenVersion ]
       }
 
-      this.axios.post(`${this.$apiuri}/chapters`, chapter)
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+
+      this.axios.post(`${this.$apiuri}/chapters`, chapter, header)
         .then(response => {
           // send flash message
           console.log(response.data)
@@ -196,7 +208,13 @@ export default {
         title: this.title
       }
 
-      this.axios.put(`${this.$apiuri}/chapters`, chapter)
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+
+      this.axios.put(`${this.$apiuri}/chapters`, chapter, header)
         .then(response => {
           // send flash message
           console.log(response.data)

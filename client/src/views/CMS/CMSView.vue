@@ -9,19 +9,27 @@
         v-model="drawer"
         app
       >
-        <v-list>
+        <v-list class="d-flex flex-column">
           <v-list-item v-for="(menu,index) in menus" v-bind:key="index" :to="menu.ref">
-                <v-list-item-icon>
-                  <v-icon v-text="menu.icon"></v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                    <v-list-item-title style="white-space: break-spaces;" v-text="menu.title"></v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
+              <v-list-item-icon>
+                <v-icon v-text="menu.icon"></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                  <v-list-item-title style="white-space: break-spaces;" v-text="menu.title"></v-list-item-title>
+              </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="logout()">
+            <v-list-item-icon>
+                <v-icon>mdi-logout</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                  <v-list-item-title style="white-space: break-spaces;"><strong>Logout</strong></v-list-item-title>
+              </v-list-item-content>
+          </v-list-item>
         </v-list>
-        <v-btn color="error" @click="logout()">
+        <!-- <v-btn color="error" @click="logout()">
           <v-icon>mdi-logout</v-icon>LOGOUT
-        </v-btn>
+        </v-btn> -->
       </v-navigation-drawer>
       <v-main class="py-0">
             <router-view></router-view>
