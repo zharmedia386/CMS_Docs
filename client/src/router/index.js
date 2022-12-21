@@ -76,8 +76,8 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   if(to.path.includes("cms")){
     if(localStorage.token){
-      axios.get(`http://localhost:3500/auth/${localStorage.token}`)
-      // axios.get(`https://cmsdocs-production.up.railway.app/auth/${localStorage.token}`)
+      // axios.get(`http://localhost:3500/auth/${localStorage.token}`)
+      axios.get(`https://cmsdocs-production.up.railway.app/auth/${localStorage.token}`)
       .then(res => {
         localStorage.setItem('token', res.data)
         next()
