@@ -7,6 +7,6 @@ ADD  ./server /server
 
 RUN npm install
 
-EXPOSE 5000
+EXPOSE 3500
 
 CMD [ "node", "server.js" ]
