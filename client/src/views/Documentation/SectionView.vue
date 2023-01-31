@@ -1,5 +1,5 @@
 <template>
-  <v-container class="content" v-html="content">
+  <v-container class="content ql-editor" v-html="content">
     
   </v-container>
 </template>
@@ -12,8 +12,6 @@ export default {
         content: ""
     }),
     created(){
-        // console.log(this.$route.params.id)
-        
         this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
             .then(response => {
                 this.content = response.data[0].content
