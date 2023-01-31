@@ -128,55 +128,49 @@ const updateChapter = async (req, res) => {
 // }
 
 const deleteChapter = async (req, res) => {
-    //Versi 1 Butuh content, version, dan chapterId(Parameter) 
-    //sectionId (Cari sendiri berdasarkan chapterId)
     let content = req.body.content;
-    const version = req.body.version;
-    const chapterId = new mongo.ObjectId(req.body.chapterId);
+    let chapterId = req.body.chapterId;
 
-    // Extract only _id of content (chapter, section) and covert it into object id
-    content = content.map( ct => ({ 
-            version: ct.version, 
-            chapter: ct.chapter.map( ch => ({
-                    _id: new mongo.ObjectId(ch._id), 
-                    section: ch.section.map( sc => ({ 
-                            _id: new mongo.ObjectId(sc._id) 
-                        }) 
-                    )
-                }) 
-            ) 
-        }) 
-    )
+    const section = []
 
-    //Mencari sectionId dari chapter id tersebut
-    const sectionId = content.map(ct => ({ version: ct.version, section: ct.chapter.map(ch => { if(ch._id==chapterId){ch.section.map(sc => sc._id)}}).flat() }))
+    for (const ct of content) {
+        // Check if in version exist atleast one chapter
+        if(!ct?.chapter) { break }
+
+        const chapter = ct.chapter.find((c) => c._id == chapterId)
+
+        if(!chapter?.section) { continue }
+
+        const sectionId = chapter.section.map((sc) => new mongo.ObjectId(sc._id))
+
+        section.push({version: ct.version, section: sectionId})
+    }
+
+    chapterId = new mongo.ObjectId(chapterId);
 
     const Sections = await sectionsDB();
     const Chapter = await chapterDB();
     const Documentation = await documentationDB();
 
     try {
+        // Delete chapter in chapter collections
         let result = await Chapter.deleteOne(
             { _id: chapterId }
         )
-        console.log('delete ke chapter collection')
-        console.log(result)
 
+        // Delete chapter in documentation structure
         result = await Documentation.updateOne(
             {},
-            { $pull: { "content.$[ct].chapter": { _id: chapterId } } },
-            { arrayFilters: [ { "ct.version": version } ] }
+            { $pull: { "content.$[].chapter": { _id: chapterId } } }
         )
-        console.log('update ke documentation section')
-        console.log(result)
 
-        result = await Sections.updateMany(
-            { _id: { $in: sectionId } },
-            { $pull: { version: version } }
-        )
-        console.log('update ke section collection')
-        console.log(result)
-
+        // Delete version from chapter in section
+        for (const sc of section) {
+            result = await Sections.updateMany(
+                { _id: { $in: sc.section } },
+                { $pull: { version: sc.version } }
+            )
+        }
     } catch (error) {
         res.status(400).send({ message: error.message })
     }

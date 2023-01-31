@@ -1,29 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const versioningController = require('../../controllers/versioningController')
+const { verifyJWT } = require("../../middleware/verifyJWT")
 
 router.route('/create')
-    .put(versioningController.createVersion)
+    .put(verifyJWT, versioningController.createVersion)
 
 router.route('/edit')
-    .put(versioningController.editVersion)
+    .put(verifyJWT, versioningController.editVersion)
 
 router.route('/delete')
-    .put(versioningController.deleteVersion)
+    .put(verifyJWT, versioningController.deleteVersion)
 
 router.route('/reorder')
-    .put(versioningController.reorderDocumentationsContent)
+    .put(verifyJWT, versioningController.reorderDocumentationsContent)
 
 router.route('/section')
-    .put(versioningController.addSection)
+    .put(verifyJWT, versioningController.addSection)
 
 router.route('/section/delete')
-    .put(versioningController.deleteSection)
+    .put(verifyJWT, versioningController.deleteSection)
 
 router.route('/chapter')
-    .put(versioningController.addChapter)
+    .put(verifyJWT, versioningController.addChapter)
 
 router.route('/chapter/delete')
-    .put(versioningController.deleteChapter)
+    .put(verifyJWT, versioningController.deleteChapter)
 
 module.exports = router;

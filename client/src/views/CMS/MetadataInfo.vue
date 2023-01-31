@@ -1,10 +1,17 @@
 <template>
   <v-container>
-    <v-alert
-        :value="alert.value"
-        :type="alert.status ? 'success' : 'error'"
-        transition="slide-y-transition"
-    >{{ alert.message }}</v-alert>
+    <v-snackbar
+      v-model="snackbar.isShow"
+      :timeout="snackbar.timeout"
+      :color="snackbar.type"
+      elevation="8"
+      top
+      centered
+    >
+      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
+      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
+      {{ snackbar.text }}
+    </v-snackbar>
     <v-card class="mx-auto">
         <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold" >Metadata</v-card-title>
         <v-form
@@ -100,29 +107,44 @@ export default {
       })
     },
     updateMetadata(){
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
       if(this.$refs.form.validate()){
-        this.axios.put(`${this.$apiuri}/documentations/metadata`, this.metadata)
+        this.axios.put(`${this.$apiuri}/documentations/metadata`, this.metadata, header)
           .then(res => {
-            this.trigger_alert(true, res.data.message)
+            this.trigger_notification(res.data.message, 'success')
           })
           .catch(err => {
-            this.trigger_alert(true, err.message)
+            if(err.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
+            this.trigger_notification(err.message, 'error')
           })
       }
     },
-    trigger_alert(status, message) {
-      this.alert.value = true
-      this.alert.status = status
-      this.alert.message = message
-      // `event` is the native DOM event
-      window.setTimeout(() => {
-        this.alert.value = false;
-      }, 3000)    
+    trigger_notification(text, type, timeout=2000){
+      this.snackbar = { isShow:true, text, type, timeout }
     }
   },
   data(){
     return {
-      alert: {value: false, status: true, message: ''},
+      snackbar: { 
+        isShow: false, 
+        text: '', 
+        type: '', 
+        timeout: 2000 
+      },
       metadata: {
         title : "",
         logo : null,

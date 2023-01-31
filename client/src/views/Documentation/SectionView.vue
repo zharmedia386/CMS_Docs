@@ -1,5 +1,5 @@
 <template>
-  <v-container class="content" v-html="content">
+  <v-container class="content ql-editor" v-html="content">
     
   </v-container>
 </template>
@@ -8,15 +8,19 @@
 export default {
     data: () => ({
         id : null,
+        title : "",
         content: ""
     }),
-    beforeCreate(){
-        // console.log(this.$route.params.id)
+    created(){
         this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
             .then(response => {
-                console.log(response.data)
                 this.content = response.data[0].content
+                this.axios.get(`${this.$apiuri}/documentations/metadata`)
+                    .then(res => {
+                        document.title = response.data[0].title + " - " + res.data.title
+                    })
             })
+        
     }
 }
 </script>
@@ -34,10 +38,6 @@ export default {
     font-family: "Consolas";
     font-size: 13px;
     white-space: pre-wrap;  
-}
-
-.content > ol{
-    
 }
 
 </style>

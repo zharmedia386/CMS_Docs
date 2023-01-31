@@ -1,10 +1,17 @@
 <template>
   <v-container>
-    <v-alert
-        :value="alert.value"
-        :type="alert.status ? 'success' : 'error'"
-        transition="slide-y-transition"
-      >{{ alert.message }}</v-alert>
+    <v-snackbar
+      v-model="snackbar.isShow"
+      :timeout="snackbar.timeout"
+      :color="snackbar.type"
+      elevation="8"
+      top
+      centered
+    >
+      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
+      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
+      {{ snackbar.text }}
+    </v-snackbar>
     <br>
     <v-card>
       <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
@@ -26,7 +33,7 @@
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn class="red lighten-2" outlined fab small><v-icon>mdi-delete</v-icon></v-btn>
+          <v-btn class="red lighten-2" outlined fab small @click="deleteChapter(chapter._id, chapter.version)"><v-icon>mdi-delete</v-icon></v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -85,20 +92,26 @@
       width="500"
     >
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
+        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium">
           Update Chapter
-        </v-card-title>
+        </v-toolbar>
+        <br>
 
         <v-text-field
           v-model="title"
-          placeholder="Input Title"
+          label="Input Title"
           class="pl-5 pr-5"
+          :rules="[v => !!v || 'Chapter title is required']"
+          outlined
+          required
         ></v-text-field>
+        
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
+            :disabled="title.length == 0"
             color="primary"
             text
             @click="update"
@@ -116,7 +129,12 @@
 export default {
   data(){
     return {
-      alert: {value: false, status: true, message: ''},
+      snackbar: { 
+        isShow: false, 
+        text: '', 
+        type: '', 
+        timeout: 2000 
+      },
       dialog: false,
       updateDialog: false,
       chapters : [],
@@ -127,22 +145,55 @@ export default {
     }
   },
   methods: {
+    deleteChapter(id, version){
+      let header = {
+        'Authorization' : "Bearer " + localStorage.token
+      }
+      this.axios.get(`${this.$apiuri}/documentations`)
+        .then(res => {
+          this.axios.delete(`${this.$apiuri}/chapters`, { 
+            data : {
+              chapterId : id,
+              version : version,
+              content : res.data[0].content
+            }, 
+            headers: header
+          })
+          .then(() => {
+            this.trigger_notification('Chapter deleted successfully', 'success')
+            this.updateChapter()
+          })
+          .catch(error => {
+            this.trigger_notification(`Failed to delete chapter, an error has occured ${error.message}`, 'error')
+          })
+        })
+        .catch(err => {
+            this.trigger_notification(`Failed to delete chapter, an error has occured ${err.message}`, 'error')
+        })
+      
+    },
     save(){
       const chapter = {
         title: this.title,
         version: [ this.choosenVersion ]
       }
 
-      this.axios.post(`${this.$apiuri}/chapters`, chapter)
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+
+      this.axios.post(`${this.$apiuri}/chapters`, chapter, header)
         .then(response => {
           // send flash message
           console.log(response.data)
-          this.trigger_alert(true, 'Chapter changed successfully')
+          this.trigger_notification('Chapter created successfully', 'success')
           this.updateChapter()
         })
         .catch(error => {
           // send flash message
-          this.trigger_alert(true, `Failed to create a chapter, an error has occured ${error.message}`)
+          this.trigger_notification(`Failed to create a chapter, an error has occured ${error.message}`, 'error')
         })
 
       console.log(JSON.stringify(chapter))
@@ -157,30 +208,30 @@ export default {
         title: this.title
       }
 
-      this.axios.put(`${this.$apiuri}/chapters`, chapter)
+      let header = {
+        headers: {
+          'Authorization' : "Bearer " + localStorage.token
+        }
+      }
+
+      this.axios.put(`${this.$apiuri}/chapters`, chapter, header)
         .then(response => {
           // send flash message
           console.log(response.data)
-          this.trigger_alert(true, 'Chapter changed successfully')
+          this.trigger_notification('Chapter changed successfully', 'success')
           this.updateChapter()
         })
         .catch(error => {
           // send flash message
-          this.trigger_alert(true, `Failed to create a chapter, an error has occured ${error.message}`)
+          this.trigger_notification(`Failed to create a chapter, an error has occured ${error.message}`, 'error')
         })
 
         this.updateDialog = false
         this.title = ''
         this.choosenChapter = ''
     },
-    trigger_alert(status, message) {
-      this.alert.value = true
-      this.alert.status = status
-      this.alert.message = message
-      // `event` is the native DOM event
-      window.setTimeout(() => {
-        this.alert.value = false;
-      }, 3000)    
+    trigger_notification(text, type, timeout=2000){
+      this.snackbar = { isShow:true, text, type, timeout }
     },
     updateChapter(){
       this.axios.get(`${this.$apiuri}/chapters`)
