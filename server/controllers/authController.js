@@ -48,4 +48,22 @@ const handleLogin = async (req, res) => {
     }
 }
 
-module.exports = { handleLogin };
+const checkToken = async (req,res) => {
+    const Users = await User()
+    const token = req.params.token
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        let foundUser = await Users.find({ username: decoded.username }).toArray();
+        if (!foundUser) return res.status(401).send("Username not found");
+        const accessToken = jwt.sign(
+            { "username": decoded.username },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '30m' }
+        )
+        res.status(200).send(accessToken)
+    } catch (err) {
+        res.status(401).send(err.message)
+    }
+}
+
+module.exports = { handleLogin, checkToken };

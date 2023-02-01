@@ -106,7 +106,11 @@ const reorderDocumentationsContent = async (req, res) => {
     
     // convert _id string to object id
     for (ct of content) {
+        if(!ct?.chapter) { break }
+
         for (ch of ct.chapter) {
+            if(!ch?.section) { break }
+
             ch._id = new mongo.ObjectId(ch._id)
             for (sc of ch.section) {
                 sc._id = new mongo.ObjectId(sc._id)

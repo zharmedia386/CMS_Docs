@@ -5,11 +5,7 @@
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <img :src="metadata.logo" style="max-height: 50%">
         <v-toolbar-title style="padding-left: 10px" v-text="metadata.title"></v-toolbar-title>
-        <v-btn 
-            outlined
-            class="search-box ml-auto"
-        ><v-icon>mdi-magnify</v-icon>Search
-        </v-btn>    
+        
         <v-select 
             v-model="choosenVersion"
             :items="versions"
@@ -26,8 +22,8 @@
     <!-- Header Stop Here -->
     <!-- Sidebar Starts Here -->
     <v-navigation-drawer app class="fontstyle px-0 py-0" v-model="drawer">
-        <v-card v-for="(chapter,i) in chapters" :key="i">
-            <v-card-title class="d-flex justify-center font-weight-bold" style="white-space: pre-wrap; word-wrap: break-word;" v-text="chapter.title"></v-card-title>
+        <v-container v-for="(chapter,i) in chapters" :key="i">
+            <v-card-title class="font-weight-bold" style="white-space: pre-wrap; word-wrap: break-word;" v-text="chapter.title"></v-card-title>
             <v-list-item-group class="text-left">
                 <v-list-item class="font-weight-thin" v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
                     <v-list-item-content>
@@ -35,7 +31,7 @@
                     </v-list-item-content>
                 </v-list-item>
             </v-list-item-group>
-        </v-card>
+        </v-container>
     </v-navigation-drawer>
     <!-- Sidebar Stop Here -->
     <v-main style="padding-top: 16px">
@@ -110,10 +106,6 @@ export default {
         max-width: 140px;
         max-height: 60px;
         display: flex;
-    }
-    .search-box {
-        width: 400px;
-        display: flex !important;
     }
     .fontstyle{
         font-family: "Merienda", Helvetica, Arial;

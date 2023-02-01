@@ -8,6 +8,8 @@ import ChapterList from '../views/CMS/ChapterList.vue'
 import Metadata from '../views/CMS/MetadataInfo.vue'
 import SectionEditor from '../views/CMS/SectionEditor.vue'
 import Versioning from '../views/CMS/VersioningEditor.vue'
+import Login from '../views/Auth/LoginView.vue'
+import axios from 'axios'
 
 Vue.use(VueRouter)
 
@@ -56,6 +58,12 @@ const routes = [
         component: Versioning
       }
     ]
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
+    props : true
   }
 ]
 
@@ -63,6 +71,39 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach(async (to, from, next) => {
+  if(to.path.includes("cms")){
+    if(localStorage.token){
+      axios.get(`http://localhost:3500/auth/${localStorage.token}`)
+      // axios.get(`https://cmsdocs-production.up.railway.app/auth/${localStorage.token}`)
+      // axios.get(`https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/auth/${localStorage.token}`)
+      .then(res => {
+        localStorage.setItem('token', res.data)
+        next()
+      })
+      .catch(err => {
+        localStorage.removeItem('token')
+        next({
+          name: "login",
+          replace: true,
+          params : {
+            message : "Invalid Session " + err ,
+            status : true,
+            msgtype : 'error'
+          }
+        })
+      })
+    }
+    else{
+      next({
+        name: "login",
+        replace: true
+      })
+    }
+  }
+  next()
 })
 
 export default router

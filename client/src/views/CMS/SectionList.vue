@@ -21,7 +21,7 @@
       <v-card-text class="d-flex justify-space-between px-5 font-weight-medium black--text" v-for="(section, index) in sections" v-bind:key="index">
         <v-card-subtitle v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-card-subtitle>
         <div>
-          <v-btn class="light-blue lighten-4" outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
+          <v-btn class="light-blue lighten-4 mr-1" outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
           <v-btn class="red lighten-2" outlined fab small @click="deleteSection(section._id)"><v-icon>mdi-delete</v-icon></v-btn>
         </div>
       </v-card-text>
@@ -53,15 +53,28 @@ export default {
   },
   methods :{
     deleteSection(id){
-      console.log(id)
-      this.axios.delete(`${this.$apiuri}/sections`, { data : {id} })
+      let header = {
+        'Authorization' : "Bearer " + localStorage.token
+      }
+      this.axios.delete(`${this.$apiuri}/sections`, { data : { id }, headers : header })
         .then(res => {
           console.log(res)
           this.trigger_notification(res.data.message, 'success')
           this.getSections()
         })
         .catch(err => {
-          this.trigger_alert(false, err.message)
+          if(err.response.status == 401){
+                localStorage.removeItem('token')
+                this.$router.push({
+                  name: "login",
+                  params : {
+                    message : "Invalid session",
+                    status : true,
+                    msgtype : 'error'
+                  }
+                })
+              }
+          this.trigger_notification(err.message, 'error')
         })
     },
     getSections(){
