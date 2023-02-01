@@ -24,7 +24,7 @@ export default {
     }
 }
 </script>
-
+<style src="quill/dist/quill.snow.css"></style>
 <style>
 .content{
     text-align: left;
@@ -33,7 +33,7 @@ export default {
 .content > pre{
     padding: 10px 15px 10px 15px;
     background-color: rgba(0, 0, 0, 0.875);
-    border-radius: 25px;
+    border-radius: 5px;
     color: yellowgreen;
     font-family: "Consolas";
     font-size: 13px;

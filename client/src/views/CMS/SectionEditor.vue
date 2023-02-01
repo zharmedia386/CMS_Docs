@@ -46,7 +46,7 @@
           class="pl-5 pr-5"
         ></v-text-field>
       </v-card>
-      <div class="my-8" v-html="content"></div>
+      <div class="my-8 ql-editor" v-html="content"></div>
       <vue-editor v-model="content"></vue-editor>
       <v-btn class="mt-1 blue darken-4 white--text" type="submit" v-text="this.create ? 'Create' : 'Save' "></v-btn>
     </v-container>
