@@ -61,12 +61,12 @@
             <v-col cols="8">
               <v-list-group :value="false">
                 <template v-slot:activator>
-                    <v-list-item-title v-text="chapter.title"></v-list-item-title>
+                    <v-list-item-title class="text-left" v-text="chapter.title"></v-list-item-title>
                 </template>
 
                 <!-- List Section -->
                 <v-list-item v-for="(section, j) in chapter.section" :key="j">
-                  <v-list-item-title v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-list-item-title>
+                  <v-list-item-title class="text-left" v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-list-item-title>
                   <!-- Remove Section -->
                   <v-btn 
                       small 

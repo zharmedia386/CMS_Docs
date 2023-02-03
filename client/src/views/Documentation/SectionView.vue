@@ -24,6 +24,7 @@ export default {
     }
 }
 </script>
+
 <style src="quill/dist/quill.snow.css"></style>
 <style>
 .content{
