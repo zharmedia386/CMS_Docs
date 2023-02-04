@@ -1,18 +1,5 @@
 <template>
   <v-container>
-    <v-snackbar
-      v-model="snackbar.isShow"
-      :timeout="snackbar.timeout"
-      :color="snackbar.type"
-      elevation="8"
-      top
-      centered
-    >
-      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
-      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
-      {{ snackbar.text }}
-    </v-snackbar>
-    <br>
     <v-card>
       <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Chapters List
@@ -129,12 +116,6 @@
 export default {
   data(){
     return {
-      snackbar: { 
-        isShow: false, 
-        text: '', 
-        type: '', 
-        timeout: 2000 
-      },
       dialog: false,
       updateDialog: false,
       chapters : [],
@@ -160,15 +141,15 @@ export default {
             headers: header
           })
           .then(() => {
-            this.trigger_notification('Chapter deleted successfully', 'success')
+            this.$root.SnackBar.show({ message: 'Chapter deleted successfully', color: 'success', icon: 'mdi-check-circle' })
             this.updateChapter()
           })
           .catch(error => {
-            this.trigger_notification(`Failed to delete chapter, an error has occured ${error.message}`, 'error')
+            this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
           })
         })
         .catch(err => {
-            this.trigger_notification(`Failed to delete chapter, an error has occured ${err.message}`, 'error')
+            this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured ${err.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
       
     },
@@ -188,15 +169,12 @@ export default {
         .then(response => {
           // send flash message
           console.log(response.data)
-          this.trigger_notification('Chapter created successfully', 'success')
+          this.$root.SnackBar.show({ message: 'Chapter created successfully', color: 'success', icon: 'mdi-check-circle' })
           this.updateChapter()
         })
         .catch(error => {
-          // send flash message
-          this.trigger_notification(`Failed to create a chapter, an error has occured ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to create a chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
-
-      console.log(JSON.stringify(chapter))
 
       this.dialog = false
       this.title = ''
@@ -216,22 +194,17 @@ export default {
 
       this.axios.put(`${this.$apiuri}/chapters`, chapter, header)
         .then(response => {
-          // send flash message
           console.log(response.data)
-          this.trigger_notification('Chapter changed successfully', 'success')
+          this.$root.SnackBar.show({ message: 'Chapter changed successfully', color: 'success', icon: 'mdi-check-circle' })
           this.updateChapter()
         })
         .catch(error => {
-          // send flash message
-          this.trigger_notification(`Failed to create a chapter, an error has occured ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to update a chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
 
         this.updateDialog = false
         this.title = ''
         this.choosenChapter = ''
-    },
-    trigger_notification(text, type, timeout=2000){
-      this.snackbar = { isShow:true, text, type, timeout }
     },
     updateChapter(){
       this.axios.get(`${this.$apiuri}/chapters`)

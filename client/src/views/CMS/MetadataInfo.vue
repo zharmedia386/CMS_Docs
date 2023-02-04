@@ -1,17 +1,5 @@
 <template>
   <v-container>
-    <v-snackbar
-      v-model="snackbar.isShow"
-      :timeout="snackbar.timeout"
-      :color="snackbar.type"
-      elevation="8"
-      top
-      centered
-    >
-      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
-      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
-      {{ snackbar.text }}
-    </v-snackbar>
     <v-card class="mx-auto">
         <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold" >Metadata</v-card-title>
         <v-form
@@ -115,7 +103,7 @@ export default {
       if(this.$refs.form.validate()){
         this.axios.put(`${this.$apiuri}/documentations/metadata`, this.metadata, header)
           .then(res => {
-            this.trigger_notification(res.data.message, 'success')
+            this.$root.SnackBar.show({ message: res.data.message, color: 'success', icon: 'mdi-check-circle' })
           })
           .catch(err => {
             if(err.response.status == 401){
@@ -129,22 +117,13 @@ export default {
                   }
                 })
               }
-            this.trigger_notification(err.message, 'error')
+            this.$root.SnackBar.show({ message: err.message, color: 'error', icon: 'mdi-close-circle' })
           })
       }
-    },
-    trigger_notification(text, type, timeout=2000){
-      this.snackbar = { isShow:true, text, type, timeout }
     }
   },
   data(){
     return {
-      snackbar: { 
-        isShow: false, 
-        text: '', 
-        type: '', 
-        timeout: 2000 
-      },
       metadata: {
         title : "",
         logo : null,

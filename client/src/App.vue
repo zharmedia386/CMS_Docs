@@ -1,10 +1,29 @@
 <template>
   <div id="app">
-    <nav>
-    </nav>
-    <router-view/>
+    <v-app>
+      <SnackBar ref="SnackBar" />
+      <nav>
+      </nav>
+      <router-view/>
+    </v-app>
   </div>
 </template>
+
+<script>
+import SnackBar from './components/SnackBar.vue';
+
+export default {
+  name: 'App',
+  components: {
+    SnackBar
+  },
+  mounted() {
+    // Register SnackBar to root so that it can use anywhere in child components
+    this.$root.SnackBar = this.$refs.SnackBar;
+  }
+}
+</script>
+
 
 <style lang="scss">
 #app {
