@@ -1,17 +1,5 @@
 <template>
   <v-container>
-    <v-snackbar
-      v-model="snackbar.isShow"
-      :timeout="snackbar.timeout"
-      :color="snackbar.type"
-      elevation="8"
-      top
-      centered
-    >
-      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
-      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
-      {{ snackbar.text }}
-    </v-snackbar>
     <v-card>
       <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
         Sections List
@@ -31,15 +19,7 @@
 
 <script>
 export default {
-  props : {
-    message : {
-      type: String
-    },
-    status : {
-      type: Boolean,
-      default: false
-    }
-  },
+  props : ['message', 'status'],
   data(){
     return {
       snackbar: { 
@@ -59,7 +39,7 @@ export default {
       this.axios.delete(`${this.$apiuri}/sections`, { data : { id }, headers : header })
         .then(res => {
           console.log(res)
-          this.trigger_notification(res.data.message, 'success')
+          this.$root.SnackBar.show({ message: res.data.message, color: 'success', icon: 'mdi-check-circle' })
           this.getSections()
         })
         .catch(err => {
@@ -74,7 +54,7 @@ export default {
                   }
                 })
               }
-          this.trigger_notification(err.message, 'error')
+          this.$root.SnackBar.show({ message: err.message, color: 'error', icon: 'mdi-close-circle' })
         })
     },
     getSections(){
@@ -82,14 +62,11 @@ export default {
       .then(response => {
         this.sections = response.data
       })
-    },
-    trigger_notification(text, type, timeout=2000){
-      this.snackbar = { isShow:true, text, type, timeout }
     }
   },
   created(){
     if(this.status){
-      this.trigger_notification(this.message, 'success')
+      this.$root.SnackBar.show({ message: this.message, color: 'success', icon: 'mdi-check-circle' })
     }
     this.getSections()
   }
