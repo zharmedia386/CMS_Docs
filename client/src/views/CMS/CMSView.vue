@@ -1,10 +1,13 @@
 <template>
     <v-app>
+      <!-- Sidebar Toggle -->
       <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: transparent; height: 0;" v-show="this.$vuetify.breakpoint.mobile">
         <v-btn @click="(drawer = !drawer)">
           <v-icon v-text="`${drawer ? 'mdi-chevron-left' : 'mdi-chevron-right'}`"></v-icon>
         </v-btn>
       </v-app-bar>
+
+      <!-- Sidebar -->
       <v-navigation-drawer
         v-model="drawer"
         dark
@@ -25,7 +28,6 @@
         </v-list>
 
         <template v-slot:append>
-          <div class="">
             <v-list nav>
               <v-list-item @click="logout()" style="align-self: flex-end;">
                 <v-list-item-icon>
@@ -36,7 +38,6 @@
                   </v-list-item-content>
               </v-list-item>
             </v-list>
-          </div>
         </template>
       </v-navigation-drawer>
       <v-main class="pa-0" style="margin-left: 56px;">

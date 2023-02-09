@@ -1,18 +1,6 @@
 <template>
   <v-form @submit.prevent="saveData()">
     <v-container>
-      <v-snackbar
-      v-model="snackbar.isShow"
-      :timeout="snackbar.timeout"
-      :color="snackbar.type"
-      elevation="8"
-      top
-      centered
-    >
-      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
-      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
-      {{ snackbar.text }}
-    </v-snackbar>
       <v-card v-if="create">
         <v-card-title>
           Load Section
@@ -91,7 +79,7 @@ export default {
       if(this.alias.length != 0) section.alias = this.alias;
 
       if(this.title == "" || this.content == ""){
-        this.trigger_notification(`Error : Please Input Title and Content`, 'error')
+        this.$root.SnackBar.show({ message: "Error : Please Input Title and Content", color: 'error', icon: 'mdi-close-circle' })
       }
       else{
         console.log(JSON.stringify(section))
@@ -115,7 +103,7 @@ export default {
                   }
                 })
               }
-              this.trigger_notification(`Error : ${error.message}`, 'error')
+              this.$root.SnackBar.show({ message: `Error : ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
             })
         }
         else{
@@ -139,14 +127,11 @@ export default {
                   }
                 })
               }
-              this.trigger_notification(`Error : ${error.message}`, 'error')
+              this.$root.SnackBar.show({ message: `Error : ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
             })
         }
         
       }      
-    },
-    trigger_notification(text, type, timeout=2000){
-      this.snackbar = { isShow:true, text, type, timeout }
     },
     loadSection(){
       console.log(this.selectedSection)

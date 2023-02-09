@@ -1,18 +1,5 @@
 <template>
   <v-container>
-    <!-- Notification -->
-    <v-snackbar
-      v-model="snackbar.isShow"
-      :timeout="snackbar.timeout"
-      :color="snackbar.type"
-      elevation="8"
-      top
-      centered
-    >
-      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
-      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
-      {{ snackbar.text }}
-    </v-snackbar>
     <!-- Manage Content Version -->
     <v-card class="mx-auto mb-5 ">
       <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
@@ -445,7 +432,7 @@ export default {
     createVersion(){
       // Validate forms
       if(!this.createFormValid) {
-        this.trigger_notification('Failed to create a version, please fill in the version name first', 'error')
+        this.$root.SnackBar.show({ message: 'Failed to create a version, please fill in the version name first', color: 'error', icon: 'mdi-close-circle' })
         return
       }
 
@@ -457,7 +444,7 @@ export default {
       }
       this.axios.put(`${this.$apiuri}/versioning/create`, {versionName}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -471,7 +458,7 @@ export default {
                   }
                 })
             }
-          this.trigger_notification(`Failed to create a version, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to create a version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
         .finally(() => {
           this.versionName = ''
@@ -482,7 +469,7 @@ export default {
     editVersion(){
       // Validate Forms
       if(!this.editFormValid) {
-        this.trigger_notification('Failed to edit version, please fill all available form input', 'error')
+        this.$root.SnackBar.show({ message: 'Failed to edit version, please fill all available form input', color: 'error', icon: 'mdi-close-circle' })
         return
       }
 
@@ -497,7 +484,7 @@ export default {
 
       this.axios.put(`${this.$apiuri}/versioning/edit`, {editedVersion, newVersionName}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -511,7 +498,7 @@ export default {
                   }
                 })
               }
-          this.trigger_notification(`Failed to edit a version, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to edit a version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
         .finally(() => {
           this.editedVersion = ''
@@ -522,7 +509,7 @@ export default {
     },
     deleteVersion(){
       if(this.deletedVersion.length==0){
-        this.trigger_notification('Failed to delete version, please choose at least one version', 'error')
+        this.$root.SnackBar.show({ message: 'Failed to delete version, please choose at least one version', color: 'error', icon: 'mdi-close-circle' })
         return
       }
 
@@ -535,7 +522,7 @@ export default {
 
       this.axios.put(`${this.$apiuri}/versioning/delete`, {content}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -549,7 +536,7 @@ export default {
                   }
                 })
               }
-          this.trigger_notification(`Failed to remove version, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to remove version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
         .finally(() => {
           this.updateDocumentationContent()
@@ -582,7 +569,7 @@ export default {
 
       this.axios.put(`${this.$apiuri}/versioning/section`, {sections, chapter, version}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -596,7 +583,7 @@ export default {
                   }
                 })
               }
-          this.trigger_notification(`Failed to add section, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to add section, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
         .finally(() => {
           this.dialog = false;
@@ -615,7 +602,7 @@ export default {
       }
       this.axios.put(`${this.$apiuri}/versioning/section/delete`, {sectionId, version}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -629,7 +616,7 @@ export default {
                   }
                 })
               }
-          this.trigger_notification(`Failed to remove section, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to remove section, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
         .finally(() => {
           this.updateDocumentationContent()
@@ -648,7 +635,7 @@ export default {
       
       this.axios.put(`${this.$apiuri}/versioning/chapter`, {chapters, version}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -662,7 +649,7 @@ export default {
                   }
                 })
               }
-          this.trigger_notification(`Failed to add chapter, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to add chapter, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
         .finally(() => {
           this.chapterDialog = false;
@@ -682,7 +669,7 @@ export default {
       }
       this.axios.put(`${this.$apiuri}/versioning/chapter/delete`, {chapterId, sectionsId, version}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -696,7 +683,7 @@ export default {
                   }
                 })
               }
-          this.trigger_notification(`Failed to remove chapter, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to remove chapter, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         }).finally(() => {
           this.updateDocumentationContent()
         })
@@ -712,7 +699,7 @@ export default {
 
       this.axios.put(`${this.$apiuri}/versioning/reorder`, {content}, header)
         .then(response => {
-          this.trigger_notification(response.data.message, 'success')
+          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
         })
         .catch(error => {
           if(error.response.status == 401){
@@ -726,7 +713,7 @@ export default {
                   }
                 })
             }
-          this.trigger_notification(`Failed to modify content structure, an error occurred ${error.message}`, 'error')
+          this.$root.SnackBar.show({ message: `Failed to modify content structure, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
         })
     },
     moveUpChapter(index) {
@@ -779,9 +766,6 @@ export default {
           this.updateSection()
           this.updateChapter()
         })
-    },
-    trigger_notification(text, type, timeout=2000){
-      this.snackbar = { isShow:true, text, type, timeout }
     }
   },
   created(){
