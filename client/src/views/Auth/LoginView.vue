@@ -1,18 +1,6 @@
 <template>
   <v-app>
     <v-main>
-      <v-snackbar
-      v-model="snackbar.isShow"
-      :timeout="snackbar.timeout"
-      :color="snackbar.type"
-      elevation="8"
-      top
-      centered
-    >
-      <v-icon v-if="snackbar.type == 'success'">mdi-check-circle</v-icon>
-      <v-icon v-if="snackbar.type == 'error'">mdi-close-circle</v-icon>
-      {{ snackbar.text }}
-    </v-snackbar>
       <v-card max-width="500" class="container">
         <v-card-title>Login</v-card-title>
         <v-form ref="form" v-model="form.valid" lazy-validation>
@@ -40,27 +28,12 @@
 
 <script>
 
+
 export default {
-  props : {
-    message : {
-      type: String
-    },
-    status : {
-      type: Boolean,
-      default: false
-    },
-    msgtype : {
-      type: String
-    }
-  },
+  name: 'LoginView',
+  props : ['message', 'status', 'msgtype'],
   data(){
     return {
-      snackbar: { 
-        isShow: false, 
-        text: '', 
-        type: '', 
-        timeout: 2000 
-      },
       form : {
         username : "",
         usernameRules: [
@@ -90,17 +63,14 @@ export default {
           this.$router.push({name : 'cms'})
         })
         .catch(err => {
-          this.trigger_notification(err.message, 'error')
+          this.$root.SnackBar.show({ message: err.message, color: 'error', icon: 'mdi-close-circle' })
         })
       }
     },
-    trigger_notification(text, type, timeout=2000){
-      this.snackbar = { isShow:true, text, type, timeout }
-    }
   },
   created(){
     if(this.status){
-      this.trigger_notification(this.message, this.msgtype)
+      this.$root.SnackBar.show({ message: this.message, color: this.msgtype, icon: 'mdi-check-circle' })
     }
   }
 }

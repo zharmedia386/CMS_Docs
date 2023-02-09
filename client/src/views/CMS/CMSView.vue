@@ -1,37 +1,46 @@
 <template>
     <v-app>
-      <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: transparent;">
+      <!-- Sidebar Toggle -->
+      <v-app-bar app style="right: auto; box-shadow: none; padding: 0; background-color: transparent; height: 0;" v-show="this.$vuetify.breakpoint.mobile">
         <v-btn @click="(drawer = !drawer)">
           <v-icon v-text="`${drawer ? 'mdi-chevron-left' : 'mdi-chevron-right'}`"></v-icon>
         </v-btn>
       </v-app-bar>
+
+      <!-- Sidebar -->
       <v-navigation-drawer
         v-model="drawer"
+        dark
+        color="#121927"
         app
+        style="padding: 0;"
+        :expand-on-hover="!this.$vuetify.breakpoint.mobile"
       >
-        <v-list class="d-flex flex-column">
+        <v-list nav>
           <v-list-item v-for="(menu,index) in menus" v-bind:key="index" :to="menu.ref">
               <v-list-item-icon>
                 <v-icon v-text="menu.icon"></v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                  <v-list-item-title style="white-space: break-spaces;" v-text="menu.title"></v-list-item-title>
-              </v-list-item-content>
-          </v-list-item>
-          <v-list-item @click="logout()">
-            <v-list-item-icon>
-                <v-icon>mdi-logout</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                  <v-list-item-title style="white-space: break-spaces;"><strong>Logout</strong></v-list-item-title>
+                  <v-list-item-title class="text-left body-1" style="white-space: break-spaces;" v-text="menu.title"></v-list-item-title>
               </v-list-item-content>
           </v-list-item>
         </v-list>
-        <!-- <v-btn color="error" @click="logout()">
-          <v-icon>mdi-logout</v-icon>LOGOUT
-        </v-btn> -->
+
+        <template v-slot:append>
+            <v-list nav>
+              <v-list-item @click="logout()" style="align-self: flex-end;">
+                <v-list-item-icon>
+                    <v-icon>mdi-logout</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                      <v-list-item-title class="text-left" style="white-space: break-spaces;"><strong>Logout</strong></v-list-item-title>
+                  </v-list-item-content>
+              </v-list-item>
+            </v-list>
+        </template>
       </v-navigation-drawer>
-      <v-main class="py-0">
+      <v-main class="pa-0" style="margin-left: 56px;">
             <router-view></router-view>
       </v-main>
     </v-app>
@@ -97,4 +106,5 @@ export default {
 .container{
   margin: auto;
 }
+
 </style>
