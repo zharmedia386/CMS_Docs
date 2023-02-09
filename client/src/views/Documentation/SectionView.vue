@@ -1,8 +1,24 @@
 <template>
   <v-container style="color: #94a3b8;">
-    <v-row>
-        <v-col class="content ql-editor" style="margin-right: 264px;" v-html="content" ></v-col>
-        <v-col class="toc col-2" v-show="!this.$vuetify.breakpoint.mobile">
+    <v-row v-if="!content">
+        <v-col>
+            <v-skeleton-loader
+                type="heading, sentences, image, chip, paragraph, sentences, paragraph"
+                dark
+                class="skeleton-loader-portal"
+            ></v-skeleton-loader>
+        </v-col>
+        <v-col class="col-3">
+            <v-skeleton-loader
+                type="heading, sentences, paragraph"
+                dark
+                class="skeleton-loader-portal"
+            ></v-skeleton-loader>
+        </v-col>
+    </v-row>
+    <v-row v-if="content">
+        <v-col class="content ql-editor" v-html="content" ></v-col>
+        <v-col class="toc col-3" v-show="!this.$vuetify.breakpoint.mobile">
             <div style="position: sticky; top: 76px" class="text-left">
                 <h3 style="color: white; margin-bottom: 15px;">On This Section</h3>
                 <ul style="padding: 0;">
@@ -67,6 +83,14 @@ export default {
     font-family: "Consolas";
     font-size: 13px;
     white-space: pre-wrap;  
+}
+
+.skeleton-loader-portal > div {
+    margin-bottom: 20px;;
+}
+
+.v-skeleton-loader__image {
+    height: 300px;
 }
 
 .toc ul li {
