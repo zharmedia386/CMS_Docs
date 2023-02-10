@@ -35,6 +35,7 @@
 
 <script>
 import $ from "jquery";
+import { useDocumentationStore } from '../../stores/DocumentationStore';
 
 export default {
     data: () => ({
@@ -43,33 +44,36 @@ export default {
         content: "",
         innerSection: []
     }),
+    methods: {
+        wrapContentInDiv() {
+            const IDs = [];
+            $("h1, h2").each(function() {
+                const id = "section-" + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
+                IDs.push({id: id, tag: this.localName, title: this.textContent})
+                $(this).nextUntil( "h1, h2" ).wrapAll( `<section id=${id}></section>` );
+                const el = $(this).next();
+                $(this).prependTo(el);
+            });
+            this.innerSection = IDs;
+        }
+    },
     created(){
+        const documentationStore = useDocumentationStore()
+
         this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
             .then(response => {
                 this.content = response.data[0].content
-                this.axios.get(`${this.$apiuri}/documentations/metadata`)
-                    .then(res => {
-                        document.title = response.data[0].title + " - " + res.data.title
-                    })
+                 document.title = response.data[0].title + " - " + documentationStore.metadata.title
             })
             .then(() => {
-                const IDs = [];
-                $("h1, h2").each(function() {
-                    const id = "section-" + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
-                    IDs.push({id: id, tag: this.localName, title: this.textContent})
-                    $(this).nextUntil( "h1, h2" ).wrapAll( `<section id=${id}></section>` );
-                    const el = $(this).next();
-                    $(this).prependTo(el);
-                    console.log(this)
-                });
-                this.innerSection = IDs;
+                this.wrapContentInDiv();
             })
-        
     }
 }
 </script>
 
 <style src="quill/dist/quill.snow.css"></style>
+
 <style>
 .content{
     text-align: left;
@@ -83,6 +87,16 @@ export default {
     font-family: "Consolas";
     font-size: 13px;
     white-space: pre-wrap;  
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6
+{
+    color: var(--secondary-purple-darker);
 }
 
 .skeleton-loader-portal > div {

@@ -26,7 +26,7 @@ export default {
 
 
 <style lang="scss">
-html{scroll-behavior:smooth}
+@import './assets/css/style.css';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -34,7 +34,7 @@ html{scroll-behavior:smooth}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: #16192d;
+  background-color: var(--primary-dark);
 }
 
 nav {
