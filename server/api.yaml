@@ -1,0 +1,102 @@
+openapi: "3.0.0"
+info:
+  title: DoCMS API
+  description: Solusi untuk seluruh kontenmu
+  version: v1.0.0
+  contact:
+    email: docms@gmail.com
+  liscence:
+    name: Apache 2.0
+    url: "http://www.apache.org/liscences/LIS"
+  servers:
+    -url: http://localhost:4000
+    description: THis is my local Server
+    -url: http://example.com/
+    description: This is my original URL
+
+# Sections from each API
+tags:
+  name: Documentations
+  description: Documentation API
+
+components:
+  # Bearer Token Authentication  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  # Schemas Database Configuration  
+  schemas:
+    Documentation: 
+      type: object
+      required:
+        - title
+        - logo
+        - description
+        - logoLink
+        - footer
+        - content
+        - createdAt
+        - updatedAt
+      properties:
+        title:
+          type: string
+          description: The auto-generated id of the book
+        logo:
+          type: string
+          description: The book title
+        description:
+          type: string
+          description: The book author
+        logoLink:
+          type: object
+          description: The book author
+        footer:
+          type: string
+          description: The book author
+        content:
+          type: object
+          description: The book author
+        createdAt:
+          type: object
+          description: The book author
+        updatedAt:
+          type: object
+          description: The book author
+
+# Bearer Token Authentication         
+security:
+  - bearerAuth: []
+
+# Route API
+paths:
+  /documentations:
+    get:
+      description: Use to request all Documentations
+      tags: [Documentations]
+      responses:
+        '200':
+          description: A successful response
+
+    post:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Documentations]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documentation'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documentation'
+        500:
+          description: Some server error
