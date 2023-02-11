@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "dev": "nodemon server"
+    "dev": "nodemon -e yaml server"
   },
   "author": "Dave Gray",
   "license": "ISC",
@@ -26,5 +26,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.12"
-  }
+  },
+  "ext": ".js, .mjs, .coffee, .litcoffee, .json, .yaml"
 }
