@@ -6,10 +6,11 @@ const bcrypt = require('bcrypt')
 const getAllDocumentationContent = async (req, res) => {
     const Documentations = await documentationDB()
 
-    res.status(200).send(await Documentations.find({})
-    .project({
-        "content": 1
-    }).toArray())
+    // res.status(200).send(await Documentations.find({})
+    // .project({
+    //     "content": 1
+    // }).toArray())
+    res.status(200).send(await Documentations.find({}).toArray())
 }
 
 // Get all documentation info
