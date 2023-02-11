@@ -63,7 +63,9 @@ export default {
         this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
             .then(response => {
                 this.content = response.data[0].content
-                 document.title = response.data[0].title + " - " + documentationStore.metadata.title
+
+                // Set page title
+                document.title = response.data[0].title + " - " + documentationStore.documentation.title
             })
             .then(() => {
                 this.wrapContentInDiv();

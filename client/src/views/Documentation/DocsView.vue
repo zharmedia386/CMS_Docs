@@ -17,10 +17,11 @@
                 <v-toolbar-title
                     class="d-flex justify-center align-center"
                 >
-                    <img :src="metadata.logo" style="max-height: 25px;" class="mr-2">
-                    <!-- <span class="mr-2" v-show="metadata.title">{{metadata.title}}</span> --> <!-- Kayaknya udh gk butuh, soalnya kurang bagus di desain -->
+                    <img :src="documentation.logo" style="max-height: 25px;" class="mr-2">
+                    <!-- <span class="mr-2" v-show="documentation.title">{{documentation.title}}</span> --> <!-- Kayaknya udh gk butuh, soalnya kurang bagus di desain -->
                     <v-select 
                         v-model="selectedVersion"
+                        ref = "versionSelect"
                         :items="getVersions"
                         @change="changeVersion(getContentInVersion(selectedVersion))"
                         outlined
@@ -43,7 +44,7 @@
                         readonly
                     ></v-text-field>
                     <v-btn
-                        :href="metadata.githubLink"
+                        :href="documentation.githubLink"
                         target="_blank"
                         icon
                     ><v-icon>mdi-github</v-icon></v-btn>
@@ -74,7 +75,7 @@
             </v-main>
             <!-- Footer Starts Here -->
             <v-footer
-                v-html="metadata.footer"
+                v-html="documentation.footer"
                 class="portal-footer text-center d-flex justify-center align-center "
                 dark
             >
@@ -98,17 +99,17 @@ export default {
     setup() {
         // Use documentation store and fetch the data from db
         const documentationStore = useDocumentationStore()
-        documentationStore.fetchData();
+        documentationStore.fetchData(true);
 
         // Extract the required data and getters as refs
         const { 
-            documentation, loading, error, selectedVersion, metadata, 
+            documentation, loading, error, selectedVersion, 
             getVersions, getContentInVersion,
         } = storeToRefs(useDocumentationStore());
 
         // Return the data so it's can be used in template
         return {
-            documentation, loading, error, selectedVersion, metadata,
+            documentation, loading, error, selectedVersion,
             getVersions, getContentInVersion
         }
     },
@@ -119,6 +120,9 @@ export default {
                 router.push(`/docs/${content[0].section[0]._id}`)
             }
         }
+    },
+    mounted() {
+        console.log(this.$refs.versionSelect)
     }
 }
 </script>

@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import axios from 'axios';
+import router from '@/router';
 
 export const useDocumentationStore = defineStore({
     id: "documentationStore",
     state: () => ({
         documentation: null,
         selectedVersion: null,
-        metadata: null,
         loading: false,
         error: null
     }),
@@ -19,7 +19,7 @@ export const useDocumentationStore = defineStore({
         }
     },
     actions: {
-        async fetchData() {
+        async fetchData(redirect=false) {
             this.loading = true;
 
             try {
@@ -31,15 +31,15 @@ export const useDocumentationStore = defineStore({
                 // set first version of the documentaion as default
                 this.selectedVersion = response.data[0]?.content[0]?.version
 
-                // set metadata
-                this.metadata = {
-                    title: this.documentation.title,
-                    logo: this.documentation.logo,
-                    footer: this.documentation.footer,
-                    githubLink: this.documentation.githubLink
+                // If in portal, then want to select default showing section
+                if (redirect) {
+                    let sectionId = this.documentation?.content[0]?.chapter[0]?.section[0]?._id;
+                    if(sectionId) {
+                        router.push(`/docs/${sectionId}`)
+                    }
                 }
             } catch (error) {
-                this.error = error;          
+                this.error = error;     
             } finally {
                 this.loading = false;
             }
