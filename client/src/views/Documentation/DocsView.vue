@@ -3,9 +3,11 @@
         <div v-if="loading">
             Loading ...
         </div>
+
         <div v-if="error">
             Error
         </div>
+        
         <div v-if="documentation">
             <!-- Header Starts Here -->
             <v-app-bar app dark class="portal-navbar">
@@ -17,18 +19,16 @@
                 <v-toolbar-title
                     class="d-flex justify-center align-center"
                 >
-                    <img :src="documentation.logo" style="max-height: 25px;" class="mr-2">
+                    <img :src="documentation.logo" class="logo mr-2">
                     <!-- <span class="mr-2" v-show="documentation.title">{{documentation.title}}</span> --> <!-- Kayaknya udh gk butuh, soalnya kurang bagus di desain -->
                     <v-select 
                         v-model="selectedVersion"
-                        ref = "versionSelect"
                         :items="getVersions"
                         @change="changeVersion(getContentInVersion(selectedVersion))"
                         outlined
                         dense
                         rounded
-                        class="ml-auto"
-                        style="width: 120px; height: 40px; font-size: 12px; background-color: #23273b; border: 1 px solid black;"
+                        class="version-dropdown ml-auto"
                     ></v-select>
                 </v-toolbar-title>
                 
@@ -38,8 +38,7 @@
                         outlined
                         placeholder="Search section..."
                         append-icon="mdi-magnify"
-                        style="padding-top: 25px;"
-                        class="mr-4"
+                        class="mr-4 pt-6"
                         dense
                         readonly
                     ></v-text-field>
@@ -53,12 +52,12 @@
             <!-- Header Stop Here -->
 
             <!-- Sidebar Starts Here -->
-            <v-navigation-drawer fixed dark class="fontstyle px-0 py-0" v-model="drawer" style="margin-top: 64px; background-color: var(--primary-dark);">
+            <v-navigation-drawer fixed dark class="side-bar fontstyle px-0 py-0" v-model="drawer">
                 <v-container v-for="(chapter,i) in getContentInVersion(selectedVersion)" :key="i">
-                    <v-card-title class="chapter-title font-weight-bold" style="white-space: pre-wrap; word-wrap: break-word;" v-text="chapter.title"></v-card-title>
+                    <v-card-title class="chapter-title font-weight-bold" v-text="chapter.title"></v-card-title>
                     <v-list flat>
-                        <v-list-item-group class="text-left" style="margin-left: 20px;">
-                            <v-list-item  dense class="section font-weight-thin" v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
+                        <v-list-item-group class="text-left ml-5">
+                            <v-list-item  dense class="section" v-for="(section,j) in chapter.section" :key="j" :to="{name : 'section', params: { id : section._id}}">
                                 <v-list-item-content>
                                     <v-list-item-title class="section-title" v-text="section.title" ></v-list-item-title>
                                 </v-list-item-content>
@@ -68,11 +67,13 @@
                 </v-container>
             </v-navigation-drawer>
             <!-- Sidebar Stop Here -->
-            <v-main class="portal-main" style="padding-top: 16px; margin-left: 270px;">
+
+            <v-main class="portal-main">
                 <v-container>
                     <router-view :key="$route.path"></router-view>
                 </v-container>
             </v-main>
+            
             <!-- Footer Starts Here -->
             <v-footer
                 v-html="documentation.footer"
@@ -120,14 +121,12 @@ export default {
                 router.push(`/docs/${content[0].section[0]._id}`)
             }
         }
-    },
-    mounted() {
-        console.log(this.$refs.versionSelect)
     }
 }
 </script>
 
-<style>
+<style scoped>
+    /* App bar styling */
     .portal-navbar {
         z-index: 99 !important;
         box-shadow: none !important;
@@ -141,29 +140,30 @@ export default {
         border-bottom: 1px solid #282d4b !important;
     }
 
-    .portal-main {
-        background: #212542;
-        background: -moz-radial-gradient(top right, ellipse cover, #272c52 0%, var(--primary-dark) 57%);
-        background: -webkit-gradient(radial, top right, 0px, top right, 100%, color-stop(0%,#272c52), color-stop(57%,var(--primary-dark)));
-        background: -webkit-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
-        background: -o-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
-        background: -ms-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
-        background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%);
+    .logo {
+        max-height: 25px;
     }
 
-    .portal-footer {
-        background: #212542 !important;
-        margin-left: 256px !important; 
-        padding-top: 16px !important; 
-        background-color: #16192d !important; 
-        border-top: 1px solid #282d4b !important; 
-        color: #94a3b8 !important;
+    .version-dropdown {
+        width: 120px; 
+        max-height: 45px; 
+        font-size: 11px; 
+        background-color: none; 
+        line-height: 1 !important;
+    }
+
+    /* Side bar styling */
+    .side-bar {
+        margin-top: 64px; 
+        background-color: var(--primary-dark);
     }
 
     .chapter-title {
         color: var(--secondary-purple-darker);
         font-size: 16px;
         padding: 10px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
     }
 
     .section {
@@ -184,5 +184,29 @@ export default {
 
     .section-title {
         color: #727f90;
+    }
+
+    /* Main section styling */
+    .portal-main {
+        margin-left: 270px;
+        padding-top: 0 !important;
+
+        background: #212542;
+        background: -moz-radial-gradient(top right, ellipse cover, #272c52 0%, var(--primary-dark) 57%);
+        background: -webkit-gradient(radial, top right, 0px, top right, 100%, color-stop(0%,#272c52), color-stop(57%,var(--primary-dark)));
+        background: -webkit-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
+        background: -o-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
+        background: -ms-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
+        background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%);
+    }
+
+    /* Footer Styling */
+    .portal-footer {
+        background: #212542 !important;
+        margin-left: 256px !important; 
+        padding-top: 16px !important; 
+        background-color: #16192d !important; 
+        border-top: 1px solid #282d4b !important; 
+        color: #94a3b8 !important;
     }
 </style>
