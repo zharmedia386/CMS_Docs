@@ -7,6 +7,9 @@ const corsOptions = require('./config/corsOptions');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
 // const { logger } = require('./middleware/logEvents');
 // const errorHandler = require('./middleware/errorHandler');
 const port = process.env.PORT || 5000
@@ -39,11 +42,35 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json 
 app.use(express.json());
 
+// Extended: https://swagger.io/specification/#infoObject
+const swaggerOptions = {
+	definition: {
+		openapi: "3.0.0",
+		info: {
+			version: "v2",
+            title: "DoCMS API",
+            description: "Solusi untuk seluruh kontenmu",
+            contact: {
+                name: "DoCMS Team"
+            },
+		},
+		servers: [
+			{
+				url: "http://localhost:3500",
+			},
+		],
+	},
+	apis: ["./routes/api/*.js"],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
-// routes
 app.use('/', require('./routes/root'));
+
 app.use('/documentations', require('./routes/api/documentations'));
 app.use('/versioning', require('./routes/api/versioning'))
 app.use('/chapters', require('./routes/api/chapters'));
