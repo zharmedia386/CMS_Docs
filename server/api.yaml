@@ -16,8 +16,17 @@ info:
 
 # Sections from each API
 tags:
-  name: Documentations
-  description: Documentation API
+  - name: Authentication
+    description: Authentication API
+  - name: Documentations
+    description: Documentation API
+  - name: Chapters
+    description: Chapter API
+  - name: Sections
+    description: Section API
+  - name: Versionings
+    description: Versioning API
+
 
 components:
   # Bearer Token Authentication  
@@ -28,6 +37,19 @@ components:
 
   # Schemas Database Configuration  
   schemas:
+    loginAuthentication:
+      type: object
+      required:
+        - user
+        - pwd
+      properties:
+        user:
+          type: string
+          description: The auto-generated id of the book
+        pwd:
+          type: string
+          description: The book title
+
     Documentation: 
       type: object
       required:
@@ -65,12 +87,112 @@ components:
           type: object
           description: The book author
 
+    Chapter:
+      type: object
+      required:
+        - title
+        - version
+        - createdAt
+        - updatedAt
+      properties:
+        title:
+          type: string
+          description: The auto-generated id of the book
+        version:
+          type: string
+          description: The book title
+        createdAt:
+          type: string
+          description: The book title
+        updatedAt:
+          type: string
+          description: The book title
+
+    Section:
+      type: object
+      required:
+        - title
+        - content
+        - version
+        - createdAt
+        - updatedAt
+      properties:
+        title:
+          type: string
+          description: The auto-generated id of the book
+        content:
+          type: string
+          description: The auto-generated id of the book
+        version:
+          type: object
+          description: The book title
+        createdAt:
+          type: string
+          description: The book title
+        updatedAt:
+          type: string
+          description: The book title
+
 # Bearer Token Authentication         
 security:
   - bearerAuth: []
 
 # Route API
 paths:
+  ##############################################################
+  #### Authentication
+  ##############################################################
+
+  # Login Authentication
+  /auth:
+    post:
+      description: Use to request all Documentations
+      tags: [Authentication]
+      requestBody:
+        description: Optional description inMarkdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginAuthentication'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginAuthentication'
+        500:
+          description: Some server error
+
+  # Logout Authentication
+  /logout:
+    get:
+      description: Use to request all Documentations
+      tags: [Authentication]
+      responses:
+        200:
+          description: The book was successfully created
+        500:
+          description: Some server error
+
+  # Refresh Token
+  /refresh:
+    get:
+      description: Use to request all Documentations
+      tags: [Authentication]
+      responses:
+        200:
+          description: The book was successfully created
+        500:
+          description: Some server error
+
+
+  ##############################################################
+  #### Documentations
+  ##############################################################
+
+  # Documentation
   /documentations:
     get:
       description: Use to request all Documentations
@@ -98,5 +220,439 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Documentation'
+        500:
+          description: Some server error
+    
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Documentations]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documentation'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documentation'
+        500:
+          description: Some server error
+    
+    delete:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Documentations]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documentation'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documentation'
+        500:
+          description: Some server error
+
+  # Version
+  /documentations/version:
+    get:
+      description: Use to request all Documentations
+      tags: [Documentations]
+      responses:
+        '200':
+          description: A successful response
+
+  # Metadata
+  /documentations/metadata:
+    get:
+      description: Use to request all Documentations
+      tags: [Documentations]
+      responses:
+        '200':
+          description: A successful response
+  
+  ##############################################################
+  #### Chapters
+  ##############################################################
+
+  /chapters:
+    get:
+      description: Use to request all Chapters
+      tags: [Chapters]
+      responses:
+        '200':
+          description: A successful response
+    
+    post:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Chapters]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chapter'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chapter'
+        500:
+          description: Some server error
+    
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Chapters]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chapter'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chapter'
+        500:
+          description: Some server error
+    
+    delete:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Chapters]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chapter'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chapter'
+        500:
+          description: Some server error
+
+  /chapters/{id}:
+    get:
+      description: Use to request all Chapters
+      tags: [Chapters]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A successful response
+
+  ##############################################################
+  #### Sections
+  ##############################################################
+
+  /sections:
+    get:
+      description: Use to request all Sections
+      tags: [Sections]
+      responses:
+        '200':
+          description: A successful response
+    
+    post:
+      security:
+        - bearerAuth: []
+      description: Use to request all Sections
+      tags: [Sections]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+    
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Sections]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+    
+    delete:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Sections]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /sections/{id}:
+    get:
+      description: Use to request all Sections
+      tags: [Sections]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A successful response
+
+  ##############################################################
+  #### Versioning
+  ##############################################################
+
+  /versioning/create: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /versioning/edit: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /versioning/delete: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /versioning/reorder: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /versioning/section: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /versioning/section/delete: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /versioning/chapter: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        500:
+          description: Some server error
+
+  /versioning/chapter/delete: 
+    put:
+      security:
+        - bearerAuth: []
+      description: Use to request all Documentations
+      tags: [Versionings]
+      requestBody:
+          description: Optional description inMarkdown*
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+      responses:
+        200:
+          description: The book was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
         500:
           description: Some server error
