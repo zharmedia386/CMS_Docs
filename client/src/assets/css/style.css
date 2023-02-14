@@ -1,0 +1,16 @@
+:root {
+    --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    --primary-dark: #181C32;
+    --primary-dark-transparant: #rgba(24, 28, 50, 0.5);
+    --primary-purple: #939AFF;
+    --primary-gray: #8B949E;
+    --primary-light: #FFFFFF;
+
+    --secondary-blue: #00E0FF;
+    --secondary-purple: #FF00D6;
+    --secondary-purple-darker: #939AFF;
+}
+
+html { 
+    scroll-behavior:smooth 
+}
