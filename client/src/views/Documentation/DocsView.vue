@@ -22,6 +22,7 @@
                     <img :src="documentation.logo" class="logo mr-2">
                     <!-- <span class="mr-2" v-show="documentation.title">{{documentation.title}}</span> --> <!-- Kayaknya udh gk butuh, soalnya kurang bagus di desain -->
                     <v-select 
+                        v-if="!this.$vuetify.breakpoint.mobile"
                         v-model="selectedVersion"
                         :items="getVersions"
                         @change="changeVersion(getContentInVersion(selectedVersion))"
@@ -29,12 +30,14 @@
                         dense
                         rounded
                         class="version-dropdown ml-auto"
+                        style="width: 120px;"
                     ></v-select>
                 </v-toolbar-title>
                 
                 
                 <div class="ml-auto mr-2 d-flex justify-center align-center">
                     <v-text-field
+                        v-if="!this.$vuetify.breakpoint.mobile"
                         outlined
                         placeholder="Search section..."
                         append-icon="mdi-magnify"
@@ -53,6 +56,29 @@
 
             <!-- Sidebar Starts Here -->
             <v-navigation-drawer fixed dark class="side-bar fontstyle px-0 py-0" v-model="drawer">
+                <v-container>
+                    <v-select 
+                        v-if="this.$vuetify.breakpoint.mobile"
+                        v-model="selectedVersion"
+                        :items="getVersions"
+                        @change="changeVersion(getContentInVersion(selectedVersion))"
+                        outlined
+                        dense
+                        rounded
+                        width="100%"
+                        class="version-dropdown ml-auto"
+                    ></v-select>
+                    <v-text-field
+                        v-if="this.$vuetify.breakpoint.mobile"
+                        outlined
+                        placeholder="Search section..."
+                        append-icon="mdi-magnify"
+                        class="mr-4 pt-6"
+                        dense
+                        readonly
+                        style="width: 100%;"
+                    ></v-text-field>
+                </v-container>
                 <v-container v-for="(chapter,i) in getContentInVersion(selectedVersion)" :key="i">
                     <v-card-title class="chapter-title font-weight-bold" v-text="chapter.title"></v-card-title>
                     <v-list flat>
@@ -68,7 +94,7 @@
             </v-navigation-drawer>
             <!-- Sidebar Stop Here -->
 
-            <v-main class="portal-main">
+            <v-main class="portal-main" :class="{ 'portal-main-mobile':  this.$vuetify.breakpoint.mobile}">
                 <v-container>
                     <router-view :key="$route.path"></router-view>
                 </v-container>
@@ -78,6 +104,7 @@
             <v-footer
                 v-html="documentation.footer"
                 class="portal-footer text-center d-flex justify-center align-center "
+                :class="{ 'portal-footer-mobile':  this.$vuetify.breakpoint.mobile}"
                 dark
             >
             </v-footer>
@@ -145,7 +172,7 @@ export default {
     }
 
     .version-dropdown {
-        width: 120px; 
+        /* width: 120px;  */
         max-height: 45px; 
         font-size: 11px; 
         background-color: none; 
@@ -200,6 +227,10 @@ export default {
         background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%);
     }
 
+    .portal-main-mobile {
+        margin-left: 0;
+    }
+
     /* Footer Styling */
     .portal-footer {
         background: #212542 !important;
@@ -208,5 +239,9 @@ export default {
         background-color: #16192d !important; 
         border-top: 1px solid #282d4b !important; 
         color: #94a3b8 !important;
+    }
+
+    .portal-footer-mobile {
+        margin-left: 0 !important;
     }
 </style>
