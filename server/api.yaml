@@ -9,8 +9,8 @@ info:
     name: Apache 2.0
     url: "http://www.apache.org/liscences/LIS"
   servers:
-    -url: http://localhost:4000
-    description: THis is my local Server
+    -url: http://localhost:3500
+    description: Backend server
     -url: http://example.com/
     description: This is my original URL
 
@@ -45,10 +45,10 @@ components:
       properties:
         user:
           type: string
-          description: The auto-generated id of the book
+          description: username for authentication purposes
         pwd:
           type: string
-          description: The book title
+          description: password for authentication purposes
 
     Documentation: 
       type: object
@@ -64,28 +64,28 @@ components:
       properties:
         title:
           type: string
-          description: The auto-generated id of the book
+          description: documentation title
         logo:
           type: string
-          description: The book title
+          description: documentation logo
         description:
           type: string
-          description: The book author
+          description: documentation description
         logoLink:
           type: object
-          description: The book author
+          description: documentation logoLink
         footer:
           type: string
-          description: The book author
+          description: documentation footer
         content:
           type: object
-          description: The book author
+          description: documentation content
         createdAt:
           type: object
-          description: The book author
+          description: documentation createdAt
         updatedAt:
           type: object
-          description: The book author
+          description: documentation updatedAt
 
     Chapter:
       type: object
@@ -97,16 +97,16 @@ components:
       properties:
         title:
           type: string
-          description: The auto-generated id of the book
+          description: chapter title
         version:
           type: string
-          description: The book title
+          description: chapter version
         createdAt:
           type: string
-          description: The book title
+          description: chapter createdAt
         updatedAt:
           type: string
-          description: The book title
+          description: chapter updatedAt
 
     Section:
       type: object
@@ -119,19 +119,19 @@ components:
       properties:
         title:
           type: string
-          description: The auto-generated id of the book
+          description: section title
         content:
           type: string
-          description: The auto-generated id of the book
+          description: section content
         version:
           type: object
-          description: The book title
+          description: section version
         createdAt:
           type: string
-          description: The book title
+          description: section createdAt
         updatedAt:
           type: string
-          description: The book title
+          description: section updatedAt
 
 # Bearer Token Authentication         
 security:
@@ -146,10 +146,10 @@ paths:
   # Login Authentication
   /auth:
     post:
-      description: Use to request all Documentations
+      description: Authenticate users to get token access 
       tags: [Authentication]
       requestBody:
-        description: Optional description inMarkdown*
+        description: login request body
         required: true
         content:
           application/json:
@@ -157,35 +157,35 @@ paths:
               $ref: '#/components/schemas/loginAuthentication'
       responses:
         200:
-          description: The book was successfully created
+          description: Use was successfully authenticated   
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/loginAuthentication'
         500:
-          description: Some server error
+          description: Server Error
 
   # Logout Authentication
   /logout:
     get:
-      description: Use to request all Documentations
+      description: Logout authentication request
       tags: [Authentication]
       responses:
         200:
-          description: The book was successfully created
+          description: User was successfully logged out
         500:
-          description: Some server error
+          description: Server error
 
   # Refresh Token
   /refresh:
     get:
-      description: Use to request all Documentations
+      description: Refresh token authentication request
       tags: [Authentication]
       responses:
         200:
-          description: The book was successfully created
+          description: Token was successfully refreshed
         500:
-          description: Some server error
+          description: Server error
 
 
   ##############################################################
@@ -195,19 +195,19 @@ paths:
   # Documentation
   /documentations:
     get:
-      description: Use to request all Documentations
+      description: Get all Documentations content
       tags: [Documentations]
       responses:
         '200':
-          description: A successful response
+          description: Documentation was successfully retrieved
 
     post:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Create a new documentation
       tags: [Documentations]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Create a new documentation request body
           required: true
           content:
             application/json:
@@ -215,21 +215,21 @@ paths:
                 $ref: '#/components/schemas/Documentation'
       responses:
         200:
-          description: The book was successfully created
+          description: Documentation was successfully created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Documentation'
         500:
-          description: Some server error
+          description: Server error
     
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Edit Documentations by id
       tags: [Documentations]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Edit Documentations by id request body
           required: true
           content:
             application/json:
@@ -237,21 +237,21 @@ paths:
                 $ref: '#/components/schemas/Documentation'
       responses:
         200:
-          description: The book was successfully created
+          description: Documentation was successfully modified
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Documentation'
         500:
-          description: Some server error
+          description: Server error
     
     delete:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Delete Documentations by id
       tags: [Documentations]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Delete documentation by id
           required: true
           content:
             application/json:
@@ -259,31 +259,30 @@ paths:
                 $ref: '#/components/schemas/Documentation'
       responses:
         200:
-          description: The book was successfully created
+          description: Documentation was successfully deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Documentation'
         500:
-          description: Some server error
+          description: Server error
 
   # Version
   /documentations/version:
     get:
-      description: Use to request all Documentations
+      description: Get all versions of documentation
       tags: [Documentations]
       responses:
         '200':
-          description: A successful response
-
+          description: Version of documentation was successfully retrieved 
   # Metadata
   /documentations/metadata:
     get:
-      description: Use to request all Documentations
+      description: Get all metadata of documentation
       tags: [Documentations]
       responses:
         '200':
-          description: A successful response
+          description: Metadata of documentation was successfully retrieved
   
   ##############################################################
   #### Chapters
@@ -291,19 +290,19 @@ paths:
 
   /chapters:
     get:
-      description: Use to request all Chapters
+      description: Get all chapters data
       tags: [Chapters]
       responses:
         '200':
-          description: A successful response
+          description: Chapters data was successfully retrieved
     
     post:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Create a new chapter 
       tags: [Chapters]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Create a new chapter request body  
           required: true
           content:
             application/json:
@@ -311,21 +310,21 @@ paths:
                 $ref: '#/components/schemas/Chapter'
       responses:
         200:
-          description: The book was successfully created
+          description: Chapters data was successfully created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
         500:
-          description: Some server error
+          description: Server error
     
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Edit Chapter by id
       tags: [Chapters]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Edit Chapter request body
           required: true
           content:
             application/json:
@@ -333,21 +332,21 @@ paths:
                 $ref: '#/components/schemas/Chapter'
       responses:
         200:
-          description: The book was successfully created
+          description: Chapter was successfully modified
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
         500:
-          description: Some server error
+          description: Server error
     
     delete:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Delete Chapter
       tags: [Chapters]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Delete Chapter request body
           required: true
           content:
             application/json:
@@ -355,17 +354,17 @@ paths:
                 $ref: '#/components/schemas/Chapter'
       responses:
         200:
-          description: The book was successfully created
+          description: Chapter was successfully deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
         500:
-          description: Some server error
+          description: Server error
 
   /chapters/{id}:
     get:
-      description: Use to request all Chapters
+      description: Get Chapter by id
       tags: [Chapters]
       parameters:
         - name: id
@@ -375,7 +374,7 @@ paths:
             type : string
       responses:
         '200':
-          description: A successful response
+          description: Chapter has been successfully retrieved by id
 
   ##############################################################
   #### Sections
@@ -383,19 +382,19 @@ paths:
 
   /sections:
     get:
-      description: Use to request all Sections
+      description: Get All Sections data 
       tags: [Sections]
       responses:
         '200':
-          description: A successful response
+          description: Section was successfully retrieved
     
     post:
       security:
         - bearerAuth: []
-      description: Use to request all Sections
+      description: Create a new Section 
       tags: [Sections]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Create a new Section request body
           required: true
           content:
             application/json:
@@ -403,21 +402,21 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Section was successfully created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
     
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Edit Section
       tags: [Sections]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Edit Section request body
           required: true
           content:
             application/json:
@@ -425,21 +424,21 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Section was successfully modified
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
     
     delete:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Delete Section
       tags: [Sections]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Delete Section request body
           required: true
           content:
             application/json:
@@ -447,17 +446,17 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Section was successfully deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
 
   /sections/{id}:
     get:
-      description: Use to request all Sections
+      description: Get Section by id
       tags: [Sections]
       parameters:
         - name: id
@@ -467,7 +466,7 @@ paths:
             type : string
       responses:
         '200':
-          description: A successful response
+          description: Section was successfully retrieved by id
 
   ##############################################################
   #### Versioning
@@ -477,10 +476,10 @@ paths:
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Create a new version
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Create a new version request body
           required: true
           content:
             application/json:
@@ -488,7 +487,7 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Version was successfully created
           content:
             application/json:
               schema:
@@ -500,10 +499,10 @@ paths:
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Edit version
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Edit version request body
           required: true
           content:
             application/json:
@@ -511,22 +510,22 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Version was successfully modified
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
 
   /versioning/delete: 
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Delete version
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Delete version requst body
           required: true
           content:
             application/json:
@@ -534,22 +533,22 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Version was successfully deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
 
   /versioning/reorder: 
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Reorder version
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Reorder version request body
           required: true
           content:
             application/json:
@@ -557,22 +556,22 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Version was successfully reordered
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
 
   /versioning/section: 
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Edit version in section
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Edit version in section request body
           required: true
           content:
             application/json:
@@ -580,22 +579,22 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Section version was successfully modified
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
 
   /versioning/section/delete: 
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Delete version in setion 
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Delete version in setion  request body
           required: true
           content:
             application/json:
@@ -603,22 +602,22 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Version in section was successfully deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
 
   /versioning/chapter: 
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Edit version in chapter 
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Edit version in chapter request body
           required: true
           content:
             application/json:
@@ -626,22 +625,22 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Chapter version was successfully modified
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
 
   /versioning/chapter/delete: 
     put:
       security:
         - bearerAuth: []
-      description: Use to request all Documentations
+      description: Delete version in chapter
       tags: [Versionings]
       requestBody:
-          description: Optional description inMarkdown*
+          description: Delete version in chapter request body
           required: true
           content:
             application/json:
@@ -649,10 +648,10 @@ paths:
                 $ref: '#/components/schemas/Section'
       responses:
         200:
-          description: The book was successfully created
+          description: Chapters version was deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
         500:
-          description: Some server error
+          description: Server error
