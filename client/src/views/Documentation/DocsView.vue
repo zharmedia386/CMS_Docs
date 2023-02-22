@@ -17,7 +17,7 @@
                 ></v-app-bar-nav-icon>
                 
                 <v-toolbar-title
-                    class="d-flex justify-center align-center"
+                    class="d-flex justify-center align-center px-0"
                 >
                     <img :src="documentation.logo" class="logo mr-2">
                     <!-- <span class="mr-2" v-show="documentation.title">{{documentation.title}}</span> --> <!-- Kayaknya udh gk butuh, soalnya kurang bagus di desain -->
@@ -35,6 +35,7 @@
                 
                 <div class="ml-auto mr-2 d-flex justify-center align-center">
                     <v-text-field
+                        v-if="!this.$vuetify.breakpoint.mobile"
                         outlined
                         placeholder="Search section..."
                         append-icon="mdi-magnify"
@@ -42,6 +43,10 @@
                         dense
                         readonly
                     ></v-text-field>
+                    <v-btn
+                        v-else
+                        icon
+                    ><v-icon>mdi-magnify</v-icon></v-btn>
                     <v-btn
                         :href="documentation.githubLink"
                         target="_blank"
@@ -53,6 +58,7 @@
 
             <!-- Sidebar Starts Here -->
             <v-navigation-drawer fixed dark class="side-bar fontstyle px-0 py-0" v-model="drawer">
+                
                 <v-container v-for="(chapter,i) in getContentInVersion(selectedVersion)" :key="i">
                     <v-card-title class="chapter-title font-weight-bold" v-text="chapter.title"></v-card-title>
                     <v-list flat>
@@ -68,7 +74,7 @@
             </v-navigation-drawer>
             <!-- Sidebar Stop Here -->
 
-            <v-main class="portal-main">
+            <v-main class="portal-main" :class="{ 'portal-main-mobile':  this.$vuetify.breakpoint.mobile}">
                 <v-container>
                     <router-view :key="$route.path"></router-view>
                 </v-container>
@@ -78,6 +84,7 @@
             <v-footer
                 v-html="documentation.footer"
                 class="portal-footer text-center d-flex justify-center align-center "
+                :class="{ 'portal-footer-mobile':  this.$vuetify.breakpoint.mobile}"
                 dark
             >
             </v-footer>
@@ -145,11 +152,12 @@ export default {
     }
 
     .version-dropdown {
-        width: 120px; 
+        /* width: 120px;  */
         max-height: 45px; 
         font-size: 11px; 
         background-color: none; 
         line-height: 1 !important;
+        width: 120px;
     }
 
     /* Side bar styling */
@@ -191,13 +199,21 @@ export default {
         margin-left: 270px;
         padding-top: 0 !important;
 
-        background: #212542;
+        /* background: #212542;
         background: -moz-radial-gradient(top right, ellipse cover, #272c52 0%, var(--primary-dark) 57%);
         background: -webkit-gradient(radial, top right, 0px, top right, 100%, color-stop(0%,#272c52), color-stop(57%,var(--primary-dark)));
         background: -webkit-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
         background: -o-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
         background: -ms-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
-        background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%);
+        background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%); */
+        background-image: url('@/assets/portalbg.png');
+        background-size: 100% auto;
+    }
+
+    .portal-main-mobile {
+        margin-left: 0;
+        background-image: url('@/assets/portalbgmobile.png');
+        background-size: 100% auto;
     }
 
     /* Footer Styling */
@@ -208,5 +224,9 @@ export default {
         background-color: #16192d !important; 
         border-top: 1px solid #282d4b !important; 
         color: #94a3b8 !important;
+    }
+
+    .portal-footer-mobile {
+        margin-left: 0 !important;
     }
 </style>

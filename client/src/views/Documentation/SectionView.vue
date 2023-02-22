@@ -81,7 +81,7 @@ export default {
     text-align: left;
 }
 
-.content > pre{
+/* .content > pre{
     padding: 10px 15px 10px 15px;
     background-color: rgba(0, 0, 0, 0.875);
     border-radius: 5px;
@@ -89,6 +89,15 @@ export default {
     font-family: "Consolas";
     font-size: 13px;
     white-space: pre-wrap;  
+} */
+
+pre {
+  background-color: #94a3b825;
+  border-radius: 4px;
+  font-size: 14px;  
+  line-height: 1.4;
+  overflow: auto;
+  padding: 16px !important;
 }
 
 .content h1,
@@ -99,6 +108,10 @@ export default {
 .content h6
 {
     color: var(--secondary-purple-darker);
+}
+
+p strong {
+    color: white;
 }
 
 .skeleton-loader-portal > div {
