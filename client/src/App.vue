@@ -2,8 +2,6 @@
   <div id="app">
     <v-app>
       <SnackBar ref="SnackBar" />
-      <nav>
-      </nav>
       <router-view/>
     </v-app>
   </div>
