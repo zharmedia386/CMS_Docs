@@ -2,8 +2,6 @@
   <div id="app">
     <v-app>
       <SnackBar ref="SnackBar" />
-      <nav>
-      </nav>
       <router-view/>
     </v-app>
   </div>
@@ -28,7 +26,7 @@ export default {
 
 
 <style lang="scss">
-html{scroll-behavior:smooth}
+@import './assets/css/style.css';
 
 
 #app {
@@ -37,6 +35,7 @@ html{scroll-behavior:smooth}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+<<<<<<< HEAD
   background: linear-gradient(116deg, #181C32, #181C32,#181C32, #00E0FF, #FF00DA);
 }
 
@@ -48,6 +47,9 @@ html{scroll-behavior:smooth}
   i {
     font-size: 2rem;
   }
+=======
+  background-color: var(--primary-dark);
+>>>>>>> 025f18e943d174b48e3fe0c7fddc60f7d0dc72f1
 }
 
 nav {

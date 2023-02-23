@@ -27,17 +27,11 @@ const handleLogin = async (req, res) => {
             { expiresIn: '1d' }
         );
 
-        // Saving refreshToken with current user
-        // foundUser[0].refreshToken = refreshToken;
         const result = await Users.updateOne({}, {$set: {
             refreshToken: refreshToken
         }});
         console.log(result);
 
-        // Users.refreshToken = refreshToken;
-        // const result = await Users.updateOne();
-        // console.log(result);
-        
         // Creates Secure Cookie with refresh token
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
         
