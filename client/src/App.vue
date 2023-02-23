@@ -35,21 +35,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-<<<<<<< HEAD
-  background: linear-gradient(116deg, #181C32, #181C32,#181C32, #00E0FF, #FF00DA);
-}
-
-#navigation-icon {
-  padding: 10px 10px 20px;
-  margin-right: 10px;
-  cursor: pointer;
-
-  i {
-    font-size: 2rem;
-  }
-=======
   background-color: var(--primary-dark);
->>>>>>> 025f18e943d174b48e3fe0c7fddc60f7d0dc72f1
 }
 
 nav {
