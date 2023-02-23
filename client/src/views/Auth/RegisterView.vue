@@ -156,7 +156,7 @@ html{scroll-behavior:smooth}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: linear-gradient(115deg, #181C32, #181C32,#181C32, #00E0FF, #FF00DA);
+  background: linear-gradient(115deg, #181C32, #181C32, #00E0FF, #FF00DA);
   overflow: hidden;
 }
 
