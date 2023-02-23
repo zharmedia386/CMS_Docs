@@ -2,8 +2,6 @@
   <div id="app">
     <v-app>
       <SnackBar ref="SnackBar" />
-      <nav>
-      </nav>
       <router-view/>
     </v-app>
   </div>
@@ -13,6 +11,7 @@
 import SnackBar from './components/SnackBar.vue';
 
 export default {
+
   name: 'App',
   components: {
     SnackBar
@@ -21,12 +20,14 @@ export default {
     // Register SnackBar to root so that it can use anywhere in child components
     this.$root.SnackBar = this.$refs.SnackBar;
   }
+
 }
 </script>
 
 
 <style lang="scss">
 @import './assets/css/style.css';
+
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
