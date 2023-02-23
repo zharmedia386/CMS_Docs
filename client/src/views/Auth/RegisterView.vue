@@ -1,6 +1,6 @@
 <template>
   <div id="inspire">
-    <v-container class="d-flex justify-center">
+    <v-container class="d-flex justify-center mt-9 mb-10">
       <v-container class="mb-2">
       <v-row class="d-flex justify-center">
                     
@@ -77,22 +77,7 @@
       </v-container>         
     </v-container>
     <v-footer class="pt-5 pr-8 mt-5 pb-3 card-resp" style="background-color: rgba(0, 0, 0, 0.25)">
-      <!-- <div class="d-flex justify-space-between">
-      <div class="d-flex ">
-      <p class="font-weight-light mr-9 ml-16" style="color: #8B949E">
-        @2023 DoCMS. 
-      </p>
-      <p class="font-weight-light mr-9" style="color: #8B949E">
-        Terms
-      </p>
-      <p class="font-weight-light" style="color: #8B949E">
-        Privacy(Updated 8/2022)
-      </p>
-      </div>
-      <div class="d-flex align-end">
-        <img src="@/assets/github.png" class="">
-      </div>
-    </div> -->
+
     <v-row>
       <v-col  md="3" cols="6" style="color: #8B949E">
         <span class="mr-15 ml-1">@2023 DoCMS.</span>

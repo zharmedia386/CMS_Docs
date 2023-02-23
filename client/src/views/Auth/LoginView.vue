@@ -1,6 +1,6 @@
 <template>
   <div id="inspire">
-    <v-container class="d-flex justify-center ">
+    <v-container class="d-flex justify-center mt-9 mb-10">
       <v-container class="mb-2">
       <v-row class="d-flex justify-center ">
                     
