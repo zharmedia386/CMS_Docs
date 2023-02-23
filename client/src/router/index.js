@@ -9,6 +9,7 @@ import Metadata from '../views/CMS/MetadataInfo.vue'
 import SectionEditor from '../views/CMS/SectionEditor.vue'
 import Versioning from '../views/CMS/VersioningEditor.vue'
 import Login from '../views/Auth/LoginView.vue'
+import Register from '../views/Auth/RegisterView.vue'
 import axios from 'axios'
 
 Vue.use(VueRouter)
@@ -64,7 +65,14 @@ const routes = [
     name: 'login',
     component: Login,
     props : true
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: Register,
+    props : true
   }
+
 ]
 
 const router = new VueRouter({

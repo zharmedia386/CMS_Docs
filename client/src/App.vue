@@ -13,6 +13,7 @@
 import SnackBar from './components/SnackBar.vue';
 
 export default {
+
   name: 'App',
   components: {
     SnackBar
@@ -21,6 +22,7 @@ export default {
     // Register SnackBar to root so that it can use anywhere in child components
     this.$root.SnackBar = this.$refs.SnackBar;
   }
+
 }
 </script>
 
@@ -28,13 +30,24 @@ export default {
 <style lang="scss">
 html{scroll-behavior:smooth}
 
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: #16192d;
+  background: linear-gradient(116deg, #181C32, #181C32,#181C32, #00E0FF, #FF00DA);
+}
+
+#navigation-icon {
+  padding: 10px 10px 20px;
+  margin-right: 10px;
+  cursor: pointer;
+
+  i {
+    font-size: 2rem;
+  }
 }
 
 nav {
