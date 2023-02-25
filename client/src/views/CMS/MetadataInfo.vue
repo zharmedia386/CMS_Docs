@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="mx-auto">
+    <v-card class="mx-auto" dark>
         <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold" >Metadata</v-card-title>
         <v-form
           ref="form" 

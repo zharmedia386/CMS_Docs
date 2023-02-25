@@ -1,6 +1,7 @@
 :root {
     --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     --primary-dark: #181C32;
+    --primary-dark-lighter: #2A4365;
     --primary-dark-transparant: #rgba(24, 28, 50, 0.5);
     --primary-purple: #939AFF;
     --primary-gray: #8B949E;
