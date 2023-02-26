@@ -1,7 +1,8 @@
 :root {
     --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     --primary-dark: #181C32;
-    --primary-dark-lighter: #2A4365;
+    --primary-dark-lighter: #363a48;
+    --primary-blue-lighter: #2A4365;
     --primary-dark-transparant: #rgba(24, 28, 50, 0.5);
     --primary-purple: #939AFF;
     --primary-gray: #8B949E;
@@ -14,4 +15,17 @@
 
 html { 
     scroll-behavior:smooth 
+}
+
+.v-pagination__item,
+.v-pagination__navigation {
+    background-color: var(--primary-dark-lighter) !important;
+}
+
+.v-pagination__item--active {
+    background-color: var(--secondary-purple-darker) !important;
+}
+
+.v-pagination__more {
+    color: white;
 }

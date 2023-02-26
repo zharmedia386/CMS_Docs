@@ -22,7 +22,7 @@
         <div class="ml-auto mr-2 d-flex justify-center align-center">
           <v-btn class="mr-6" color="var(--primary-dark)"><v-icon class="mr-2">mdi-github</v-icon>Github</v-btn>
 
-          <v-menu bottom min-width="200px" rounded offset-y>
+          <v-menu dark class="avatar-menu" bottom min-width="200px" rounded offset-y>
             <template v-slot:activator="{ on }">
               <v-btn icon x-large v-on="on">
                 <v-avatar color="brown" size="48">
@@ -68,7 +68,7 @@
                       <v-icon v-text="menu.icon" color="var(--primary-purple)"></v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title class="text-left body-1" style="white-space: break-spaces;"
+                      <v-list-item-title class="text-left" style="white-space: break-spaces;"
                         v-text="menu.title"></v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -85,7 +85,7 @@
                       <v-icon color="var(--primary-purple)">mdi-logout</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title class="text-left body-1"
+                      <v-list-item-title class="text-left"
                         style="white-space: break-spaces;"><strong>Logout</strong></v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -99,6 +99,10 @@
       <v-main class="cms-main" :class="{ 'cms-main-mobile': this.$vuetify.breakpoint.mobile }">
         <router-view></router-view>
       </v-main>
+
+      <v-footer v-html="documentation.footer" class="cms-footer text-center d-flex justify-center align-center mt-5"
+          :class="{ 'cms-footer-mobile': this.$vuetify.breakpoint.mobile }" dark>
+      </v-footer>
     </div>
   </v-app>
 </template>
@@ -233,7 +237,7 @@ export default {
 
 .cms-navbar {
   z-index: 99 !important;
-  background-color: var(--primary-dark-lighter) !important;
+  background-color: var(--primary-blue-lighter) !important;
 
 }
 
@@ -254,8 +258,6 @@ export default {
     background: -o-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
     background: -ms-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
     background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%); */
-  background-image: url('@/assets/portalbg.png');
-  background-size: 100% auto;
 }
 
 .cms-main-mobile {
@@ -281,7 +283,28 @@ export default {
   max-height: 60px;
 }
 
+.v-menu__content {
+  margin-top: 8px;
+}
+.v-menu__content .v-list-item__content {
+  margin-top: 6px;
+  background-color: var(--primary-blue-lighter);
+}
+
 .container {
   margin: auto;
+}
+
+button {
+  text-transform: none;
+}
+
+.cms-footer {
+  background: #212542 !important;
+  margin-left: 256px !important;
+  padding-top: 16px !important;
+  background-color: #16192d !important;
+  border-top: 1px solid #282d4b !important;
+  color: #94a3b8 !important;
 }
 </style>
