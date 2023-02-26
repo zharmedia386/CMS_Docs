@@ -1,29 +1,58 @@
 <template>
   <v-container>
-    <v-card>
-      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
-        Chapters List
+    <v-card class="chapter-header elevation-0" dark>
+      <v-card-title class="d-flex justify-space-between pa-0">
+        <v-text-field dense outlined placeholder="Search..." class="search-input"></v-text-field>
         <v-btn 
-        @click="dialog = true"
-        class="blue darken-4 white--text d-flex align-start flex-column"
+          @click="dialog = true"
+          color="#939AFF"
+          class="black--text d-flex align-start flex-column"
         >
-          Create New Chapter
+          <v-icon class="mr-2">mdi-plus</v-icon>
+          Add New
         </v-btn>
       </v-card-title>
-      <br>
-      <v-card-text class="d-flex justify-space-between px-5 font-weight-medium black--text" v-for="(chapter, index) in chapters" v-bind:key="index">
-        <!-- <v-icon>{{chapter.icon}}</v-icon> {{chapter.title}} -->
-        {{ chapter.title }}
-        <div>
-          <v-btn class="light-blue lighten-4 mr-1" outlined fab small
-          @click="() => { updateDialog = true; choosenChapter = chapter; title = chapter.title }"
-          >
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn class="red lighten-2" outlined fab small @click="deleteChapter(chapter._id, chapter.version)"><v-icon>mdi-delete</v-icon></v-btn>
-        </div>
-      </v-card-text>
     </v-card>
+
+    <div class="chapter-list">
+      <v-card variant="tonal" class="chapter-card table-responsive mb-3" dark v-for="(chapter, index) in cloneItems" v-bind:key="index">
+        <table style="width: 100%;">
+          <tr>
+            <td>
+              <span>Chapter Title:</span>
+              <p>{{ chapter.title }}</p>
+            </td>
+            <td>
+              <span>Last Updated:</span>
+              <p><span>{{ new Date(chapter.updatedAt) | moment("from", "now") }}</span></p>
+            </td>
+            <td>
+              <span>Author:</span>
+              <p>Fauzi</p>
+            </td>
+            <td>
+              <span>Actions:</span>
+              <div>
+                <v-btn class="edit-btn tonal mr-2" rounded color="warning" @click="() => { updateDialog = true; choosenChapter = chapter; title = chapter.title }"><v-icon class="mr-2">mdi-pencil</v-icon>Edit</v-btn>
+                <v-btn class="delete-btn tonal" rounded color="error" @click="deleteChapter(chapter._id, chapter.version)"><v-icon class="mr-2">mdi-delete</v-icon>Delete</v-btn>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </v-card>
+    </div>
+
+    <v-pagination
+      v-if="pagination.total >= pagination.rowsPerPage"
+      v-model="pagination.page"
+      :length="pages"
+      :total-visible="5"
+      color="var(--secondary-purple-darker)"
+      prev-icon="mdi-menu-left"
+      next-icon="mdi-menu-right"
+      dark
+      class="chapter-pagination"
+    ></v-pagination>
 
     <!-- insert dialog -->
     <v-dialog
@@ -122,7 +151,12 @@ export default {
       versions: [],
       title: '',
       choosenVersion: '',
-      choosenChapter: ''
+      choosenChapter: '',
+      pagination: {
+        page: 1,
+        total: 0,
+        rowsPerPage: 5
+      }
     }
   },
   methods: {
@@ -210,7 +244,18 @@ export default {
       this.axios.get(`${this.$apiuri}/chapters`)
       .then(response => {
         this.chapters = response.data
+        this.pagination.total = this.chapters.length
       })
+    },
+  },
+  computed: {
+    pages () {
+      return Math.ceil(this.pagination.total / this.pagination.rowsPerPage)
+    },
+    cloneItems() {
+        var clone = JSON.parse(JSON.stringify(this.chapters));
+        var startFrom = (this.pagination.page*this.pagination.rowsPerPage)-this.pagination.rowsPerPage;
+        return clone.splice(startFrom, this.pagination.rowsPerPage);
     }
   },
   created(){
@@ -228,6 +273,74 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  button {
+    text-transform: none;
+    font-weight: bold;
+  }
 
+  .chapter-header {
+    margin: 0 50px;
+  }
+
+  .chapter-header button {
+    margin-bottom: 14px;
+  }
+  .chapter-header .search-input {
+    max-width: 300px;
+    min-width: 100px;
+    margin-top: 12px;
+  }
+
+
+  .chapter-list {
+    overflow-x: auto;
+    margin: 0 50px;
+  }
+  .chapter-card {
+    padding: 40px 20px;
+    background-color: var(--primary-dark-lighter);
+    min-width: 1200px;
+  }
+
+  table tr td {
+    text-align: left;
+    min-width: 300px;
+  }
+  
+  table tr td span {
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  table tr td p,
+  table tr td p span {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    margin-top: 5px;
+  }
+  
+  table tr td:first-child p {
+    font-weight: bold;
+  }
+
+  table tr td div {
+    margin-top: 5px;
+  }
+
+  table tr td button {
+    height: 35px !important;
+  }
+  
+  table tr td div .edit-btn {
+    background-color: #2c5282 !important;
+  }
+
+  table tr td div .delete-btn {
+    background-color: #a40d14 !important;
+  }
+
+  .chapter-header{
+    background-color: var(--primary-dark);
+  }
 </style>
