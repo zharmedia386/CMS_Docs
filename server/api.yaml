@@ -355,6 +355,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
+              example:
+                  id: 63f2e96c2b33fa161e141270
+                  title: Chapeter Baru Lho12
+                  documentation: 636de308766ae4515fc2117f
+                  version: [ver1.1]
       responses:
         200:
           description: Chapter was successfully modified
@@ -377,6 +382,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
+              example:
+                  id: 63f2e96c2b33fa161e141270
+                  version: [ver1.1]
       responses:
         200:
           description: Chapter was successfully deleted
@@ -429,6 +437,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
+              example:
+                  title: NEW SECTIONS
+                  content: <h1>Customize</h1><p>Learn how to theme, customize, and extend Bootst
+                  version: [ver1.1]
       responses:
         200:
           description: Section was successfully created
@@ -451,6 +463,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
+              example:
+                  id: 63ffda58db357bdc26c3e304
+                  title: TEST2
+                  content: <h1>Customize</h1><p>Learn how to theme, customize, and extend Bootst
       responses:
         200:
           description: Section was successfully modified
@@ -473,6 +489,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
+              example:
+                  id: 63ffd9b1d5465d685923519e
       responses:
         200:
           description: Section was successfully deleted
@@ -493,6 +511,10 @@ paths:
           required: true
           schema:
             type : string
+          examples:
+            id:
+              summary: Sections id
+              value: 63ffda58db357bdc26c3e304
       responses:
         '200':
           description: Section was successfully retrieved by id
