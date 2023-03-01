@@ -6,20 +6,20 @@ const mongo = require('mongodb')
 // Get all chapters info
 const getAllChapters = async (req, res) => {
     const Chapters = await chapterDB()
-    if (!Chapters) return res.status(204).json({ 'message': 'No chapter found.' });
+    if (!Chapters) return res.status(204).json({ 'message': 'Chapter tidak ditemukan.' });
 
     res.status(200).send(await Chapters.find({}).toArray())
 }
 
 // Get specified chapters info
 const getChaptersById = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ 'message': 'Chapters ID required.' });
+    if (!req?.params?.id) return res.status(400).json({ 'message': 'Masukan Chapter ID.' });
 
     const Chapters = await chapterDB()
     let objectId = new mongo.ObjectId(req.params.id)
 
     if (!Chapters) {
-        return res.status(204).json({ "message": `No chapters matches ID ${req.params.id}.` });
+        return res.status(204).json({ "message": `Chapter tidak cocok dengan ID ${req.params.id}.` });
     }
     
     res.status(200).send(await Chapters.find({_id : objectId}).toArray())
@@ -27,16 +27,16 @@ const getChaptersById = async (req, res) => {
 
 // Create chapters info
 const createNewChapter = async (req, res) => {
-    // check all field required
+    // cek field
     if (!req?.body?.title || !req?.body?.version) {
-        return res.status(400).json({ 'message': 'Title, and version is required' });
+        return res.status(400).json({ 'message': 'Judul dan Versi harus diisi' });
     }
 
     const Chapters = await chapterDB();
     const Documentation = await documentationDB();
 
     try {
-        // insert new chapters
+        // masukan chapter baru
         const insertedChapter = await Chapters.insertOne({
             title: req.body.title,
             version: req.body.version,
@@ -44,30 +44,30 @@ const createNewChapter = async (req, res) => {
             updatedAt: new Date() 
         })
 
-        // insert new chapters into documentations contents
+        // masukan chapter baru didalam dokumen
         const result = await Documentation.updateOne(
             { content: { $elemMatch: { "version": `${req.body.version[0]}` } } },
             { $push: { "content.$.chapter": { "_id": insertedChapter.insertedId, "title": `${req.body.title}` } } }
         )
 
-        // Check if chapters failed inserted into documentations content
+        // cek ketika chapter baru dimasukan kedalam dokumen
         if ( result.modifiedCount == 0 ) {
             // Cancel inserting new sections
             await Chapters.deleteOne({ _id: insertedChapter.insertedId });
-            throw new Error ("Error when try to insert chapter into documentations")
+            throw new Error ("Error ketika memasukan chapter")
         }
 
-        res.status(201).send({ message : "Chapters Data Created!" })
+        res.status(201).send({ message : "Chapter berhasil dibuat!" })
     } catch (err) {
         res.status(400).send({ message: err.message })
     }
 }
 
 const updateChapter = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ 'message': 'Chapters ID required.' });
+    if (!req?.body?.id) return res.status(400).json({ 'message': 'Chapter ID harus diisi.' });
 
     if (!req?.body?.title) {
-        return res.status(400).json({ 'message': 'Title is required' });
+        return res.status(400).json({ 'message': 'Judul harus diisi' });
     }
 
     let chapterId = new mongo.ObjectId(req.body.id)
@@ -81,13 +81,13 @@ const updateChapter = async (req, res) => {
     }
 
     try {
-        // update chapter in chapter collections
+        // update chapter
         await Chapters.updateOne(
             { _id: chapterId },
             { $set: chapter }
         )
         
-        // updating chapter title in documentation content
+        // update judul chapter
         await Documentation.updateOne(
             {},
             { $set: { "content.$[].chapter.$[ch].title": `${chapter.title}` } },
@@ -97,35 +97,8 @@ const updateChapter = async (req, res) => {
         res.status(400).send({ message: error.message })
     }
 
-    res.status(201).send({ message : "Chapters Data Updated!" })
+    res.status(201).send({ message : "Chapter Diperbaharui!" })
 }
-
-// const deleteChapter = async (req, res) => {
-//     if (!req?.body?.id || !req?.body?.version) return res.status(400).json({ 'message': 'Chapters ID and version required.' });
-
-//     let chapterId = new mongo.ObjectId(req.body.id)
-
-//     const Chapters = await chapterDB()
-//     const Documentation = await documentationDB();
-
-//     try {
-//         // update chapter in section collections
-//         await Chapters.deleteOne(
-//             { _id: chapterId }
-//         )
-        
-//         // updating chapter title in documentation content
-//         await Documentation.updateOne(
-//             {},
-//             { $pull: { "content.$[ct].chapter": { "_id": chapterId } } },
-//             { arrayFilters: [ { "ct.version":  req.body.version[0]} ] }
-//         )
-//     } catch (error) {
-//         res.status(400).send({ message: error.message })
-//     }
-
-//     res.status(201).send({ message : "Chapters Data Deleted!" })
-// }
 
 const deleteChapter = async (req, res) => {
     let content = req.body.content;
@@ -134,7 +107,7 @@ const deleteChapter = async (req, res) => {
     const section = []
 
     for (const ct of content) {
-        // Check if in version exist atleast one chapter
+        // Cek jka chapter sudah ada
         if(!ct?.chapter) { break }
 
         const chapter = ct.chapter.find((c) => c._id == chapterId)
@@ -153,12 +126,12 @@ const deleteChapter = async (req, res) => {
     const Documentation = await documentationDB();
 
     try {
-        // Delete chapter in chapter collections
+        // menghapus chapter di colection
         let result = await Chapter.deleteOne(
             { _id: chapterId }
         )
 
-        // Delete chapter in documentation structure
+        // menghapus chapter di struktur dokumentasi
         result = await Documentation.updateOne(
             {},
             { $pull: { "content.$[].chapter": { _id: chapterId } } }

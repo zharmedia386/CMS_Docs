@@ -1,4 +1,4 @@
-const documentationDB = require('../model/documentations')
+ const documentationDB = require('../model/documentations')
 const userCollection = require('../model/users');
 const mongo = require('mongodb')
 const bcrypt = require('bcrypt')
