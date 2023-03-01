@@ -281,8 +281,8 @@ export default {
 
   .chapter-header {
     margin: 0 50px;
+    background-color: var(--primary-dark);
   }
-
   .chapter-header button {
     margin-bottom: 14px;
   }
@@ -292,7 +292,6 @@ export default {
     margin-top: 12px;
   }
 
-
   .chapter-list {
     overflow-x: auto;
     margin: 0 50px;
@@ -300,12 +299,16 @@ export default {
   .chapter-card {
     padding: 40px 20px;
     background-color: var(--primary-dark-lighter);
-    min-width: 1200px;
+    min-width: 1000px;
   }
 
   table tr td {
     text-align: left;
     min-width: 300px;
+  }
+  table tr td:nth-child(2),
+  table tr td:nth-child(3) {
+    min-width: 200px;
   }
   
   table tr td span {
@@ -338,9 +341,5 @@ export default {
 
   table tr td div .delete-btn {
     background-color: #a40d14 !important;
-  }
-
-  .chapter-header{
-    background-color: var(--primary-dark);
   }
 </style>

@@ -1,13 +1,5 @@
 <template>
   <v-app>
-    <div v-if="loading" class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100%;">
-      <v-container>
-        <img src="@/assets/docmslogo.png" alt="logo" height="400" class="mb-16">
-        <p class="linear-wipe">Loading your content...</p>
-        <div class="animated-gradient progress-bar"></div>
-      </v-container>
-    </div>
-
     <div v-if="error">
       Error
     </div>
@@ -103,6 +95,14 @@
       <v-footer v-html="documentation.footer" class="cms-footer text-center d-flex justify-center align-center mt-5"
           :class="{ 'cms-footer-mobile': this.$vuetify.breakpoint.mobile }" dark>
       </v-footer>
+    </div>
+
+    <div v-if="loading" class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100%; z-index: position: absolute;">
+      <v-container>
+        <img src="@/assets/docmslogo.png" alt="logo" height="400" class="mb-16">
+        <p class="linear-wipe">Loading your content...</p>
+        <div class="animated-gradient progress-bar"></div>
+      </v-container>
     </div>
   </v-app>
 </template>
@@ -258,6 +258,7 @@ export default {
     background: -o-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
     background: -ms-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
     background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%); */
+    background-color: var(--primary-dark);
 }
 
 .cms-main-mobile {
