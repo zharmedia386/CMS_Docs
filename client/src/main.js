@@ -11,6 +11,10 @@ Vue.use(PiniaVuePlugin)
 const pinia = createPinia()
 Vue.use(VueAxios, axios)
 Vue.use(Scrollspy);
+<<<<<<< HEAD
+//Vue.use(require('vue-moment'));
+=======
+>>>>>>> fe6a5cc31512ccf19785d21ff17e9e83204e50c7
 
 // Turn off productionTip Warning
 Vue.config.productionTip = false

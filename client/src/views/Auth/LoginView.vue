@@ -6,7 +6,7 @@
                     
                     <v-col class="col-8 white d-flex justify-center align-center pa-8 card-resp" cols="12" sm="8" >
                       
-                      <v-card-text rounded class=" py-8 pl-8 ftl" >
+                      <v-card-text rounded class=" py-10 pl-8 ftl" >
                         <h1
                           class="text-left display-1 font-weight-normal"
                         >Sign in</h1>
@@ -20,7 +20,7 @@
                           <v-text-field
                             class="mt-12"
                             v-model="form.username"
-                            label="Email"
+                            label="Username"
                             variant="tonal"
                             :rules="form.usernameRules"
                             required
@@ -168,7 +168,7 @@ html{scroll-behavior:smooth}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: linear-gradient(115deg, #181C32, #181C32, #00E0FF, #FF00DA);
+  background: linear-gradient(115deg, #181C32, #181C32,#181C32, #00E0FF, #FF00DA);
   overflow: hidden;
 }
 // .one{
