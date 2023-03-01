@@ -122,7 +122,7 @@ export default {
         password : "",
         passwordRules: [
           v => !!v || 'Password is required',
-          v => v.length >= 4 || 'Min 4 characters'
+          v => v.length >= 10 || 'Min 4 characters'
         ],
         valid : true
       }
