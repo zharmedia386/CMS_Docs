@@ -1,13 +1,16 @@
-const documentationDB = require('../model/documentations')
+ const documentationDB = require('../model/documentations')
+const userCollection = require('../model/users');
 const mongo = require('mongodb')
+const bcrypt = require('bcrypt')
 
 const getAllDocumentationContent = async (req, res) => {
     const Documentations = await documentationDB()
 
-    res.status(200).send(await Documentations.find({})
-    .project({
-        "content": 1
-    }).toArray())
+    // res.status(200).send(await Documentations.find({})
+    // .project({
+    //     "content": 1
+    // }).toArray())
+    res.status(200).send(await Documentations.find({}).toArray())
 }
 
 // Get all documentation info
@@ -33,7 +36,7 @@ const getDocumentations = async (req, res) => {
         {
             "title": 1,
             "logo": 1,
-            "logoLink": 1,
+            "githubLink": 1,
             "footer": 1,
             "content.$": 1
         }
@@ -52,21 +55,71 @@ const getAllVersions = async (req, res) => {
 // Get all Metadatas
 const getMetadata = async (req, res) => {
     const Documentations = await documentationDB()
+    const User = await userCollection()
     
-    if (!Documentations) return res.status(204).json({ 'message': 'No documentation found.' });
-
-    res.status(200).send(await Documentations.find(
-        {
-
-        }
-    ).project(
-        {
+    if (!Documentations || !User) return res.status(204).json({ 'message': 'Metadata not found.' });
+    
+    try {
+        let webMetadata = await Documentations.find({}).project({
             "title": 1,
             "logo": 1,
-            "logoLink": 1,
-            "footer": 1,
+            "githubLink": 1,
+            "footer": 1
+        }).toArray()
+        let userMetadata = await User.find({}).project({
+            "username" : 1
+        }).toArray()
+        res.status(200).send({
+            "title" : webMetadata[0].title,
+            "logo": webMetadata[0].logo,
+            "githubLink": webMetadata[0].githubLink,
+            "footer": webMetadata[0].footer,
+            "username" : userMetadata[0].username
+        })
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+}
+
+const updateMetadata = async (req,res) => {
+    const Documentations = await documentationDB()
+    const User = await userCollection()
+    
+    if (!Documentations || !User) return res.status(204).json({ 'message': 'Metadata not found.'});
+
+    if (!req?.body?.title || !req?.body?.logo || !req?.body?.githubLink || !req?.body?.footer || !req?.body?.username) {
+        return res.status(400).json({'message': 'Please fill all required field'});
+    }
+
+    try {
+        let data = {
+            "title" : req.body.title,
+            "logo" : req.body.logo,
+            "githubLink" : req.body.githubLink,
+            "footer" : req.body.footer
         }
-    ).toArray())
+        const updateDoc = await Documentations.updateOne({}, {
+            $set : data
+        })
+        let user = {
+            "username" : req.body.username
+        }
+        if(req.body.password.length >= 4){
+            user.password = await bcrypt.hash(req.body.password, 10)
+        }
+        const updateUser = await User.updateOne({}, {
+            $set : user
+        })
+        let update = {
+            updateDoc,
+            updateUser,
+            "message" : "Metadata updated!"
+        }
+        res.status(200).send(update)
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+
 }
 
 // Create documentation info
@@ -83,7 +136,7 @@ const createNewDocumentation = async (req, res) => {
             title : req.body.title,
             logo : req.body.logo,
             description : req.body.description,
-            logoLink : req.body.logoLink,
+            githubLink : req.body.githubLink,
             footer : req.body.footer,
             content : req.body.content,
             createdAt : new Date(),
@@ -112,7 +165,7 @@ const updateDocumentation = async (req, res) => {
         title : req.body.title,
         logo : req.body.logo,
         description : req.body.description,
-        logoLink : req.body.logoLink,
+        githubLink : req.body.githubLink,
         footer : req.body.footer,
         updatedAt : new Date()
     }
@@ -153,28 +206,6 @@ const deleteDocumentation = async (req, res) => {
     })
 }
 
-const reorderDocumentationsContent = async (req, res) => {
-    if (!req?.body?.content) return res.status(400).json({ 'message': 'Documentations content required.' });
-
-    let content = req.body.content
-    console.log(content)
-
-    // // console.log(JSON.stringify(content))
-    const Documentation = await documentationDB();
-
-    try {
-        // updating chapter title in documentation content
-        await Documentation.updateOne(
-            {},
-            { $set: { "content": content } }
-        )
-    } catch (error) {
-        res.status(400).send({ message: error.message })
-    }
-    
-    res.status(200).send({ message: "Documentation content updated" })
-}
-
 module.exports = {
     getAllDocumentationContent,
     getDocumentations,
@@ -183,5 +214,5 @@ module.exports = {
     updateDocumentation,
     deleteDocumentation,
     getMetadata,
-    reorderDocumentationsContent
+    updateMetadata,
 }
