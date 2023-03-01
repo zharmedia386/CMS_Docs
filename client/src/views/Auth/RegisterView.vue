@@ -17,15 +17,15 @@
                         <v-form ref="form" v-model="form.valid" lazy-validation>
                           <v-text-field
                             class="mt-12"
-                            v-model="form.fullname"
-                            label="Full name"
+                            v-model="form.email"
+                            label="Email"
                             variant="tonal"
-                            :rules="form.fullnameRules"
+                            :rules="form.emailRules"
                             required
                           ></v-text-field>
                           <v-text-field
                             v-model="form.username"
-                            label="Email"
+                            label="Username"
                             variant="tonal"
                             :rules="form.usernameRules"
                             required
@@ -100,9 +100,9 @@ export default {
   data(){
     return {
       form : {
-        fullname : "",
-        fullnameRules: [
-          v => !!v || 'Fullname is required',
+        email : "",
+        emailRules: [
+          v => !!v || 'Email is required',
           v => v.length >= 4 || 'Min 4 characters'
         ],
         username : "",
@@ -156,7 +156,7 @@ html{scroll-behavior:smooth}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: linear-gradient(115deg, #181C32, #181C32, #00E0FF, #FF00DA);
+  background: linear-gradient(115deg, #181C32, #181C32,#181C32, #00E0FF, #FF00DA);
   overflow: hidden;
 }
 
