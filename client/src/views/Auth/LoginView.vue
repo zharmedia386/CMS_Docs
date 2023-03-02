@@ -1,17 +1,12 @@
 <template>
-  <v-app id="inspire">
-    <v-content>
-      <v-container class="fill-height" fluid>
-        <v-row align="center" justify="center">
-          <v-col cols="12" sm="5" md="5" >
-            
-            <v-card round class="elevation-8 rounded-xl" >
-              <v-window v-model="step">
-                <v-window-item :value="1">
-                  <v-row>
+  <div id="inspire">
+    <v-container class="d-flex justify-center mt-9 mb-10">
+      <v-container class="mb-2">
+      <v-row class="d-flex justify-center ">
                     
-                    <v-col cols="12" md="8">
-                      <v-card-text rounded class="mt-12 pa-20 py-8 pl-8" >
+                    <v-col class="col-8 white d-flex justify-center align-center pa-8 card-resp" cols="12" sm="8" >
+                      
+                      <v-card-text rounded class=" py-10 pl-8 ftl" >
                         <h1
                           class="text-left display-1 font-weight-normal"
                         >Sign in</h1>
@@ -23,8 +18,9 @@
                         <v-form ref="form" v-model="form.valid" lazy-validation>
                           
                           <v-text-field
+                            class="mt-12"
                             v-model="form.username"
-                            label="Email"
+                            label="Username"
                             variant="tonal"
                             :rules="form.usernameRules"
                             required
@@ -37,34 +33,76 @@
                             :rules="form.passwordRules"
                             required
                           ></v-text-field>
+                          
                           <v-btn block @click="login()"
-                          class="ma-1"
-                          color="#FF00D6" dark>
+                          class="ma-1 mt-15 gradient-btn">
                             Sign in
                           </v-btn>
-
-                          <h5>Don't have an account?Create Account</h5>
-
+                          <!-- <v-row class="one">
+                            <v-col class="second">
+                              <v-sheet class="pa-2 ma-2">
+                                <h5>Don't have an account?</h5>
+                              </v-sheet>
+                            </v-col>
+                            <v-col class="third">
+                              <v-sheet class="pa-2 ma-2">
+                                <router-link to="/register" class="text-decoration-none">
+                                  <h5 class="font1">Create Account</h5>
+                                </router-link>
+                              </v-sheet>
+                            </v-col>
+                          </v-row> -->
+                          <div class="mt-3">
+                            <h5>Don't have an account?
+                              <router-link to="/register" class="text-decoration-none">
+                              <span class="font1">Create Account</span>
+                              </router-link>
+                            </h5>
+                          </div>
                         </v-form>
                         
                       </v-card-text>
-                      
+                    
                     </v-col>
-                    <v-col cols="12" md="4" class="black" >
-                    <img src="@/assets/docms1.jpeg"  width="200" height="400">
+                    <v-col class="d-none d-sm-flex col-2 d-flex justify-center align-center" cols="0" style="padding: 0;">
+                      <img src="@/assets/docms1.jpeg" class="d-none d-sm-flex" style="width: 100% ; border-radius: 0 20px 20px 0">
+
                     </v-col>
-
-
+                  
 
                   </v-row>
-                </v-window-item>
-              </v-window>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-content>
-  </v-app>
+                </v-container>
+    </v-container>
+    <v-footer class="pt-5 pr-8 mt-5 pb-3" style="background-color: rgba(0, 0, 0, 0.25)">
+      <!-- <div class="d-flex justify-space-between">
+      <div class="d-flex ">
+      <p class="font-weight-light mr-9 ml-16" style="color: #8B949E">
+        @2023 DoCMS. 
+      </p>
+      <p class="font-weight-light mr-9" style="color: #8B949E">
+        Terms
+      </p>
+      <p class="font-weight-light" style="color: #8B949E">
+        Privacy(Updated 8/2022)
+      </p>
+      </div>
+      <div class="d-flex align-end">
+        <img src="@/assets/github.png" class="">
+      </div>
+    </div> -->
+    <v-row>
+      <v-col md="3" cols="6" style="color: #8B949E">
+        <span class="mr-15 ml-1">@2023 DoCMS.</span>
+        <!-- <span class="mr-9">Terms</span>
+        <span>Privacy(Updated 8/2022)</span> -->
+      </v-col>
+      <v-col md="9" cols="6" class="text-right">
+        <img src="@/assets/github.png">
+      </v-col>
+    </v-row>
+
+    </v-footer>
+  </div>
 </template>
 
 <script>
@@ -73,6 +111,8 @@ export default {
   props : ['message', 'status', 'msgtype'],
   data(){
     return {
+
+
       form : {
         username : "",
         usernameRules: [
@@ -82,10 +122,11 @@ export default {
         password : "",
         passwordRules: [
           v => !!v || 'Password is required',
-          v => v.length >= 4 || 'Min 4 characters'
+          v => v.length >= 10 || 'Min 4 characters'
         ],
         valid : true
       }
+
     }
   },
   methods: {
@@ -112,6 +153,8 @@ export default {
       this.$root.SnackBar.show({ message: this.message, color: this.msgtype, icon: 'mdi-check-circle' })
     }
   },
+
+
   
 }
 </script>
@@ -125,9 +168,42 @@ html{scroll-behavior:smooth}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: #16192d;
+  background: linear-gradient(115deg, #181C32, #181C32,#181C32, #00E0FF, #FF00DA);
+  overflow: hidden;
+}
+// .one{
+//   padding-left: 98px;
+//   padding-right: 201px;
+// }
+// .second{
+//   padding: -100px;
+//   margin-left: 110px;
+// }
+// .third{
+//   margin-left: -50px;
+//   padding-right: -200px;
+// }
+.gradient-btn {
+  background: linear-gradient(90deg, #FF00D6 8.81%, #00E0FF 94.11%);
+  color: white;
 }
 
+.gradient-btn:hover {
+  background: linear-gradient(to right, #00E0FF, #FF00DA);
+  /* Sesuaikan dengan warna gradient yang diinginkan saat button dihover */
+}
 
+.font1 {
+  color:#FF00D6;
+}
+
+.card-resp{
+   border-radius: 20px 0 0 20px;
+}
+@media only screen and (max-width: 600px) { 
+    .card-resp{
+          border-radius: 20px;
+    }
+}
 
 </style>

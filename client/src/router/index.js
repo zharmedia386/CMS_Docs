@@ -9,6 +9,7 @@ import Metadata from '../views/CMS/MetadataInfo.vue'
 import SectionEditor from '../views/CMS/SectionEditor.vue'
 import Versioning from '../views/CMS/VersioningEditor.vue'
 import Login from '../views/Auth/LoginView.vue'
+import Register from '../views/Auth/RegisterView.vue'
 import axios from 'axios'
 
 Vue.use(VueRouter)
@@ -64,7 +65,14 @@ const routes = [
     name: 'login',
     component: Login,
     props : true
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: Register,
+    props : true
   }
+
 ]
 
 const router = new VueRouter({
@@ -76,9 +84,9 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   if(to.path.includes("cms")){
     if(localStorage.token){
-      axios.get(`http://localhost:3500/auth/${localStorage.token}`)
+      axios.get(`https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/auth/${localStorage.token}`)
+      // axios.get(`http://localhost:3500/auth/${localStorage.token}`)
       // axios.get(`https://cmsdocs-production.up.railway.app/auth/${localStorage.token}`)
-      // axios.get(`https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/auth/${localStorage.token}`)
       .then(res => {
         localStorage.setItem('token', res.data)
         next()

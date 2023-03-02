@@ -155,6 +155,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/loginAuthentication'
+            example:
+              user: cms1
+              pwd: yvO1ToRSCU
       responses:
         200:
           description: Use was successfully authenticated   
@@ -213,6 +216,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Documentation'
+              example:
+                  title: CMS Documentations
+                  footer: <p>Copyright Invite CSS 2022</p>
+                  description: Invite CSS documentation page
+                  githubLink: https://github.com
+                  logo: /assets/images/invitecss.png
+                  logoLink: [{link: https://github.com/, linkCategory: github}]
+                  content: [{version: 1.2, chapter: {title: getting started}}]
       responses:
         200:
           description: Documentation was successfully created
@@ -235,6 +246,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Documentation'
+              example:
+                  _id: {$oid: 63f2e040d23b3e9d5bfe0c50}
+                  title: CMS Documentations
+                  footer: <p>Copyright Invite CSS 2022</p>
+                  description: Invite CSS documentation page
+                  githubLink: https://github.com
+                  logo: /assets/images/invitecss.png
+                  logoLink: [{link: https://github.com/, linkCategory: github}]
       responses:
         200:
           description: Documentation was successfully modified
@@ -257,6 +276,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Documentation'
+              example:
+                  id: 63f2e040d23b3e9d5bfe0c50
       responses:
         200:
           description: Documentation was successfully deleted
@@ -308,6 +329,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
+              example:
+                  title: Chapeter Baru Lho2
+                  documentation: 636de308766ae4515fc2117f
+                  version: [ver1.1]
       responses:
         200:
           description: Chapters data was successfully created
@@ -330,6 +355,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
+              example:
+                  id: 63f2e96c2b33fa161e141270
+                  title: Chapeter Baru Lho12
+                  documentation: 636de308766ae4515fc2117f
+                  version: [ver1.1]
       responses:
         200:
           description: Chapter was successfully modified
@@ -352,6 +382,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Chapter'
+              example:
+                  id: 63f2e96c2b33fa161e141270
+                  version: [ver1.1]
       responses:
         200:
           description: Chapter was successfully deleted
@@ -372,6 +405,10 @@ paths:
           required: true
           schema:
             type : string
+          examples:
+            id:
+              summary: Chapters id
+              value: 638635fb846002acad08cc87
       responses:
         '200':
           description: Chapter has been successfully retrieved by id
@@ -400,6 +437,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
+              example:
+                  title: NEW SECTIONS
+                  content: <h1>Customize</h1><p>Learn how to theme, customize, and extend Bootst
+                  version: [ver1.1]
       responses:
         200:
           description: Section was successfully created
@@ -422,6 +463,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
+              example:
+                  id: 63ffda58db357bdc26c3e304
+                  title: TEST2
+                  content: <h1>Customize</h1><p>Learn how to theme, customize, and extend Bootst
       responses:
         200:
           description: Section was successfully modified
@@ -444,6 +489,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
+              example:
+                  id: 63ffd9b1d5465d685923519e
       responses:
         200:
           description: Section was successfully deleted
@@ -464,6 +511,10 @@ paths:
           required: true
           schema:
             type : string
+          examples:
+            id:
+              summary: Sections id
+              value: 63ffda58db357bdc26c3e304
       responses:
         '200':
           description: Section was successfully retrieved by id
