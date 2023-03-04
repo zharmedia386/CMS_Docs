@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="chapter-header elevation-0" dark>
       <v-card-title class="d-flex justify-space-between pa-0">
-        <v-text-field dense outlined placeholder="Search..." class="search-input"></v-text-field>
+        <v-text-field dense outlined placeholder="Search..." class="search-input" v-model="searchKeyword"></v-text-field>
         <v-btn 
           @click="dialog = true"
           color="#939AFF"
@@ -15,7 +15,12 @@
     </v-card>
 
     <div class="chapter-list">
-      <v-card variant="tonal" class="chapter-card table-responsive mb-3" dark v-for="(chapter, index) in cloneItems" v-bind:key="index">
+      <div v-if="filteredChapter.length === 0">
+        <v-card variant="tonal" class="chapter-card table-responsive mb-3" dark>
+          <span>No result found</span>
+        </v-card>
+      </div>
+      <v-card variant="tonal" class="chapter-card table-responsive mb-3" dark v-for="(chapter, index) in (searchKeyword) ? filteredChapter: cloneItems" v-bind:key="index">
         <table style="width: 100%;">
           <tr>
             <td>
@@ -43,7 +48,7 @@
     </div>
 
     <v-pagination
-      v-if="pagination.total >= pagination.rowsPerPage"
+      v-if="(pagination.total >= pagination.rowsPerPage) && (!searchKeyword)"
       v-model="pagination.page"
       :length="pages"
       :total-visible="5"
@@ -60,29 +65,31 @@
       width="500"
     >
       <v-form>
-        <v-card>
-          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium">
-            Create New Chapter
-          </v-toolbar>
+        <v-card class="card-dialog" dark>
+          <v-card-title class="text-h5 font-weight-medium justify-center">
+            <span>Create New Chapter</span>
+          </v-card-title>
           <br>
-          <v-text-field
+          <v-card-text>
+            <v-text-field
             v-model="title"
             label="Input Title"
             class="pl-5 pr-5"
             :rules="[v => !!v || 'Chapter title is required']"
-            outlined
+            filled
             required
           ></v-text-field>
 
           <v-select
               v-model="choosenVersion"
               :items="versions"
-              outlined
+              filled
               label="Choose Version"
               class="pl-5 pr-5"
               :rules="[v => !!v || 'Please choose version']"
               required
           ></v-select>
+          </v-card-text>
 
           <v-divider></v-divider>
 
@@ -93,6 +100,7 @@
               color="primary"
               text
               @click="save"
+              dark
             >
               Save
             </v-btn>
@@ -107,10 +115,10 @@
       v-model="updateDialog"
       width="500"
     >
-      <v-card>
-        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium">
-          Update Chapter
-        </v-toolbar>
+      <v-card class="card-dialog" dark>
+        <v-card-title class="text-h5 font-weight-medium justify-center">
+          <span>Update Chapter</span>
+        </v-card-title>
         <br>
 
         <v-text-field
@@ -156,7 +164,8 @@ export default {
         page: 1,
         total: 0,
         rowsPerPage: 5
-      }
+      },
+      searchKeyword: ''
     }
   },
   methods: {
@@ -256,6 +265,11 @@ export default {
         var clone = JSON.parse(JSON.stringify(this.chapters));
         var startFrom = (this.pagination.page*this.pagination.rowsPerPage)-this.pagination.rowsPerPage;
         return clone.splice(startFrom, this.pagination.rowsPerPage);
+    },
+    filteredChapter() {
+      return this.chapters.filter((chapter) =>
+        chapter.title.toLowerCase().includes(this.searchKeyword.toLowerCase())
+      );
     }
   },
   created(){
@@ -342,4 +356,12 @@ export default {
   table tr td div .delete-btn {
     background-color: #a40d14 !important;
   }
+
+  .card-dialog .v-card__title{
+    background-color: var(--primary-blue-lighter);
+  }
+  .card-dialog {
+    background-color: var(--primary-dark);
+  }
+  
 </style>
