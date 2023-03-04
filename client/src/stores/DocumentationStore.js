@@ -23,8 +23,8 @@ export const useDocumentationStore = defineStore({
             this.loading = true;
 
             try {
-                // const response = await axios.get('http://localhost:3500/documentations');
-                const response = await axios.get('https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/documentations');
+                const response = await axios.get('http://localhost:3500/documentations');
+                // const response = await axios.get('https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/documentations');
 
                 // set all documentations data
                 this.documentation = response.data[0];

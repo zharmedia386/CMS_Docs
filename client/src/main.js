@@ -11,17 +11,14 @@ Vue.use(PiniaVuePlugin)
 const pinia = createPinia()
 Vue.use(VueAxios, axios)
 Vue.use(Scrollspy);
-<<<<<<< HEAD
-//Vue.use(require('vue-moment'));
-=======
->>>>>>> fe6a5cc31512ccf19785d21ff17e9e83204e50c7
+Vue.use(require('vue-moment'));
 
 // Turn off productionTip Warning
 Vue.config.productionTip = false
 
-Vue.prototype.$apiuri = "https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io"
+// Vue.prototype.$apiuri = "https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io"
 // Vue.prototype.$apiuri = "https://cmsdocs-production.up.railway.app"
-// Vue.prototype.$apiuri = "http://localhost:3500"
+Vue.prototype.$apiuri = "http://localhost:3500"
 
 
 new Vue({

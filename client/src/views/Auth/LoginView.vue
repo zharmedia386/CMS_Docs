@@ -31,6 +31,7 @@
                             :type="show1 ? 'text' : 'password'"
                             label="Password"
                             :rules="form.passwordRules"
+                            @click:append="show1 = !show1"
                             required
                           ></v-text-field>
                           
@@ -111,7 +112,7 @@ export default {
   props : ['message', 'status', 'msgtype'],
   data(){
     return {
-
+      show1: false,
 
       form : {
         username : "",
@@ -185,7 +186,7 @@ html{scroll-behavior:smooth}
 // }
 .gradient-btn {
   background: linear-gradient(90deg, #FF00D6 8.81%, #00E0FF 94.11%);
-  color: white;
+  color: white !important;
 }
 
 .gradient-btn:hover {

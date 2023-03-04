@@ -10,6 +10,7 @@ import SectionEditor from '../views/CMS/SectionEditor.vue'
 import Versioning from '../views/CMS/VersioningEditor.vue'
 import Login from '../views/Auth/LoginView.vue'
 import Register from '../views/Auth/RegisterView.vue'
+import ProfileInfo from '../views/CMS/ProfileInfo.vue'
 import axios from 'axios'
 
 Vue.use(VueRouter)
@@ -57,6 +58,11 @@ const routes = [
         path: 'version',
         name: 'version',
         component: Versioning
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: ProfileInfo
       }
     ]
   },
@@ -84,8 +90,8 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   if(to.path.includes("cms")){
     if(localStorage.token){
-      axios.get(`https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/auth/${localStorage.token}`)
-      // axios.get(`http://localhost:3500/auth/${localStorage.token}`)
+      // axios.get(`https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/auth/${localStorage.token}`)
+      axios.get(`http://localhost:3500/auth/${localStorage.token}`)
       // axios.get(`https://cmsdocs-production.up.railway.app/auth/${localStorage.token}`)
       .then(res => {
         localStorage.setItem('token', res.data)

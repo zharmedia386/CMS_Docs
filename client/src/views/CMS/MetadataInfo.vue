@@ -7,13 +7,14 @@
     class="border-opacity-100"
     color="white"
     ></v-divider>
+    <div style="relative">
     <v-row>
-      <v-col cols="4" class="mt-6 text-container">
+      <v-col cols="4" class="mt-15 ml-8 text-container">
         <v-list-subheader>Logo Picture</v-list-subheader>
       </v-col>
 
-      <v-col cols="1" class="mt-3">
-        <v-file-input
+      <v-col cols="1" class="mt-8">
+        <!-- <v-file-input
                 label="Logo"
                 rounded="circle"
                 
@@ -23,19 +24,50 @@
                 @change="getBase64()"
                 filled
                 required
-        ></v-file-input>
+        ></v-file-input> -->
+        <!-- <v-file-input
+          v-model="image"
+          accept="image/*"
+          @change="getBase64()"
+          prepend-icon="mdi-camera"
+        >
+            <div class="circle">
+              <img :src="metadata.logo" class="preview-image" />
+            </div>
+            <div class="circle placeholder">{{ text }}</div>
+
+        </v-file-input> -->
+        <div>
+          <label for="input-file">
+            <div class="circle">
+              <img :src="metadata.logo"  />
+              <div class="placeholder">Choose an image</div>
+            </div>
+          </label>
+          <!-- <input id="input-file" type="file" accept="image/*" @change="getBase64()" /> -->
+          <v-file-input
+            id="input-file"
+            accept="image/*"
+            prepend-icon="mdi-camera"
+            class="camera-input"
+            @change="getBase64()"
+          />
+        </div>
+
         </v-col>
-            <v-col cols="1" style="max-width: 100%; border-radius: 0 20px 0 20px;">
+            <!-- <v-col cols="1" style="max-width: 100%; border-radius: 0 20px 0 20px;">
               <img :src="metadata.logo" style="max-width: 100%;" />
-            </v-col>
+            </v-col> -->
+        
     </v-row>
-
+    </div>
     <v-row>
-      <v-col cols="4" class="mt-4 text-container">
-        <v-list-subheader>Title</v-list-subheader>
-      </v-col>
+      
+    <v-col cols="4" class="mt-4 ml-8 text-container">
+      <v-list-subheader>Title</v-list-subheader>
+    </v-col>
 
-    <v-col variant="tonal" cols="8" >
+    <v-col cols="7" class="mt-1" >
         <v-text-field dark
           v-model="metadata.title"
           :rules="rules.title"
@@ -47,11 +79,11 @@
     </v-row>
 
     <v-row>
-      <v-col cols="4" class="mt-4 text-container">
+      <v-col cols="4" class="mt-4 ml-8 text-container">
         <v-list-subheader>Github Link</v-list-subheader>
       </v-col>
 
-      <v-col cols="8">
+      <v-col cols="7" class="mt-1">
         <v-text-field dark
           
           v-model="metadata.githubLink"
@@ -66,16 +98,14 @@
     <v-row>
       <v-col dark 
       cols="4" 
-      class="mt-4 text-container"
-      
-      >
+      class="mt-4 ml-8 text-container">
         <v-list-subheader dark
         solo-inverted
         >Footer
         </v-list-subheader>
       </v-col> 
 
-      <v-col cols="8" solo-inverted>
+      <v-col cols="7" class="mb-12" solo-inverted>
           <vue-editor  v-model="metadata.footer"></vue-editor>
           
       </v-col>
@@ -89,7 +119,7 @@
 
     <div class="d-flex justify-end">
       <v-btn class="mt-3 mr-3 colorbtn1" variant="flat">Discard</v-btn>
-      <v-btn type="submit" class="mt-3 colorbtn" >Save Changes</v-btn>
+      <v-btn type="submit" class="mt-3 mr-6 colorbtn" >Save Changes</v-btn>
     </div>
      
   </v-container>
@@ -130,6 +160,14 @@ export default {
   VueEditor
  },
   methods: {
+    // handleImageUpload(event) {
+    //   const file = event.target.files[0];
+    //   const reader = new FileReader();
+    //   reader.readAsDataURL(file);
+    //   reader.onload = () => {
+    //     this.image = reader.result;
+    //   };
+    // },
     getBase64(){
       const base64 = new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -181,7 +219,8 @@ export default {
         footer : "",
         githubLink : "",
         username : "",
-        password : ""
+        password : "",
+        image :null
       },
       rules : {
         title : [
@@ -238,6 +277,70 @@ export default {
   color:white !important;
 
 }
+.circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background-color:white;
+}
+
+.circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ccc;
+  background-color: #f5f5f5;
+}
+#input-file {
+  position: absolute;
+  left: -99999px;
+}
+
+label[for="input-file"] {
+  cursor: pointer;
+}
+/* .my-icon-class {
+  margin-bottom: 50px;
+  margin-right: 50px;
+} */
+.camera-input .v-icon.mdi.mdi-camera {
+    margin-bottom: 60px;
+    margin-left: 155px;
+    background-color: #FF00D6;
+    border-radius: 50px;
+    padding: 8px;
+}
+.vue-editor--wrapper {
+  background-color: white !important;
+}
+
+.vue-editor--wrapper:focus {
+  background-color: white;
+}
+/* .v-icon.mdi-camera:not(.v-icon--disabled)::before {
+  border: none;
+} */
+
+/* .v-icon.mdi-camera{
+  margin-top: 50px;
+  color: #2c3e50; */
+  /* background-color: var(--primary-dark); */
+/* } */
+/* .theme--light.v-file-input .v-icon.mdi-camera:before {
+  box-shadow: none;
+} */
 /* .theme--light.v-btn.v-btn--has-bg{
   background-color:#939AFF;
 } */
