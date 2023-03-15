@@ -6,6 +6,7 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Scrollspy from 'vue2-scrollspy';
 import { createPinia, PiniaVuePlugin } from 'pinia';
+//import VueEditor from 'primevue/editor';
 
 Vue.use(PiniaVuePlugin)
 const pinia = createPinia()
@@ -16,9 +17,9 @@ Vue.use(require('vue-moment'));
 // Turn off productionTip Warning
 Vue.config.productionTip = false
 
-Vue.prototype.$apiuri = "https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io"
+// Vue.prototype.$apiuri = "https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io"
 // Vue.prototype.$apiuri = "https://cmsdocs-production.up.railway.app"
-// Vue.prototype.$apiuri = "http://localhost:3500"
+Vue.prototype.$apiuri = "http://localhost:3500"
 
 
 new Vue({

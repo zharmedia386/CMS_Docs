@@ -143,6 +143,13 @@ export default {
             name: 'version'
           },
           icon: 'mdi-folder'
+        },
+        {
+          title: 'Profile',
+          ref: {
+            name: 'profile'
+          },
+          icon: 'mdi-account-multiple'
         }
       ],
       user: true,
