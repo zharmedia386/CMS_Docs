@@ -154,6 +154,7 @@
 
 <script>
 import { VueEditor } from "vue2-editor";
+//import VueEditor from 'primevue/editor';
 
 export default {
   components: {
