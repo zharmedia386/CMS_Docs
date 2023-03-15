@@ -16,7 +16,7 @@
     </v-card> -->
     <v-card class="section-header elevation-0" dark>
       <v-card-title class="d-flex justify-space-between pa-0">
-        <v-text-field dense outlined placeholder="Search..." class="search-input"></v-text-field>
+        <v-text-field dense outlined placeholder="Search..." class="search-input"  v-model="searchKeyword"></v-text-field>
         <v-btn 
           to="/cms/section/create"
           color="#939AFF"
@@ -29,7 +29,12 @@
     </v-card>
 
     <div class="section-list">
-      <v-card variant="tonal" class="section-card table-responsive mb-3" dark v-for="(section, index) in cloneItems" v-bind:key="index">
+      <div v-if="filteredSection.length === 0">
+        <v-card variant="tonal" class="section-card table-responsive mb-3" dark>
+          <span>No result found</span>
+        </v-card>
+      </div>
+      <v-card variant="tonal" class="section-card table-responsive mb-3" dark v-for="(section, index) in (searchKeyword) ? filteredSection: cloneItems" v-bind:key="index">
         <table style="width: 100%;">
           <tr>
             <td>
@@ -80,7 +85,8 @@ export default {
         page: 1,
         total: 0,
         rowsPerPage: 5
-      }
+      },
+      searchKeyword: ''
     }
   },
   methods :{
@@ -125,6 +131,11 @@ export default {
         var clone = JSON.parse(JSON.stringify(this.sections));
         var startFrom = (this.pagination.page*this.pagination.rowsPerPage)-this.pagination.rowsPerPage;
         return clone.splice(startFrom, this.pagination.rowsPerPage);
+    },
+    filteredSection() {
+      return this.sections.filter((section) =>
+        section.title.toLowerCase().includes(this.searchKeyword.toLowerCase())
+      );
     }
   },
   created(){
