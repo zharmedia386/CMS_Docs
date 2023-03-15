@@ -81,16 +81,6 @@ export default {
     text-align: left;
 }
 
-/* .content > pre{
-    padding: 10px 15px 10px 15px;
-    background-color: rgba(0, 0, 0, 0.875);
-    border-radius: 5px;
-    color: yellowgreen;
-    font-family: "Consolas";
-    font-size: 13px;
-    white-space: pre-wrap;  
-} */
-
 pre {
   background-color: #94a3b825;
   border-radius: 4px;
