@@ -32,9 +32,9 @@
               <v-list-item>
                 <div style="display: flex; justify-content: space-between; width: 100%;">
                   <div style="min-width: 200px; text-align: left;">
-                    <strong>Content Version</strong>
+                    <strong>Version Name</strong>
                   </div>
-                  <div style="min-width: 400px; display: flex; justify-content: start;">
+                  <div style="min-width: 250px; display: flex; justify-content: start;">
                     <strong>Action</strong>
                   </div>
                 </div>
@@ -53,7 +53,7 @@
                   <div style="min-width: 200px; text-align: left;">
                     {{ ct.version }}
                   </div>
-                  <div style="min-width: 400px; display: flex; justify-content: start;">
+                  <div style="min-width: 250px; display: flex; justify-content: start;">
                     <v-btn class="edit-btn tonal mr-2" rounded color="warning"><v-icon
                         class="mr-2">mdi-pencil</v-icon>Edit</v-btn>
                     <v-btn class="delete-btn tonal" rounded color="error"><v-icon
