@@ -6,6 +6,7 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Scrollspy from 'vue2-scrollspy';
 import { createPinia, PiniaVuePlugin } from 'pinia';
+//import VueEditor from 'primevue/editor';
 
 Vue.use(PiniaVuePlugin)
 const pinia = createPinia()

@@ -10,6 +10,7 @@ import SectionEditor from '../views/CMS/SectionEditor.vue'
 import Versioning from '../views/CMS/VersioningEditor.vue'
 import Login from '../views/Auth/LoginView.vue'
 import Register from '../views/Auth/RegisterView.vue'
+import ProfileInfo from '../views/CMS/ProfileInfo.vue'
 import axios from 'axios'
 
 Vue.use(VueRouter)
@@ -57,6 +58,11 @@ const routes = [
         path: 'version',
         name: 'version',
         component: Versioning
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: ProfileInfo
       }
     ]
   },
