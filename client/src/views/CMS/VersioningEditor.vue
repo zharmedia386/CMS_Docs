@@ -9,18 +9,38 @@
 
       <v-tabs-items v-model="tab" dark>
         <v-tab-item>
-          <v-card color="#3A4052">
-            <v-card-title class="mt-4" style="display: flex; justify-content: space-between;">
-              <h2>Content Version</h2>
-              <v-btn class="blue darken-4 white--text mr-5" @click="() => { createDialog = true }">Create Version</v-btn>
-            </v-card-title>
+          <v-card color="#3A4052" style="overflow: auto;">
+            <!-- <v-card-title class="mt-4">
+              <div style="display: flex; justify-content: space-between; width: 100%;">
+                <h2 style="min-width: 300px; text-align: left;">Content Version</h2>
+                <v-btn class="blue darken-4 white--text" @click="() => { createDialog = true }">Create Version</v-btn>
+              </div>
+            </v-card-title> -->
             <!-- <v-container class="d-flex justify-start pt-5 pb-5">
               <v-btn class="blue darken-4 white--text mr-5" @click="() => { deleteDialog = true }">Delete Version</v-btn>
               <v-btn class="blue darken-4 white--text mr-5" @click="() => { editDialog = true }">Edit Version</v-btn>
             </v-container> -->
             <v-list color="#3A4052">
+              <!-- <div style="display: flex; justify-content: space-between; width: 100%;">
+                <div style="min-width: 200px; text-align: left; padding-left: 16px;">
+                  Version Name
+                </div>
+                <div style="min-width: 400px; text-align: left;">
+                  Action
+                </div>
+              </div> -->
+              <v-list-item>
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                  <div style="min-width: 200px; text-align: left;">
+                    <strong>Content Version</strong>
+                  </div>
+                  <div style="min-width: 400px; display: flex; justify-content: start;">
+                    <strong>Action</strong>
+                  </div>
+                </div>
+              </v-list-item>
               <v-list-item v-for="(ct, i) in content" :key="i" style="margin: 20px 0;">
-                <v-row style="overflow: auto;">
+                <!-- <v-row style="overflow: auto;">
                   <v-col style="text-align: left; min-width: 200px;">
                     {{ ct.version }}
                   </v-col>
@@ -28,7 +48,18 @@
                     <v-btn class="edit-btn tonal mr-2" rounded color="warning"><v-icon class="mr-2">mdi-pencil</v-icon>Edit</v-btn>
                     <v-btn class="delete-btn tonal" rounded color="error"><v-icon class="mr-2">mdi-delete</v-icon>Delete</v-btn>
                   </v-col>
-                </v-row>
+                </v-row> -->
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                  <div style="min-width: 200px; text-align: left;">
+                    {{ ct.version }}
+                  </div>
+                  <div style="min-width: 400px; display: flex; justify-content: start;">
+                    <v-btn class="edit-btn tonal mr-2" rounded color="warning"><v-icon
+                        class="mr-2">mdi-pencil</v-icon>Edit</v-btn>
+                    <v-btn class="delete-btn tonal" rounded color="error"><v-icon
+                        class="mr-2">mdi-delete</v-icon>Delete</v-btn>
+                  </div>
+                </div>
               </v-list-item>
             </v-list>
           </v-card>
@@ -94,7 +125,7 @@
                   </v-col>
 
                   <!-- Move Up/Down Chapter -->
-                  <v-col cols="2" class="my-auto" >
+                  <v-col cols="2" class="my-auto">
                     <!-- Move Up Chapter -->
                     <v-btn class="mr-2" small outlined fab :disabled="i == 0" @click="moveUpChapter(i)">
                       <v-icon>mdi-arrow-up</v-icon>
