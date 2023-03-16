@@ -89,9 +89,9 @@ const updateChapter = async (req, res) => {
         
         // update judul chapter
         await Documentation.updateOne(
-            {},
-            { $set: { "content.$[].chapter.$[ch].title": `${chapter.title}` } },
-            { arrayFilters: [ { "ch._id": chapterId } ] }
+            { "content.chapter._id": chapterId },
+            { $set: { "content.$[c].chapter.$[ch].title": `${chapter.title}` } },
+            { arrayFilters: [ { "c.chapter._id": chapterId }, { "ch._id": chapterId } ] }
         )
     } catch (error) {
         res.status(400).send({ message: error.message })

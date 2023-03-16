@@ -101,7 +101,7 @@ const deleteSection = async (req, res) => {
         
         // updating section title in documentation content
         await Documentation.updateOne(
-            {},
+            { "content.chapter.section._id": sectionId },
             { $pull: { "content.$[].chapter.$[].section": { "_id": sectionId } } }
         )
     } catch (error) {
