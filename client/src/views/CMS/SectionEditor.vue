@@ -2,19 +2,19 @@
   <v-form @submit.prevent="saveData()">
     <v-container>
       <h1 style="color: var(--primary-purple); text-align: left; margin-bottom: 10px;">Section Editor</h1>
-      <hr>
-      <div style="color: white; width: 300px; margin-top: 40px;">
+      <hr style="margin-bottom: 40px;">
+      <div style="color: white; width: 300px;" v-if="create">
         <label for="select-section" style="text-align: left; display: block;">Load Section</label>
         <v-select
           id="select-section"
           class="section-editor-input"
-            v-model="selectedSection"
-            :items="sections"
-            :item-text="section => `${section.title} ${section.alias ? '- ' + section.alias : ''}`"
-            :item-value="section => section._id"
-            placeholder="Select Section"
-            @change="loadSection()"
-            dark
+          v-model="selectedSection"
+          :items="sections"
+          :item-text="section => `${section.title} ${section.alias ? '- ' + section.alias : ''}`"
+          :item-value="section => section._id"
+          placeholder="Select Section"
+          @change="loadSection()"
+          dark
           >
         </v-select>
       </div>
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import SectionService from "@/services/SectionService";
 import { VueEditor } from "vue2-editor";
 export default {
   components: {
@@ -75,109 +76,87 @@ export default {
     }
   },
   methods: {
+    async createSection(section){
+      try {
+        await SectionService.createSection(section)
+        this.$router.push({name: "sectionList", params: {message: "Section created!", status: true}})
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to create section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    },
+    async updateSection(section) {
+      section.id = this.$route.params.id
+      try {
+        await SectionService.updateSection(section);
+        this.$router.push({name: "sectionList", params: {message: "Section updated!", status: true}})
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to update section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    },
     saveData(){
       let section = {
         title: this.title,
         content: this.content
       }
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      if(this.alias.length != 0) {
+        section.alias = this.alias;
       }
 
-      if(this.alias.length != 0) section.alias = this.alias;
-
+      // Check if submission valid
       if(this.title == "" || this.content == ""){
         this.$root.SnackBar.show({ message: "Error : Please Input Title and Content", color: 'error', icon: 'mdi-close-circle' })
+        return;
+      }
+      
+      if(this.$route.params.id == "create"){
+        this.createSection(section)
       }
       else{
-        console.log(JSON.stringify(section))
-        if(this.$route.params.id == "create"){
-          this.axios.post(`${this.$apiuri}/sections`, section, header)
-            .then(response => {
-              // send flash message
-              console.log(response.data)
-              this.$router.push({name: "sectionList", params: {message: "Section created!", status: true}})
-            })
-            .catch(error => {
-              // send flash message
-              if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-              this.$root.SnackBar.show({ message: `Error : ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-            })
-        }
-        else{
-          section.id = this.$route.params.id
-          this.axios.put(`${this.$apiuri}/sections`, section, header)
-          .then(response => {
-              // send flash message
-              console.log(response.data)
-              this.$router.push({name: "sectionList", params: {message: "Section updated!", status: true}})
-            })
-            .catch(error => {
-              // send flash message
-              if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-              this.$root.SnackBar.show({ message: `Error : ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-            })
-        }
-        
-      }      
+        this.updateSection(section)
+      }
     },
-    loadSection(){
-      console.log(this.selectedSection)
-      this.axios.get(`${this.$apiuri}/sections/${this.selectedSection}`)
-        .then(response => {
-          this.title = response.data[0].title
-          this.content = response.data[0].content
-          if(response.data[0].alias){
-            this.alias = response.data[0].alias
-          }
-        })
-        .catch(error => {
-          console.log(error)
-          this.selectedSection = ""
-          this.title = ""
-          this.alias = ""
-          this.content = ""
-        })
+    async fetchSections() {
+      try {
+        const response = await SectionService.getAllSections();
+        this.sections = response.data
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    },
+    async loadEditedSection() {
+      try {
+        const response = await SectionService.getSectionById(this.$route.params.id)
+        this.content = response.data[0].content
+        this.title = response.data[0].title
+        this.alias = response.data[0]?.alias ? response.data[0].alias : ''
+        this.create = false
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to load edited section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    }, 
+    async loadSection(){
+      try {
+        const response = await SectionService.getSectionById(this.selectedSection);
+        this.title = response.data[0].title
+        this.content = response.data[0].content
+        this.alias = response.data[0]?.alias ? response.data[0].alias : ''
+      } catch (error) {
+        this.selectedSection = ""
+        this.title = ""
+        this.alias = ""
+        this.content = ""
+        this.$root.SnackBar.show({ message: `Failed to load section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
     }
   },
-  beforeCreate(){
+  created(){
+    // Check if action is edit or not (if not then create)
     if(this.$route.params.id != "create"){
-      this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
-        .then(response => {
-          this.content = response.data[0].content
-          this.title = response.data[0].title
-          if(response.data[0].alias) this.alias = response.data[0].alias;
-          this.create = false
-        })
+      this.loadEditedSection();
     }
     else{
-      this.axios.get(`${this.$apiuri}/sections`)
-        .then(response => {
-          this.sections = response.data
-        })
+      this.fetchSections();
     }
   }
 }

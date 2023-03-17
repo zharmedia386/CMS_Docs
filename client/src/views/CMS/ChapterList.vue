@@ -150,6 +150,9 @@
 </template>
 
 <script>
+import ChapterService from '@/services/ChapterService'
+import DocumentationService from '@/services/DocumentationService'
+
 export default {
   data(){
     return {
@@ -169,93 +172,75 @@ export default {
     }
   },
   methods: {
-    deleteChapter(id, version){
-      let header = {
-        'Authorization' : "Bearer " + localStorage.token
+    async deleteChapter(id, version){
+      try {
+        const response = await DocumentationService.getDocumentations()
+        await ChapterService.deleteChapter({
+          chapterId : id,
+          version : version,
+          content : response.data[0].content
+        })
+        this.$root.SnackBar.show({ message: 'Chapter deleted successfully', color: 'success', icon: 'mdi-check-circle' })
+        this.fetchChapters()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.get(`${this.$apiuri}/documentations`)
-        .then(res => {
-          this.axios.delete(`${this.$apiuri}/chapters`, { 
-            data : {
-              chapterId : id,
-              version : version,
-              content : res.data[0].content
-            }, 
-            headers: header
-          })
-          .then(() => {
-            this.$root.SnackBar.show({ message: 'Chapter deleted successfully', color: 'success', icon: 'mdi-check-circle' })
-            this.updateChapter()
-          })
-          .catch(error => {
-            this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-          })
-        })
-        .catch(err => {
-            this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured ${err.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-      
     },
-    save(){
+    async save(){
       const chapter = {
         title: this.title,
         version: [ this.choosenVersion ]
       }
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      try {
+        await ChapterService.createChapter(chapter);
+        this.$root.SnackBar.show({ message: 'Chapter created successfully', color: 'success', icon: 'mdi-check-circle' })
+        this.fetchChapters()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to create a chapter, an error has occured`, color: 'error', icon: 'mdi-close-circle' })
       }
-
-      this.axios.post(`${this.$apiuri}/chapters`, chapter, header)
-        .then(response => {
-          // send flash message
-          console.log(response.data)
-          this.$root.SnackBar.show({ message: 'Chapter created successfully', color: 'success', icon: 'mdi-check-circle' })
-          this.updateChapter()
-        })
-        .catch(error => {
-          this.$root.SnackBar.show({ message: `Failed to create a chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
 
       this.dialog = false
       this.title = ''
       this.choosenVersion = ''
     },
-    update(){
+    async update(){
       const chapter = {
         id: this.choosenChapter._id,
         title: this.title
       }
-
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      
+      try {
+        await ChapterService.updateChapter(chapter);
+        this.$root.SnackBar.show({ message: 'Chapter changed successfully', color: 'success', icon: 'mdi-check-circle' })
+        this.fetchChapters()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to update a chapter, an error has occured`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      this.axios.put(`${this.$apiuri}/chapters`, chapter, header)
-        .then(response => {
-          console.log(response.data)
-          this.$root.SnackBar.show({ message: 'Chapter changed successfully', color: 'success', icon: 'mdi-check-circle' })
-          this.updateChapter()
-        })
-        .catch(error => {
-          this.$root.SnackBar.show({ message: `Failed to update a chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-
-        this.updateDialog = false
-        this.title = ''
-        this.choosenChapter = ''
+      this.updateDialog = false
+      this.title = ''
+      this.choosenChapter = ''
     },
-    updateChapter(){
-      this.axios.get(`${this.$apiuri}/chapters`)
-      .then(response => {
+    async fetchChapters() {
+      try {
+        const response = await ChapterService.getAllChapters()
         this.chapters = response.data
         this.pagination.total = this.chapters.length
-      })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to get chapters data`, color: 'error', icon: 'mdi-close-circle' })
+      }
     },
+    async getDocumentationVersions() {
+      try {
+        const response = await DocumentationService.getAllVersions();
+        response.data[0].content.forEach(v => {
+            this.versions.push(v.version)
+        });
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to get available documentation version`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    }
   },
   computed: {
     pages () {
@@ -273,16 +258,8 @@ export default {
     }
   },
   created(){
-    this.updateChapter()
-  },
-  beforeCreate(){
-    // get all version list
-    this.axios.get(`${this.$apiuri}/documentations/version`)
-      .then((response) => {
-          response.data[0].content.forEach(v => {
-              this.versions.push(v.version)
-          });
-      })
+    this.getDocumentationVersions();
+    this.fetchChapters()
   }
 }
 </script>
