@@ -110,6 +110,7 @@
 <script>
 import { storeToRefs } from 'pinia';
 import { useDocumentationStore } from '../../stores/DocumentationStore';
+import AuthService from '../../services/AuthService';
 
 export default {
   data() {
@@ -183,10 +184,12 @@ export default {
     this.$router.push("/cms/metadata")
   },
   methods: {
-    logout() {
-      if (localStorage.token) {
-        localStorage.removeItem('token')
-        this.$router.push({ name: "login", params: { message: "Logout success!", status: true, msgtype: 'success' } })
+    async logout() {
+      try {
+          await AuthService.logout();
+          this.$router.push({ name: "login", params: { message: "Logout success!", status: true, msgtype: 'success' } })
+      } catch (error) {
+        this.$router.push({ name: "error", params: { message: "Logout failed!", status: true, msgtype: 'false' } })
       }
     }
   }

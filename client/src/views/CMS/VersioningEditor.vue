@@ -62,6 +62,12 @@
                 </div>
               </v-list-item>
             </v-list>
+            <v-card-actions style="background-color: #2D3748; padding: 16px 16px;">
+              <v-btn text @click="() => { createDialog = true }">
+                <v-icon style="color: var(--primary-purple); font-size: 20px;">mdi-plus</v-icon>
+                <strong style="color: var(--primary-purple);">Create Version</strong>
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-tab-item>
         <v-tab-item>
@@ -419,6 +425,9 @@ export default {
           this.editDialog = false
           this.updateDocumentationContent()
         })
+    },
+    deleteVersionFix() {
+      
     },
     deleteVersion() {
       if (this.deletedVersion.length == 0) {
