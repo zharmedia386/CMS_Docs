@@ -275,7 +275,6 @@ export default {
 
 .cms-main-mobile {
   margin-left: 0;
-  background-image: url('@/assets/portalbgmobile.png');
   background-size: 100% auto;
 }
 
@@ -319,5 +318,9 @@ button {
   background-color: #16192d !important;
   border-top: 1px solid #282d4b !important;
   color: #94a3b8 !important;
+}
+
+.cms-footer-mobile {
+    margin-left: 0 !important;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card dark color="#2D3748">
-      <v-tabs v-model="tab" background-color="transparent" grow>
+      <v-tabs v-model="tab" background-color="transparent" grow height="60">
         <v-tab v-for="item in items" :key="item">
           {{ item }}
         </v-tab>
@@ -9,51 +9,58 @@
 
       <v-tabs-items v-model="tab" dark>
         <v-tab-item>
-          <v-card color="#3A4052" style="overflow: auto;">
-            <v-list color="#3A4052">
-              <v-list-item>
-                <div style="display: flex; justify-content: space-between; width: 100%;">
-                  <div style="min-width: 200px; text-align: left;">
-                    <strong>Version Name</strong>
+          <v-card color="#3A4052">
+            <v-card-text style="overflow: auto;">
+              <v-list color="#3A4052">
+                <v-list-item>
+                  <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <div style="min-width: 200px; text-align: left;">
+                      <strong>Version Name</strong>
+                    </div>
+                    <div style="min-width: 250px; display: flex; justify-content: start;">
+                      <strong>Action</strong>
+                    </div>
                   </div>
-                  <div style="min-width: 250px; display: flex; justify-content: start;">
-                    <strong>Action</strong>
+                </v-list-item>
+                <v-list-item v-for="(ct, i) in content" :key="i" style="margin: 20px 0;">
+                  <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <div style="min-width: 200px; text-align: left;">
+                      {{ ct.version }}
+                    </div>
+                    <div style="min-width: 250px; display: flex; justify-content: start;">
+                      <v-btn class="edit-btn tonal mr-2" color="warning"
+                        @click="() => { editedVersion = ct.version; newVersionName = ct.version; editDialog = true }" rounded>
+                        <v-icon class="mr-2">mdi-pencil</v-icon>
+                        Edit
+                      </v-btn>
+                      <v-btn class="delete-btn tonal" color="error" @click="deleteVersion(ct)" rounded>
+                        <v-icon class="mr-2">mdi-delete</v-icon>
+                        Delete
+                      </v-btn>
+                    </div>
                   </div>
-                </div>
-              </v-list-item>
-              <v-list-item v-for="(ct, i) in content" :key="i" style="margin: 20px 0;">
-                <div style="display: flex; justify-content: space-between; width: 100%;">
-                  <div style="min-width: 200px; text-align: left;">
-                    {{ ct.version }}
-                  </div>
-                  <div style="min-width: 250px; display: flex; justify-content: start;">
-                    <v-btn class="edit-btn tonal mr-2" rounded color="warning"><v-icon
-                        class="mr-2">mdi-pencil</v-icon>Edit</v-btn>
-                    <v-btn class="delete-btn tonal" rounded color="error"><v-icon
-                        class="mr-2">mdi-delete</v-icon>Delete</v-btn>
-                  </div>
-                </div>
-              </v-list-item>
-            </v-list>
-            <v-card-actions style="background-color: #2D3748; padding: 16px 16px;">
-              <v-btn text @click="() => { createDialog = true }">
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+            <v-card-actions style="background-color: #2D3748; padding: 16px 16px; ">
+              <v-btn text @click="() => { createDialog = true }" style="text-transform:none;">
                 <v-icon style="color: var(--primary-purple); font-size: 20px;">mdi-plus</v-icon>
-                <strong style="color: var(--primary-purple);">Create Version</strong>
+                <strong style="color: var(--primary-purple); letter-spacing: normal;">Create Version</strong>
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-tab-item>
         <v-tab-item>
-          <v-card color="#3A4052" style="border-radius: 0; overflow: auto;" dark>
-
-            <!-- Reorder Content -->
+          <v-card color="#3A4052" style="border-radius: 0;" dark>
+            <v-card-text style="overflow: auto;">
+              <!-- Reorder Content -->
             <v-row class="d-flex px-5 mt-5">
               <v-col cols="9">
                 <v-select v-model="selectedVersion" :items="content" item-text="version" outlined return-object
                   @change="() => { updateSection(); updateChapter() }"></v-select>
               </v-col>
-              <v-col cols="3">
-                <v-btn @click="reorder()" class="mt-1 blue darken-4 white--text">
+              <v-col cols="3" class="d-flex justify-start">
+                <v-btn @click="reorder()" color="var(--primary-purple)" class="mt-1" block large>
                   Reorder Content
                 </v-btn>
               </v-col>
@@ -118,10 +125,14 @@
                 </v-row>
               </div>
             </v-list>
+            </v-card-text>
+            <v-card-actions style="background-color: #2D3748; padding: 16px 16px; ">
+              <v-btn text @click="() => { chapterDialog = true }" style="text-transform:none;">
+                <v-icon style="color: var(--primary-purple); font-size: 20px;">mdi-plus</v-icon>
+                <strong style="color: var(--primary-purple);">Add Chapter</strong>
+              </v-btn>
+            </v-card-actions>
             <!-- Add Chapter -->
-            <v-btn @click="() => { chapterDialog = true }" class="mt-1 blue darken-4 white--text mb-5">
-              Add Chapter
-            </v-btn>
           </v-card>
         </v-tab-item>
       </v-tabs-items>
@@ -129,14 +140,14 @@
 
     <!-- Add Section Dialog -->
     <v-dialog v-model="dialog" width="800" transition="dialog-bottom-transition" scrollable persistent>
-      <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
+      <v-card dark color="var(--primary-dark)">
+        <v-toolbar class="font-weight-bold" dark color="var(--primary-blue-lighter)">
           Add Section Into Chapter
         </v-toolbar>
 
         <v-card-text style="max-height: 500px; padding:0;">
           <!-- List of section in checkboxes -->
-          <v-list>
+          <v-list color="var(--primary-dark)" dark>
             <v-list-item v-for="(section, index) in sections" :key="index">
               <v-checkbox v-model="selectedSections" :value="section" multiple />
               {{ `${section.title} ${section.alias ? '- ' + section.alias : ''}` }}
@@ -148,11 +159,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="() => { dialog = false }">
+          <v-btn color="var(--primary-dark)" @click="() => { dialog = false }">
             Cancel
           </v-btn>
 
-          <v-btn color="primary" text @click="addSection()">
+          <v-btn color="var(--primary-blue-lighter)" @click="addSection()">
             Add
           </v-btn>
         </v-card-actions>
@@ -161,13 +172,13 @@
 
     <!-- Add Chapter Dialog -->
     <v-dialog v-model="chapterDialog" width="800" transition="dialog-bottom-transition" scrollable persistent>
-      <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
+      <v-card color="var(--primary-dark)">
+        <v-toolbar class="font-weight-bold" dark color="var(--primary-blue-lighter)">
           Add Chapter into Version
         </v-toolbar>
 
         <v-card-text style="max-height: 500px; padding:0;">
-          <v-list>
+          <v-list color="var(--primary-dark)" dark>
             <v-list-item v-for="(chapter, index) in chapters" :key="index">
               <v-checkbox v-model="selectedChapters" :value="chapter" multiple />
               {{ chapter.title }}
@@ -179,11 +190,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="() => { chapterDialog = false }">
+          <v-btn color="var(--primary-dark)" @click="() => { chapterDialog = false }" dark>
             Cancel
           </v-btn>
 
-          <v-btn color="primary" text @click="addChapter">
+          <v-btn color="var(--primary-blue-lighter)" @click="addChapter" dark>
             Add
           </v-btn>
         </v-card-actions>
@@ -193,8 +204,8 @@
     <!-- Create Version Dialog -->
     <v-dialog v-model="createDialog" width="600" transition="dialog-bottom-transition" persistent>
       <v-form v-model="createFormValid">
-        <v-card>
-          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
+        <v-card dark color="var(--primary-dark)">
+          <v-toolbar color="var(--primary-blue-lighter)" class="text-h5 font-weight-medium d-flex justify-center">
             Create New Version
           </v-toolbar>
 
@@ -206,11 +217,11 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="() => { createDialog = false; versionName = '' }">
+            <v-btn color="var(--primary-dark)" @click="() => { createDialog = false; versionName = '' }">
               Cancel
             </v-btn>
 
-            <v-btn color="primary" text :disabled="!createFormValid" @click="createVersion">
+            <v-btn color="var(--primary-blue-lighter)" :disabled="!createFormValid" @click="createVersion">
               Create
             </v-btn>
           </v-card-actions>
@@ -221,14 +232,14 @@
     <!-- Edit Version Dialog -->
     <v-dialog v-model="editDialog" width="600" transition="dialog-bottom-transition" persistent>
       <v-form v-model="editFormValid">
-        <v-card>
-          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
+        <v-card dark color="var(--primary-dark)">
+          <v-toolbar color="var(--primary-blue-lighter)">
             Edit Version
           </v-toolbar>
 
-          <v-card-text class="mt-10">
-            <v-select v-model="editedVersion" :items="content" :rules="[rules.required]" label="Choose Version"
-              item-text="version" outlined return-object></v-select>
+          <v-card-text class="mt-5">
+            <!-- <v-select v-model="editedVersion" :items="content" :rules="[rules.required]" label="Choose Version"
+              item-text="version" outlined return-object></v-select> -->
             <v-text-field v-model="newVersionName" label="New Version Name" :rules="[rules.required]"
               outlined></v-text-field>
           </v-card-text>
@@ -237,46 +248,17 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="() => { editDialog = false; editedVersion = ''; newVersionName = '' }">
+            <v-btn color="var(--primary-dark)"
+              @click="() => { editDialog = false; editedVersion = ''; newVersionName = '' }">
               Cancel
             </v-btn>
 
-            <v-btn color="primary" text @click="editVersion()" :disabled="!editFormValid">
+            <v-btn color="var(--primary-blue-lighter)" @click="editVersion()" :disabled="!editFormValid">
               Save
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-form>
-    </v-dialog>
-
-    <!-- Delete Dialog -->
-    <v-dialog v-model="deleteDialog" width="800" transition="dialog-bottom-transition" scrollable persistent>
-      <v-card>
-        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
-          Delete Version
-        </v-toolbar>
-
-        <v-card-text style="max-height: 500px; padding:0;">
-          <v-list>
-            <v-list-item v-for="(ct, index) in content" :key="index">
-              <v-checkbox v-model="deletedVersion" :value="ct" multiple />
-              {{ ct.version }}
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="() => { deleteDialog = false }">
-            Cancel
-          </v-btn>
-          <v-btn color="primary" text :disabled="!(!!this.deletedVersion.length)" @click="deleteVersion">
-            Delete
-          </v-btn>
-        </v-card-actions>
-      </v-card>
     </v-dialog>
   </v-container>
 </template>
@@ -297,7 +279,6 @@ export default {
       chapterDialog: false,
       createDialog: false,
       editDialog: false,
-      deleteDialog: false,
 
       createFormValid: false,
       editFormValid: false,
@@ -305,7 +286,7 @@ export default {
       editedVersion: '',
       newVersionName: '',
 
-      deletedVersion: [],
+      deletedVersion: '',
 
       versionName: '',
 
@@ -341,88 +322,44 @@ export default {
       } catch (error) {
         this.$root.SnackBar.show({ message: `Failed to create a version, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      
+
       this.versionName = ''
       this.createDialog = false
       this.updateDocumentationContent()
     },
-    editVersion() {
+    async editVersion() {
       // Validate Forms
       if (!this.editFormValid) {
         this.$root.SnackBar.show({ message: 'Failed to edit version, please fill all available form input', color: 'error', icon: 'mdi-close-circle' })
         return
       }
 
-      const editedVersion = this.editedVersion.version;
+      const editedVersion = this.editedVersion;
       const newVersionName = this.newVersionName;
 
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.editVersion({ editedVersion, newVersionName })
+        this.$root.SnackBar.show({ message: "Version successfully edited", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to edit a version, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      this.axios.put(`${this.$apiuri}/versioning/edit`, { editedVersion, newVersionName }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to edit a version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.editedVersion = ''
-          this.newVersionName = ''
-          this.editDialog = false
-          this.updateDocumentationContent()
-        })
+      this.editedVersion = ''
+      this.newVersionName = ''
+      this.editDialog = false
+      this.updateDocumentationContent()
     },
-    deleteVersion() {
-      if (this.deletedVersion.length == 0) {
-        this.$root.SnackBar.show({ message: 'Failed to delete version, please choose at least one version', color: 'error', icon: 'mdi-close-circle' })
-        return
+    async deleteVersion(version) {
+      const content = [version]
+
+      try {
+        await VersioningService.deleteVersion({ content })
+        this.$root.SnackBar.show({ message: "Version successfully deleted", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to delete version, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      const content = this.deletedVersion;
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
-      }
-
-      this.axios.put(`${this.$apiuri}/versioning/delete`, { content }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to remove version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.updateDocumentationContent()
-          this.deletedVersion = []
-          this.deleteDialog = false
-        })
+      this.updateDocumentationContent()
     },
     findVersionIndex() {
       // Get index of version from current selected version
@@ -440,7 +377,7 @@ export default {
           ({ _id: section._id, title: section.title }) :
           ({ _id: section._id, title: section.title, alias: section.alias })
         )
-        
+
       try {
         await VersioningService.addSection({ sections, chapter, version })
         this.$root.SnackBar.show({ message: "Section successfully added", color: 'success', icon: 'mdi-check-circle' })
@@ -546,6 +483,7 @@ export default {
         const response = await ChapterService.getAllChapters()
         this.chapters = response.data.filter(chapter => !chapter.version.includes(this.selectedVersion.version))
       } catch (error) {
+        console.log(error.message)
         this.$root.SnackBar.show({ message: `Failed to fetch chapter, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
     },
@@ -554,7 +492,7 @@ export default {
         const response = await DocumentationService.getDocumentations()
         this.content = response.data[0].content
         const versionIdx = this.findVersionIndex()
-        this.selectedVersion = response.data[0].content[versionIdx]
+        this.selectedVersion = response.data[0].content[versionIdx] ?? response.data[0].content[0]
         this.updateSection()
         this.updateChapter()
       } catch (error) {
@@ -579,6 +517,13 @@ export default {
 </script>
 
 <style>
+.v-tab {
+  text-transform: none !important;
+  letter-spacing: normal;
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .v-tab.v-tab--active {
   color: var(--primary-purple) !important;
 }
@@ -589,5 +534,14 @@ export default {
 
 .v-window-item {
   background-color: #3A4052;
+}
+
+.v-list-item--active .v-list-item__title {
+  color: var(--primary-purple) !important;
+  font-weight: bold;
+}
+
+.v-list-item--active .v-list-item__icon {
+  color: var(--primary-purple) !important;
 }
 </style>
