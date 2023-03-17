@@ -10,25 +10,7 @@
       <v-tabs-items v-model="tab" dark>
         <v-tab-item>
           <v-card color="#3A4052" style="overflow: auto;">
-            <!-- <v-card-title class="mt-4">
-              <div style="display: flex; justify-content: space-between; width: 100%;">
-                <h2 style="min-width: 300px; text-align: left;">Content Version</h2>
-                <v-btn class="blue darken-4 white--text" @click="() => { createDialog = true }">Create Version</v-btn>
-              </div>
-            </v-card-title> -->
-            <!-- <v-container class="d-flex justify-start pt-5 pb-5">
-              <v-btn class="blue darken-4 white--text mr-5" @click="() => { deleteDialog = true }">Delete Version</v-btn>
-              <v-btn class="blue darken-4 white--text mr-5" @click="() => { editDialog = true }">Edit Version</v-btn>
-            </v-container> -->
             <v-list color="#3A4052">
-              <!-- <div style="display: flex; justify-content: space-between; width: 100%;">
-                <div style="min-width: 200px; text-align: left; padding-left: 16px;">
-                  Version Name
-                </div>
-                <div style="min-width: 400px; text-align: left;">
-                  Action
-                </div>
-              </div> -->
               <v-list-item>
                 <div style="display: flex; justify-content: space-between; width: 100%;">
                   <div style="min-width: 200px; text-align: left;">
@@ -40,15 +22,6 @@
                 </div>
               </v-list-item>
               <v-list-item v-for="(ct, i) in content" :key="i" style="margin: 20px 0;">
-                <!-- <v-row style="overflow: auto;">
-                  <v-col style="text-align: left; min-width: 200px;">
-                    {{ ct.version }}
-                  </v-col>
-                  <v-col style="display: flex; justify-content: start; min-width: 200px;">
-                    <v-btn class="edit-btn tonal mr-2" rounded color="warning"><v-icon class="mr-2">mdi-pencil</v-icon>Edit</v-btn>
-                    <v-btn class="delete-btn tonal" rounded color="error"><v-icon class="mr-2">mdi-delete</v-icon>Delete</v-btn>
-                  </v-col>
-                </v-row> -->
                 <div style="display: flex; justify-content: space-between; width: 100%;">
                   <div style="min-width: 200px; text-align: left;">
                     {{ ct.version }}
@@ -309,6 +282,11 @@
 </template>
 
 <script>
+import ChapterService from '@/services/ChapterService';
+import DocumentationService from '@/services/DocumentationService';
+import SectionService from '@/services/SectionService';
+import VersioningService from '@/services/VersioningService';
+
 export default {
   data() {
     return {
@@ -348,7 +326,7 @@ export default {
     }
   },
   methods: {
-    createVersion() {
+    async createVersion() {
       // Validate forms
       if (!this.createFormValid) {
         this.$root.SnackBar.show({ message: 'Failed to create a version, please fill in the version name first', color: 'error', icon: 'mdi-close-circle' })
@@ -356,34 +334,17 @@ export default {
       }
 
       const versionName = this.versionName;
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
+
+      try {
+        await VersioningService.createVersion({ versionName })
+        this.$root.SnackBar.show({ message: "Section successfully created", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to create a version, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.put(`${this.$apiuri}/versioning/create`, { versionName }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to create a version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.versionName = ''
-          this.createDialog = false
-          this.updateDocumentationContent()
-        })
+      
+      this.versionName = ''
+      this.createDialog = false
+      this.updateDocumentationContent()
     },
     editVersion() {
       // Validate Forms
@@ -425,9 +386,6 @@ export default {
           this.editDialog = false
           this.updateDocumentationContent()
         })
-    },
-    deleteVersionFix() {
-      
     },
     deleteVersion() {
       if (this.deletedVersion.length == 0) {
@@ -474,7 +432,7 @@ export default {
 
       return versionIdx
     },
-    addSection() {
+    async addSection() {
       const version = this.selectedVersion.version;
       const chapter = this.sectionChapter._id
       const sections = this.selectedSections
@@ -482,161 +440,70 @@ export default {
           ({ _id: section._id, title: section.title }) :
           ({ _id: section._id, title: section.title, alias: section.alias })
         )
-
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
+        
+      try {
+        await VersioningService.addSection({ sections, chapter, version })
+        this.$root.SnackBar.show({ message: "Section successfully added", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to add section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      this.axios.put(`${this.$apiuri}/versioning/section`, { sections, chapter, version }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to add section, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.dialog = false;
-          this.selectedSections = []
-          this.updateDocumentationContent()
-        })
+      this.dialog = false;
+      this.selectedSections = []
+      this.updateDocumentationContent()
     },
-    removeSection(section) {
+    async removeSection(section) {
       const version = this.selectedVersion.version;
       const sectionId = section._id;
 
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.removeSection({ sectionId, version })
+        this.$root.SnackBar.show({ message: "Section successfully removed", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to remove section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.put(`${this.$apiuri}/versioning/section/delete`, { sectionId, version }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to remove section, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.updateDocumentationContent()
-        })
+
+      this.updateDocumentationContent();
     },
-    addChapter() {
+    async addChapter() {
       const version = this.selectedVersion.version;
       const chapters = this.selectedChapters
         .map(ch => ({ _id: ch._id, title: ch.title }))
 
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.addChapter({ chapters, version })
+        this.$root.SnackBar.show({ message: "Chapter successfully added", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to add chapter, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      this.axios.put(`${this.$apiuri}/versioning/chapter`, { chapters, version }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to add chapter, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.chapterDialog = false;
-          this.selectedChapters = []
-          this.updateDocumentationContent()
-        })
+      this.chapterDialog = false;
+      this.selectedChapters = []
+      this.updateDocumentationContent()
     },
-    removeChapter(chapter) {
+    async removeChapter(chapter) {
       const version = this.selectedVersion.version;
       const chapterId = chapter._id
       const sectionsId = (chapter?.section) ? chapter?.section.map(sc => sc._id) : []
 
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.removeChapter({ chapterId, sectionsId, version })
+        this.$root.SnackBar.show({ message: "Chapter successfully removed", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to remove chapter, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.put(`${this.$apiuri}/versioning/chapter/delete`, { chapterId, sectionsId, version }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to remove chapter, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        }).finally(() => {
-          this.updateDocumentationContent()
-        })
+
+      this.updateDocumentationContent()
     },
-    reorder() {
+    async reorder() {
       const content = this.content
 
-      let header = {
-        headers: {
-          'Authorization': "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.reorderContent({ content });
+        this.$root.SnackBar.show({ message: "Content successfully reordered", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to reorder content structure, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-
-      this.axios.put(`${this.$apiuri}/versioning/reorder`, { content }, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if (error.response.status == 401) {
-            localStorage.removeItem('token')
-            this.$router.push({
-              name: "login",
-              params: {
-                message: "Invalid session",
-                status: true,
-                msgtype: 'error'
-              }
-            })
-          }
-          this.$root.SnackBar.show({ message: `Failed to modify content structure, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
     },
     moveUpChapter(index) {
       let versionIdx = this.findVersionIndex()
@@ -666,38 +533,47 @@ export default {
 
       this.content[versionIdx].chapter[chapterIdx].section.splice(sectionIdx, 2, nextSection, crntSection)
     },
-    updateSection() {
-      this.axios.get(`${this.$apiuri}/sections`)
-        .then(response => {
-          const sections = response.data
-          this.sections = (!sections) ? sections : sections.filter(section => !section?.version?.includes(this.selectedVersion.version))
-        })
+    async updateSection() {
+      try {
+        const response = await SectionService.getAllSections()
+        this.sections = (!response) ? response : response.data.filter(section => !section?.version?.includes(this.selectedVersion.version))
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
     },
-    updateChapter() {
-      this.axios.get(`${this.$apiuri}/chapters`)
-        .then(response => {
-          this.chapters = response.data.filter(chapter => !chapter.version.includes(this.selectedVersion.version))
-        })
+    async updateChapter() {
+      try {
+        const response = await ChapterService.getAllChapters()
+        this.chapters = response.data.filter(chapter => !chapter.version.includes(this.selectedVersion.version))
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch chapter, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
     },
-    updateDocumentationContent() {
-      this.axios.get(`${this.$apiuri}/documentations`)
-        .then(response => {
-          this.content = response.data[0].content
-          const versionIdx = this.findVersionIndex()
-          this.selectedVersion = response.data[0].content[versionIdx]
-          this.updateSection()
-          this.updateChapter()
-        })
+    async updateDocumentationContent() {
+      try {
+        const response = await DocumentationService.getDocumentations()
+        this.content = response.data[0].content
+        const versionIdx = this.findVersionIndex()
+        this.selectedVersion = response.data[0].content[versionIdx]
+        this.updateSection()
+        this.updateChapter()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch documentation, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
     }
   },
   created() {
-    this.axios.get(`${this.$apiuri}/documentations`)
-      .then(response => {
+    (async () => {
+      try {
+        const response = await DocumentationService.getDocumentations()
         this.content = response.data[0].content
         this.selectedVersion = response.data[0].content[0]
         this.updateSection()
         this.updateChapter()
-      })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch documentation content, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    })()
   }
 }
 </script>

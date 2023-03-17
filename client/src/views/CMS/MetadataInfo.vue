@@ -75,6 +75,34 @@ export default {
   components: {
     VueEditor
   },
+  data() {
+    return {
+      metadata: {
+        title: "",
+        logo: null,
+        footer: "",
+        githubLink: "",
+        username: "",
+        image: null
+      },
+      rules: {
+        title: [
+          v => !!v || "Title is required",
+          v => (v && v.length >= 4) || "Title must be 4 characters at least"
+        ],
+        logo: [
+          v => !!v || "Logo is required"
+        ],
+        githubLink: [
+          v => !!v || "Github link is required"
+        ],
+        username: [
+          v => !!v || "Username is required",
+          v => (v && v.length >= 4) || "Username must be 4 characters at least"
+        ]
+      }
+    }
+  },
   methods: {
     getBase64() {
       const base64 = new Promise((resolve, reject) => {
@@ -92,68 +120,25 @@ export default {
         })
     },
     async updateMetadata() {
-      if(!this.$refs.form.validate()) {
-        return;
-      }
-
       const metadata = this.metadata;
       try {
         const response = await DocumentationService.updateMetadata(metadata);
         this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
       } catch (error) {
-        if (error.response.status == 401) {
-          localStorage.removeItem('token')
-          this.$router.push({
-            name: "login",
-            params: {
-              message: "Invalid session",
-              status: true,
-              msgtype: 'error'
-            }
-          })
-        }
         this.$root.SnackBar.show({ message: error.message, color: 'error', icon: 'mdi-close-circle' })
       }
-    }
-  },
-  data() {
-    return {
-      metadata: {
-        title: "",
-        logo: null,
-        footer: "",
-        githubLink: "",
-        username: "",
-        password: "",
-        image: null
-      },
-      rules: {
-        title: [
-          v => !!v || "Title is required",
-          v => (v && v.length >= 4) || "Title must be 4 characters at least"
-        ],
-        logo: [
-          v => !!v || "Logo is required"
-        ],
-        githubLink: [
-          v => !!v || "Github link is required"
-        ],
-        username: [
-          v => !!v || "Username is required",
-          v => (v && v.length >= 4) || "Username must be 4 characters at least"
-        ],
-        password: [
-          v => ((v && v.length >= 4) || v.length == 0) || "Password must be 4 characters at least"
-        ]
+    },
+    async getMetadata() {
+      try {
+        const response = await DocumentationService.getMetadata()
+        this.metadata = response.data
+      } catch (error) {
+        this.$root.SnackBar.show({ message: "Failed to fetch metadata", color: 'error', icon: 'mdi-close-circle' })
       }
     }
   },
   created() {
-    this.axios.get(`${this.$apiuri}/documentations/metadata`)
-      .then(res => {
-        this.metadata = res.data
-        this.metadata.password = ""
-      })
+    this.getMetadata()
   }
 }
 </script>

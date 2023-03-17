@@ -10,7 +10,7 @@
       <div style="relative">
       <v-row>
         <!-- <v-col cols="4" class="mt-15 ml-8 text-container">
-          <v-list-subheader>Logo Picture</v-list-subheader>
+          <span>Logo Picture</span>
         </v-col> -->
   
         <v-col cols="1" class="mt-8 ml-16">
@@ -64,7 +64,7 @@
       <v-row>
         
       <v-col cols="4" class="mt-4 ml-16 text-container">
-        <v-list-subheader>Full Name</v-list-subheader>
+        <span>Full Name</span>
       </v-col>
   
       <v-col cols="3" class="mt-1" >
@@ -89,7 +89,7 @@
   
       <v-row>
         <v-col cols="4" class="mt-4 ml-16 text-container">
-          <v-list-subheader>Username</v-list-subheader>
+          <span>Username</span>
         </v-col>
   
         <v-col cols="6" class="mt-1">
@@ -105,7 +105,7 @@
 
       <v-row>
         <v-col cols="4" class="mt-4 ml-16 text-container">
-          <v-list-subheader>Email</v-list-subheader>
+          <span>Email</span>
         </v-col>
   
         <v-col cols="6" class="mt-1">
@@ -121,7 +121,7 @@
 
       <v-row>
         <v-col cols="4" class="mt-4 ml-16 text-container">
-          <v-list-subheader>Password</v-list-subheader>
+          <span>Password</span>
         </v-col>
   
         <v-col cols="6" class="mt-1">

@@ -37,7 +37,7 @@
                     Edit Profile
                   </v-btn>
                   <v-divider class="my-3"></v-divider>
-                  <v-btn depressed rounded text>
+                  <v-btn depressed rounded text @click="logout()">
                     Logout
                   </v-btn>
                 </div>
@@ -111,6 +111,7 @@
 import { storeToRefs } from 'pinia';
 import { useDocumentationStore } from '../../stores/DocumentationStore';
 import AuthService from '../../services/AuthService';
+import DocumentationService from '@/services/DocumentationService';
 
 export default {
   data() {
@@ -176,14 +177,12 @@ export default {
       documentation, loading, error
     }
   },
-  created() {
-    this.axios.get(`${this.$apiuri}/documentations/metadata`)
-      .then(res => {
-        document.title = "CMS - " + res.data.title
-      })
-    this.$router.push("/cms/metadata")
-  },
   methods: {
+    async getMetadata(){
+      const response = await DocumentationService.getMetadata();
+      document.title = "CMS - " + response.data.title;
+      this.$router.push("/cms/metadata")
+    },
     async logout() {
       try {
           await AuthService.logout();
@@ -192,7 +191,10 @@ export default {
         this.$router.push({ name: "error", params: { message: "Logout failed!", status: true, msgtype: 'false' } })
       }
     }
-  }
+  },
+  created() {
+    this.getMetadata();
+  },
 }
 </script>
 
