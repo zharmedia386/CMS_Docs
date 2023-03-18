@@ -9,6 +9,10 @@ const login = (user) => {
         })
         .then((response) => {
             localStorage.setItem('token', response.data.accessToken)
+
+            if(!JSON.parse(localStorage.getItem('tour'))){
+                localStorage.setItem('tour', JSON.stringify({}))
+            }
         })
 }
 

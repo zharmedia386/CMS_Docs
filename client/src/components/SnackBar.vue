@@ -4,8 +4,8 @@
     :timeout="timer"
     :color="color"
     elevation="8"
-    top
-    centered
+    left
+    bottom
   >
     <v-icon>{{ icon }}</v-icon>
     {{ message }}

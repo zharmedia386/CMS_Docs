@@ -180,6 +180,7 @@ export default {
           version : version,
           content : response.data[0].content
         })
+        console.log('success')
         this.$root.SnackBar.show({ message: 'Chapter deleted successfully', color: 'success', icon: 'mdi-check-circle' })
         this.fetchChapters()
       } catch (error) {
