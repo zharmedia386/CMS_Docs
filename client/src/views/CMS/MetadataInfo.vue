@@ -298,6 +298,9 @@ export default {
   color: #ccc;
   background-color: #f5f5f5;
 }
+/* .fontsubheader{
+  color:#ffffff !important;
+} */
 #input-file {
   position: absolute;
   left: -99999px;
