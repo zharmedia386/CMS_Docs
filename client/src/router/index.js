@@ -11,7 +11,8 @@ import Versioning from '../views/CMS/VersioningEditor.vue'
 import Login from '../views/Auth/LoginView.vue'
 import Register from '../views/Auth/RegisterView.vue'
 import ProfileInfo from '../views/CMS/ProfileInfo.vue'
-import axios from 'axios'
+// import axios from 'axios'
+import AuthService from '@/services/AuthService'
 
 Vue.use(VueRouter)
 
@@ -90,25 +91,21 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   if(to.path.includes("cms")){
     if(localStorage.token){
-      // axios.get(`https://cms-docs-prod-cms-docs-hds0vk.mo2.mogenius.io/auth/${localStorage.token}`)
-      axios.get(`${process.env.VUE_APP_API_URL}auth/${localStorage.token}`)
-      // axios.get(`https://cmsdocs-production.up.railway.app/auth/${localStorage.token}`)
-      .then(res => {
-        localStorage.setItem('token', res.data)
+      try {
+        await AuthService.refreshToken();
         next()
-      })
-      .catch(err => {
-        localStorage.removeItem('token')
+      } catch (error) {
+        localStorage.removeItem('token');
         next({
           name: "login",
           replace: true,
           params : {
-            message : "Invalid Session " + err ,
+            message : "Your login session is expired",
             status : true,
             msgtype : 'error'
           }
         })
-      })
+      }
     }
     else{
       next({

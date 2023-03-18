@@ -37,7 +37,7 @@
                     Edit Profile
                   </v-btn>
                   <v-divider class="my-3"></v-divider>
-                  <v-btn depressed rounded text>
+                  <v-btn depressed rounded text @click="logout()">
                     Logout
                   </v-btn>
                 </div>
@@ -110,6 +110,8 @@
 <script>
 import { storeToRefs } from 'pinia';
 import { useDocumentationStore } from '../../stores/DocumentationStore';
+import AuthService from '../../services/AuthService';
+import DocumentationService from '@/services/DocumentationService';
 
 export default {
   data() {
@@ -175,21 +177,24 @@ export default {
       documentation, loading, error
     }
   },
-  created() {
-    this.axios.get(`${this.$apiuri}/documentations/metadata`)
-      .then(res => {
-        document.title = "CMS - " + res.data.title
-      })
-    this.$router.push("/cms/metadata")
-  },
   methods: {
-    logout() {
-      if (localStorage.token) {
-        localStorage.removeItem('token')
-        this.$router.push({ name: "login", params: { message: "Logout success!", status: true, msgtype: 'success' } })
+    async getMetadata(){
+      const response = await DocumentationService.getMetadata();
+      document.title = "CMS - " + response.data.title;
+      this.$router.push("/cms/metadata")
+    },
+    async logout() {
+      try {
+          await AuthService.logout();
+          this.$router.push({ name: "login", params: { message: "Logout success!", status: true, msgtype: 'success' } })
+      } catch (error) {
+        this.$router.push({ name: "error", params: { message: "Logout failed!", status: true, msgtype: 'false' } })
       }
     }
-  }
+  },
+  created() {
+    this.getMetadata();
+  },
 }
 </script>
 
@@ -270,7 +275,6 @@ export default {
 
 .cms-main-mobile {
   margin-left: 0;
-  background-image: url('@/assets/portalbgmobile.png');
   background-size: 100% auto;
 }
 
@@ -314,5 +318,9 @@ button {
   background-color: #16192d !important;
   border-top: 1px solid #282d4b !important;
   color: #94a3b8 !important;
+}
+
+.cms-footer-mobile {
+    margin-left: 0 !important;
 }
 </style>

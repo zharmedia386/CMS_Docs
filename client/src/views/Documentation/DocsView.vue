@@ -165,7 +165,6 @@ export default {
     box-shadow: none !important;
     background-color: var(--primary-dark) !important;
     background: var(--primary-dark-transparant) !important;
-    border-radius: 16px !important;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
     backdrop-filter: blur(10.5px) !important;
     -webkit-backdrop-filter: blur(10.5px) !important;
