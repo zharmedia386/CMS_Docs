@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
 :root {
     --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     --primary-dark: #181C32;
@@ -17,6 +19,10 @@ html {
     scroll-behavior:smooth 
 }
 
+body, body * {
+    font-family: 'Inter', sans-serif;
+}
+
 .v-pagination__item,
 .v-pagination__navigation {
     background-color: var(--primary-dark-lighter) !important;
@@ -28,4 +34,9 @@ html {
 
 .v-pagination__more {
     color: white;
+}
+
+.v-btn {
+    text-transform: none !important;
+    letter-spacing: normal !important;
 }

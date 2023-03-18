@@ -1,19 +1,5 @@
 <template>
   <v-container>
-    <!-- <v-card>
-      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
-        Sections List
-        <v-btn class="blue darken-4 white--text" to="/cms/section/create">Create New Section</v-btn>
-      </v-card-title>
-      <br>
-      <v-card-text class="d-flex justify-space-between px-5 font-weight-medium black--text" v-for="(section, index) in sections" v-bind:key="index">
-        <v-card-subtitle v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-card-subtitle>
-        <div>
-          <v-btn class="light-blue lighten-4 mr-1" outlined fab small :to="`/cms/section/${section._id}`"><v-icon>mdi-pencil</v-icon></v-btn>
-          <v-btn class="red lighten-2" outlined fab small @click="deleteSection(section._id)"><v-icon>mdi-delete</v-icon></v-btn>
-        </div>
-      </v-card-text>
-    </v-card> -->
     <v-card class="section-header elevation-0" dark>
       <v-card-title class="d-flex justify-space-between pa-0">
         <v-text-field dense outlined placeholder="Search..." class="search-input"  v-model="searchKeyword"></v-text-field>
@@ -76,6 +62,8 @@
 </template>
 
 <script>
+import SectionService from '@/services/SectionService'
+
 export default {
   props : ['message', 'status'],
   data(){
@@ -90,37 +78,23 @@ export default {
     }
   },
   methods :{
-    deleteSection(id){
-      let header = {
-        'Authorization' : "Bearer " + localStorage.token
+    async deleteSection(id){
+      try {
+        await SectionService.deleteSection({ id });
+        this.$root.SnackBar.show({ message: "Section successfully deleted", color: 'success', icon: 'mdi-check-circle' })
+        this.fetchSections()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: "Failed to delete section, an error occurred", color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.delete(`${this.$apiuri}/sections`, { data : { id }, headers : header })
-        .then(res => {
-          console.log(res)
-          this.$root.SnackBar.show({ message: res.data.message, color: 'success', icon: 'mdi-check-circle' })
-          this.getSections()
-        })
-        .catch(err => {
-          if(err.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-          this.$root.SnackBar.show({ message: err.message, color: 'error', icon: 'mdi-close-circle' })
-        })
     },
-    getSections(){
-      this.axios.get(`${this.$apiuri}/sections`)
-      .then(response => {
+    async fetchSections(){
+      try {
+        const response = await SectionService.getAllSections();
         this.sections = response.data
         this.pagination.total = this.sections.length
-      })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: 'Failed to get chapters', color: 'error', icon: 'mdi-close-circle' })
+      }
     }
   },
   computed: {
@@ -142,7 +116,7 @@ export default {
     if(this.status){
       this.$root.SnackBar.show({ message: this.message, color: 'success', icon: 'mdi-check-circle' })
     }
-    this.getSections()
+    this.fetchSections()
   }
 }
 </script>
