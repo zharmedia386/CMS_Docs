@@ -14,7 +14,7 @@ router.route('/version')
 
 router.route('/metadata')
     .get(documentationsController.getMetadata)
-    .put(verifyJWT, documentationsController.updateMetadata)
+    .put(documentationsController.updateMetadata)
 
 router.route('/:version')
     .get(documentationsController.getDocumentations)
