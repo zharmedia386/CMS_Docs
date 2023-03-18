@@ -9,6 +9,12 @@ const handleLogin = async (req, res) => {
     
     let foundUser = await Users.find({ username: user }).toArray();
     if (!foundUser) return res.sendStatus(401);
+
+    // Create a copy of foundUser and delete the password field
+    let foundUserWithoutPassword = {
+        ...foundUser[0],
+        password: undefined
+      };
     
     const match = await bcrypt.compare(pwd, foundUser[0].password);
     if (match) {
@@ -23,11 +29,15 @@ const handleLogin = async (req, res) => {
             { expiresIn: '1d' }
         );
 
-        const result = await Users.updateOne({}, {$set: {
-            refreshToken: refreshToken
-        }});
+        const result = await Users.updateOne(
+            { _id: foundUser._id },
+            { $set: { refreshToken: refreshToken } }
+          );
+
+        // Set user data in the session
+        req.session.user = foundUserWithoutPassword;
         
-        res.json({ accessToken });
+        res.json({ accessToken, user: foundUserWithoutPassword });
     } else {
         res.sendStatus(401);
     }
