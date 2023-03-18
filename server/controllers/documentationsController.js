@@ -123,7 +123,6 @@ const updateMetadata = async (req,res) => {
     } catch (error) {
         res.status(400).send(error.message)
     }
-
 }
 
 // Create documentation info
