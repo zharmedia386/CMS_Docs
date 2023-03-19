@@ -1,15 +1,21 @@
 <template>
   <div>
     <v-container>
+      <v-tour 
+        name="profileTour" 
+        :steps="steps" 
+        :options="{ highlight: true, enableScrolling: false }"
+        :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd }"
+      ></v-tour>
       <h1 class="text-containerh1 mb-3">Profile Settings</h1>
       <v-divider :thickness="4" class="border-opacity-100" color="white"></v-divider>
       <div style="relative">
         <v-row>
-          <v-col cols="1" class="mt-8 ml-16">
+          <v-col cols="1" class="mt-8 ml-16" id="v-step-profile-0">
             <div>
               <label for="input-file">
                 <div class="circle">
-                  <img :src="metadata.logo" />
+                  <img src="" />
                   <div class="placeholder">Choose an image</div>
                 </div>
               </label>
@@ -19,60 +25,67 @@
           </v-col>
         </v-row>
       </div>
-      <v-row>
-
+      <v-row id="v-step-profile-1">
         <v-col cols="4" class="mt-4 ml-16 text-container">
           <span>Full Name</span>
         </v-col>
 
         <v-col cols="3" class="mt-1">
-          <v-text-field dark v-model="metadata.firstname" :rules="rules.firstname" outlined required
+          <v-text-field dark v-model="user.firstname" :rules="rules.firstname" outlined required
             solo-inverted></v-text-field>
         </v-col>
         <v-col cols="3" class="mt-1">
-          <v-text-field dark v-model="metadata.lastname" :rules="rules.lastname" outlined required
+          <v-text-field dark v-model="user.lastname" :rules="rules.lastname" outlined required
             solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row id="v-step-profile-2">
         <v-col cols="4" class="mt-4 ml-16 text-container">
           <span>Username</span>
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field dark v-model="metadata.username" :rules="rules.username" outlined required
+          <v-text-field dark v-model="user.username" :rules="rules.username" outlined required
             solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row id="v-step-profile-3">
         <v-col cols="4" class="mt-4 ml-16 text-container">
           <span>Email</span>
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field dark v-model="metadata.email" :rules="rules.email" outlined required solo-inverted></v-text-field>
+          <v-text-field dark v-model="user.email" :rules="rules.email" outlined required solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row id="v-step-profile-4">
         <v-col cols="4" class="mt-4 ml-16 text-container">
-          <span>Password</span>
+          <span>Old Password</span>
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field dark v-model="metadata.password" :rules="rules.password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'"
-            @click:append="show1 = !show1" outlined required solo-inverted></v-text-field>
+          <v-text-field dark v-model="oldPassword" :rules="rules.password" :append-icon="is ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="is ? 'text' : 'password'" @click:append="is = !is" outlined required solo-inverted></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row id="v-step-profile-5">
+        <v-col cols="4" class="mt-4 ml-16 text-container">
+          <span>New Password</span>
+        </v-col>
+
+        <v-col cols="6" class="mt-1">
+          <v-text-field dark v-model="newPassword" :rules="rules.password" :append-icon="is ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="is ? 'text' : 'password'" @click:append="is = !is" outlined required solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
       <v-divider :thickness="4" class="border-opacity-100 mt-8" color="white"></v-divider>
 
       <div class="d-flex justify-end">
-        <v-btn class="mt-3 mr-3 colorbtn1" variant="flat">Discard</v-btn>
-        <v-btn type="submit" class="mt-3 mr-6 colorbtn">Save Changes</v-btn>
+        <v-btn type="submit" class="mt-3 mr-6 colorbtn" id="v-step-profile-6">Save Changes</v-btn>
       </div>
     </v-container>
   </div>
@@ -81,6 +94,97 @@
 <script>
 export default {
   components: {},
+  data() {
+    return {
+      oldPassword: "",
+      newPassword: "",
+      is: false,
+      user: null,
+      rules: {
+        firstname: [
+          (v) => !!v || "Firstname is required",
+          (v) =>
+            (v && v.length >= 4) || "Firstname must be 4 characters at least",
+        ],
+        lastname: [
+          (v) => !!v || "Lastname is required",
+          (v) =>
+            (v && v.length >= 4) || "Lastname must be 4 characters at least",
+        ],
+        email: [
+          (v) => !!v || "Email is required",
+          (v) =>
+            (v && v.length >= 4) || "Lastname must be 4 characters at least",
+        ],
+        logo: [(v) => !!v || "Logo is required"],
+        githubLink: [(v) => !!v || "Github link is required"],
+        username: [
+          (v) => !!v || "Username is required",
+          (v) =>
+            (v && v.length >= 4) || "Username must be 4 characters at least",
+        ],
+        password: [
+          (v) =>
+            (v && v.length >= 4) ||
+            v.length == 0 ||
+            "Password must be 4 characters at least",
+        ],
+      },
+      steps: [
+        {
+          target: '#v-step-profile-0',
+          content: `<strong>Profile Image</strong><br>Change your profile image by click this button`,
+          params: {
+            placement: 'right',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-profile-1',
+          content: `<strong>Full Name</strong><br>If you want to change firstname and lastname, you can adjust here`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-profile-2',
+          content: `<strong>Username</strong><br>Set your username here, your username should be unique`,
+          params: {
+            placement: 'bottom'
+          }
+        },
+        {
+          target: '#v-step-profile-3',
+          content: `<strong>Email</strong><br>Your email can be adjust here`,
+          params: {
+            placement: 'bottom'
+          }
+        },
+        {
+          target: '#v-step-profile-4',
+          content: `<strong>Old Password</strong><br>If you want to change your password, first type your old password here`,
+          params: {
+            placement: 'bottom'
+          }
+        },
+        {
+          target: '#v-step-profile-5',
+          content: `<strong>New Password</strong><br>Then type your new password here`,
+          params: {
+            placement: 'top'
+          }
+        },
+        {
+          target: '#v-step-profile-6',
+          content: `<strong>Save Changes</strong><br>Don't forget to save your change by click this button`,
+          params: {
+            placement: 'top'
+          }
+        },
+      ]
+    };
+  },
   methods: {
     getBase64() {
       const base64 = new Promise((resolve, reject) => {
@@ -133,57 +237,28 @@ export default {
           });
       }
     },
-  },
-  data() {
-    return {
-      show1: false,
-      metadata: {
-        firstname: "",
-        logo: null,
-        lastname: "",
-        email: "",
-        username: "",
-        password: "",
-        image: null,
-      },
-      rules: {
-        firstname: [
-          (v) => !!v || "Firstname is required",
-          (v) =>
-            (v && v.length >= 4) || "Firstname must be 4 characters at least",
-        ],
-        lastname: [
-          (v) => !!v || "Lastname is required",
-          (v) =>
-            (v && v.length >= 4) || "Lastname must be 4 characters at least",
-        ],
-        email: [
-          (v) => !!v || "Email is required",
-          (v) =>
-            (v && v.length >= 4) || "Lastname must be 4 characters at least",
-        ],
-        logo: [(v) => !!v || "Logo is required"],
-        githubLink: [(v) => !!v || "Github link is required"],
-        username: [
-          (v) => !!v || "Username is required",
-          (v) =>
-            (v && v.length >= 4) || "Username must be 4 characters at least",
-        ],
-        password: [
-          (v) =>
-            (v && v.length >= 4) ||
-            v.length == 0 ||
-            "Password must be 4 characters at least",
-        ],
-      },
-    };
+    startTour() {
+      if (!this.$vuetify.breakpoint.mobile) {
+        const tour = JSON.parse(localStorage.getItem('tour'));
+        const isTourHaveBeenDone = tour?.profile;
+        if (!isTourHaveBeenDone) {
+          this.$tours['profileTour'].start()
+        }
+      }
+    },
+    handleTourEnd() {
+      let tour = JSON.parse(localStorage.getItem('tour'))
+      tour.profile = true;
+      tour = JSON.stringify(tour);
+      localStorage.setItem('tour', tour)
+    }
   },
   created() {
-    this.axios.get(`${this.$apiuri}/documentations/metadata`).then((res) => {
-      this.metadata = res.data;
-      this.metadata.password = "";
-    });
+    this.user = JSON.parse(localStorage.getItem('user'));
   },
+  mounted(){
+    this.startTour();
+  }
 };
 </script>
 

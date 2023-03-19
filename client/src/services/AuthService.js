@@ -9,7 +9,11 @@ const login = (user) => {
             pwd: user.password 
         })
         .then((response) => {
-            localStorage.setItem('token', response.data.accessToken)
+            const token = response.data.accessToken;
+            const user = response.data.user;
+
+            localStorage.setItem('token', token)
+            localStorage.setItem('user', JSON.stringify(user))
 
             if(!JSON.parse(localStorage.getItem('tour'))){
                 localStorage.setItem('tour', JSON.stringify({}))
@@ -22,6 +26,7 @@ const logout = () => {
         .get(URL + 'logout')
         .then(() => {
             localStorage.removeItem('token')
+            localStorage.removeItem('user')
         })
 }
 

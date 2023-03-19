@@ -96,6 +96,7 @@ router.beforeEach(async (to, from, next) => {
         next()
       } catch (error) {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         next({
           name: "login",
           replace: true,
