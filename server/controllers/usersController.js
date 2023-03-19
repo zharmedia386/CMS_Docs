@@ -1,36 +1,89 @@
-const User = require('../model/users');
+const UserDB = require('../model/users');
 const bcrypt = require('bcrypt');
 const nodemailer = require("nodemailer");
+const mongo = require('mongodb')
 
 const getAllUsers = async (req, res) => {
-    const users = await User.find();
-    if (!users) return res.status(204).json({ 'message': 'No users found' });
-    res.json(users);
+    const Users = await UserDB();
+    if (!Users) return res.status(204).json({ 'message': 'No users found' });
+    res.status(200).send(await Users.find({}).toArray())
+}
+
+const getUserById = async (req, res) => {
+    if (!req?.params?.id) return res.status(400).json({ 'message': 'Users ID required.' });
+
+    const Users = await UserDB()
+    let objectId = new mongo.ObjectId(req.params.id)
+
+    if (!Users) {
+        return res.status(204).json({ "message": `No users matches ID ${req.params.id}.` });
+    }
+    
+    res.status(200).send(await Users.find({_id : objectId}).toArray())
+}
+
+const getUserByUsername = async (req, res) => {
+    if (!req?.params?.username) return res.status(400).json({ 'message': 'Username required.' });
+
+    const Users = await UserDB()
+
+    if (!Users) {
+        return res.status(204).json({ "message": `No users matches usernames ${req.params.username}.` });
+    }
+    
+    res.status(200).send(await Users.find({username : req.params.username}).toArray())
+}
+
+const updateUser = async (req,res) => {
+    if (!req?.body?.id) return res.status(400).json({ 'message': 'Users ID required.' });
+
+    if(!req?.body?.email || !req?.body?.firstname || !req?.body?.lastname || !req?.body?.username) {
+        return res.status(400).json({'message': 'Please fill all required field'});
+    }
+
+    let userId = new mongo.ObjectId(req.body.id)
+
+    const Users = await UserDB()
+
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
+    let userData = {
+        "email" : req.body.email,
+        "firstname" : req.body.firstname,
+        "lastname" : req.body.lastname,
+        "username" : req.body.username,
+        "updatedBy": userDataSession.username
+    }
+
+    if(req.body.alias && req.body.alias.length != 0) userData.alias = req.body.alias;
+
+    try {
+        // update users in users collections
+        await Users.updateOne(
+            { _id: userId },
+            { $set: userData }
+        )
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+    res.status(201).send({ message : "Users Data Updated!" })
 }
 
 const deleteUser = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ "message": 'User ID required' });
-    const user = await User.findOne({ _id: req.body.id }).exec();
+    if (!req?.body?.id) return res.status(400).json({ "message": 'UserDB ID required' });
+    const user = await UserDB.findOne({ _id: req.body.id }).exec();
     if (!user) {
-        return res.status(204).json({ 'message': `User ID ${req.body.id} not found` });
+        return res.status(204).json({ 'message': `UserDB ID ${req.body.id} not found` });
     }
     const result = await user.deleteOne({ _id: req.body.id });
     res.json(result);
 }
 
-const getUser = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ "message": 'User ID required' });
-    const user = await User.findOne({ _id: req.params.id }).exec();
-    if (!user) {
-        return res.status(204).json({ 'message': `User ID ${req.params.id} not found` });
-    }
-    res.json(user);
-}
-
 const resetPassword = async (req, res) => {
     if(!req?.body?.email) return res.status(400).json({"message" : "Email is required"})
 
-    const Users = await User()
+    const Users = await UserDB()
 
     if (!Users) return res.status(204).json({ 'message': 'No user found.' });
 
@@ -76,14 +129,13 @@ const resetPassword = async (req, res) => {
     } catch (error) {
         res.status(400).send({"message" : error.message})
     }
-
-    
-    
 }
 
 module.exports = {
     getAllUsers,
+    updateUser,
     deleteUser,
-    getUser,
+    getUserById,
+    getUserByUsername,
     resetPassword
 }

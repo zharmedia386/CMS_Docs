@@ -84,6 +84,9 @@ const getMetadata = async (req, res) => {
 const updateMetadata = async (req,res) => {
     const Documentations = await documentationDB()
     const User = await userCollection()
+
+    // Get user data from the session
+    const userDataSession = req.session.user;
     
     if (!Documentations || !User) return res.status(204).json({ 'message': 'Metadata not found.'});
 
@@ -96,7 +99,8 @@ const updateMetadata = async (req,res) => {
             "title" : req.body.title,
             "logo" : req.body.logo,
             "githubLink" : req.body.githubLink,
-            "footer" : req.body.footer
+            "footer" : req.body.footer,
+            "updatedBy": userDataSession.username
         }
         const updateDoc = await Documentations.updateOne({}, {
             $set : data
@@ -119,7 +123,6 @@ const updateMetadata = async (req,res) => {
     } catch (error) {
         res.status(400).send(error.message)
     }
-
 }
 
 // Create documentation info
@@ -130,6 +133,9 @@ const createNewDocumentation = async (req, res) => {
 
     const Documentations = await documentationDB()
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     try {
         // insert documentation
         const insertedDocumentation = await Documentations.insertOne({
@@ -139,6 +145,7 @@ const createNewDocumentation = async (req, res) => {
             githubLink : req.body.githubLink,
             footer : req.body.footer,
             content : req.body.content,
+            createdBy: userDataSession.username,
             createdAt : new Date(),
             updatedAt : new Date()
         })
@@ -161,13 +168,17 @@ const updateDocumentation = async (req, res) => {
 
     const Documentations = await documentationDB()
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     const documentation = {
         title : req.body.title,
         logo : req.body.logo,
         description : req.body.description,
         githubLink : req.body.githubLink,
         footer : req.body.footer,
-        updatedAt : new Date()
+        updatedAt : new Date(),
+        updatedBy: userDataSession.username
     }
 
     try {

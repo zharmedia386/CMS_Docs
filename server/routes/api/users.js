@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const usersController = require('../../controllers/usersController');
+const { verifyJWT } = require("../../middleware/verifyJWT")
 
 router.route('/')
     .get(usersController.getAllUsers)
-    .post(usersController.resetPassword)
-    .delete(usersController.deleteUser);
+    .put(verifyJWT, usersController.updateUser)
+    .post(verifyJWT, usersController.resetPassword)
+    .delete(verifyJWT, usersController.deleteUser);
 
 router.route('/:id')
-    .get(usersController.getUser);
+    .get(usersController.getUserById);
+
+router.route('/username/:username')
+    .get(usersController.getUserByUsername);
 
 module.exports = router;
