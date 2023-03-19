@@ -10,10 +10,11 @@ axios.interceptors.response.use(
     // If error 401 - unauthorized - redirect to login
     if (error.response.status === 401) {
         localStorage.removeItem('token')
+        localStorage.removeItem('user')
         this.$router.push({
             name: "login",
             params: {
-              message: "Invalid session 2",
+              message: "Your login session is expired",
               status: true,
               msgtype: 'error'
             }

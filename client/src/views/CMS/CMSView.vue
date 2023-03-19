@@ -18,7 +18,7 @@
             <template v-slot:activator="{ on }">
               <v-btn icon x-large v-on="on">
                 <v-avatar color="brown" size="48">
-                  <span class="white--text text-h5">{{ user2.initials }}</span>
+                  <span class="white--text text-h5">{{ user.initials }}</span>
                 </v-avatar>
               </v-btn>
             </template>
@@ -26,14 +26,14 @@
               <v-list-item-content class="justify-center">
                 <div class="mx-auto text-center">
                   <v-avatar color="brown">
-                    <span class="white--text text-h5">{{ user2.initials }}</span>
+                    <span class="white--text text-h5">{{ user.initials }}</span>
                   </v-avatar>
-                  <h3>{{ user2.fullName }}</h3>
+                  <h3>{{ user.username }}</h3>
                   <p class="text-caption mt-1">
-                    {{ user2.email }}
+                    {{ user.email }}
                   </p>
                   <v-divider class="my-3"></v-divider>
-                  <v-btn depressed rounded text>
+                  <v-btn depressed rounded text :to="{ name: 'profile' }">
                     Edit Profile
                   </v-btn>
                   <v-divider class="my-3"></v-divider>
@@ -164,8 +164,7 @@ export default {
           icon: 'mdi-account-multiple'
         }
       ],
-      user: true,
-      user2: {
+      user: {
         initials: 'JD',
         fullName: 'John Doe',
         email: 'john.doe@doe.com',
@@ -274,6 +273,8 @@ export default {
   },
   created() {
     this.getMetadata();
+    this.user = JSON.parse(localStorage.getItem('user'))
+    this.user.initials = this.user.firstname[0] + this.user.lastname[0]
   }
 }
 </script>
