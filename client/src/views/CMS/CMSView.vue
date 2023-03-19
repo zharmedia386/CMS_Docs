@@ -257,7 +257,6 @@ export default {
     handleTourEnd(){
       let tour = JSON.parse(localStorage.getItem('tour'))
       tour.cms = true;
-      console.log(this.$route.name)
       if(!tour?.metadata){
         if(this.$route.name == 'metadata') {
           const isTourHaveBeenDone = tour?.metadata;

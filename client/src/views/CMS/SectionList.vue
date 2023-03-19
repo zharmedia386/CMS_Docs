@@ -1,9 +1,23 @@
 <template>
   <v-container>
+    <v-tour 
+      name="sectionTour" 
+      :steps="steps" 
+      :options="{ highlight: true, enableScrolling: false }"
+      :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd }"
+    ></v-tour>
     <v-card class="section-header elevation-0" dark>
       <v-card-title class="d-flex justify-space-between pa-0">
-        <v-text-field dense outlined placeholder="Search..." class="search-input"  v-model="searchKeyword"></v-text-field>
+        <v-text-field 
+          id="v-step-chapter-1"
+          dense 
+          outlined 
+          placeholder="Search..." 
+          class="search-input"  
+          v-model="searchKeyword">
+        </v-text-field>
         <v-btn 
+          id="v-step-chapter-0"
           to="/cms/section/create"
           color="#939AFF"
           class="black--text d-flex align-start flex-column"
@@ -14,7 +28,7 @@
       </v-card-title>
     </v-card>
 
-    <div class="section-list">
+    <div class="section-list" id="v-step-chapter-2">
       <div v-if="filteredSection.length === 0">
         <v-card variant="tonal" class="section-card table-responsive mb-3" dark>
           <span>No result found</span>
@@ -48,6 +62,7 @@
     </div>
 
     <v-pagination
+      id="v-step-chapter-3"
       v-if="pagination.total >= pagination.rowsPerPage"
       v-model="pagination.page"
       :length="pages"
@@ -74,7 +89,40 @@ export default {
         total: 0,
         rowsPerPage: 5
       },
-      searchKeyword: ''
+      searchKeyword: '',
+      steps: [
+        {
+          target: '#v-step-chapter-0',
+          content: `<strong>Add New Section</strong><br>You can add new section into your documentation by clicking this button`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-chapter-1',
+          content: `<strong>Search Section</strong><br>Is it hard to find your spesific section? search it here by it's name`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-chapter-2',
+          content: `<strong>Section List</strong><br>Here your section listed, you can do action such as edit it or deleted it`,
+          params: {
+            placement: 'left',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-chapter-3',
+          content: `<strong>Navigation</strong><br>Switch between pages if you want to see other side of you section`,
+          params: {
+            placement: 'top',
+          }
+        },
+      ]
     }
   },
   methods :{
@@ -92,9 +140,25 @@ export default {
         const response = await SectionService.getAllSections();
         this.sections = response.data
         this.pagination.total = this.sections.length
+        this.startTour()
       } catch (error) {
         this.$root.SnackBar.show({ message: 'Failed to get chapters', color: 'error', icon: 'mdi-close-circle' })
       }
+    },
+    startTour(){
+      if(!this.$vuetify.breakpoint.mobile){
+        const tour = JSON.parse(localStorage.getItem('tour'));
+        const isTourHaveBeenDone = tour?.section;
+        if(!isTourHaveBeenDone) {
+          this.$tours['sectionTour'].start()
+        }
+      }
+    },
+    handleTourEnd(){
+      let tour = JSON.parse(localStorage.getItem('tour'))
+      tour.section = true;
+      tour = JSON.stringify(tour);
+      localStorage.setItem('tour', tour)
     }
   },
   computed: {

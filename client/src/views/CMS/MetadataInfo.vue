@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-tour name="metadataTour" :steps="steps" :options="{ highlight: true, enableScrolling: false }" :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd }"></v-tour>
+    <v-tour 
+      name="metadataTour" 
+      :steps="steps" 
+      :options="{ highlight: true, enableScrolling: false }" 
+      :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd }"
+    ></v-tour>
     <h1 class="text-containerh1 mb-3" id="v-step-metadata-0">
       Metadata Settings
     </h1>
@@ -105,14 +110,16 @@ export default {
           target: '#v-step-metadata-0',
           content: `<strong>Manage Metadata</strong><br>If you want to change your documentation setting, this is the place`,
           params: {
-            placement: 'bottom'
+            placement: 'bottom',
+            enableScrolling: false
           }
         },
         {
           target: '#v-step-metadata-1',
           content: `<strong>Logo</strong><br>Change your logo in your navbar here`,
           params: {
-            placement: 'bottom'
+            placement: 'bottom',
+            enableScrolling: false
           }
         },
         {

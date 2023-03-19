@@ -2,41 +2,10 @@
   <div>
     <v-container>
       <h1 class="text-containerh1 mb-3">Profile Settings</h1>
-      <v-divider
-        :thickness="4"
-        class="border-opacity-100"
-        color="white"
-      ></v-divider>
+      <v-divider :thickness="4" class="border-opacity-100" color="white"></v-divider>
       <div style="relative">
-      <v-row>
-        <!-- <v-col cols="4" class="mt-15 ml-8 text-container">
-          <span>Logo Picture</span>
-        </v-col> -->
-
+        <v-row>
           <v-col cols="1" class="mt-8 ml-16">
-            <!-- <v-file-input
-                  label="Logo"
-                  rounded="circle"
-                  
-                  prepend-icon="mdi-camera "
-                  v-model="metadata.logo"
-                  :rules="rules.logo"
-                  @change="getBase64()"
-                  filled
-                  required
-          ></v-file-input> -->
-            <!-- <v-file-input
-            v-model="image"
-            accept="image/*"
-            @change="getBase64()"
-            prepend-icon="mdi-camera"
-          >
-              <div class="circle">
-                <img :src="metadata.logo" class="preview-image" />
-              </div>
-              <div class="circle placeholder">{{ text }}</div>
-  
-          </v-file-input> -->
             <div>
               <label for="input-file">
                 <div class="circle">
@@ -44,45 +13,25 @@
                   <div class="placeholder">Choose an image</div>
                 </div>
               </label>
-              <!-- <input id="input-file" type="file" accept="image/*" @change="getBase64()" /> -->
-              <v-file-input
-                id="input-file"
-                accept="image/*"
-                prepend-icon="mdi-camera"
-                class="camera-input"
-                @change="getBase64()"
-              />
+              <v-file-input id="input-file" accept="image/*" prepend-icon="mdi-camera" class="camera-input"
+                @change="getBase64()" />
             </div>
           </v-col>
-          <!-- <v-col cols="1" style="max-width: 100%; border-radius: 0 20px 0 20px;">
-                <img :src="metadata.logo" style="max-width: 100%;" />
-              </v-col> -->
         </v-row>
       </div>
       <v-row>
-        
-      <v-col cols="4" class="mt-4 ml-16 text-container">
-        <span>Full Name</span>
-      </v-col>
-  
-      <v-col cols="3" class="mt-1" >
-          <v-text-field dark
-            v-model="metadata.firstname"
-            :rules="rules.firstname"
-            outlined
-            required
-            solo-inverted
-          ></v-text-field>
+
+        <v-col cols="4" class="mt-4 ml-16 text-container">
+          <span>Full Name</span>
+        </v-col>
+
+        <v-col cols="3" class="mt-1">
+          <v-text-field dark v-model="metadata.firstname" :rules="rules.firstname" outlined required
+            solo-inverted></v-text-field>
         </v-col>
         <v-col cols="3" class="mt-1">
-          <v-text-field
-            dark
-            v-model="metadata.lastname"
-            :rules="rules.lastname"
-            outlined
-            required
-            solo-inverted
-          ></v-text-field>
+          <v-text-field dark v-model="metadata.lastname" :rules="rules.lastname" outlined required
+            solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
@@ -92,14 +41,8 @@
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field
-            dark
-            v-model="metadata.username"
-            :rules="rules.username"
-            outlined
-            required
-            solo-inverted
-          ></v-text-field>
+          <v-text-field dark v-model="metadata.username" :rules="rules.username" outlined required
+            solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
@@ -109,14 +52,7 @@
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field
-            dark
-            v-model="metadata.email"
-            :rules="rules.email"
-            outlined
-            required
-            solo-inverted
-          ></v-text-field>
+          <v-text-field dark v-model="metadata.email" :rules="rules.email" outlined required solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
@@ -126,25 +62,13 @@
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field
-            dark
-            v-model="metadata.password"
-            :rules="rules.password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="show1 ? 'text' : 'password'"
-            @click:append="show1 = !show1"
-            outlined
-            required
-            solo-inverted
-          ></v-text-field>
+          <v-text-field dark v-model="metadata.password" :rules="rules.password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'"
+            @click:append="show1 = !show1" outlined required solo-inverted></v-text-field>
         </v-col>
       </v-row>
 
-      <v-divider
-        :thickness="4"
-        class="border-opacity-100 mt-8"
-        color="white"
-      ></v-divider>
+      <v-divider :thickness="4" class="border-opacity-100 mt-8" color="white"></v-divider>
 
       <div class="d-flex justify-end">
         <v-btn class="mt-3 mr-3 colorbtn1" variant="flat">Discard</v-btn>
@@ -152,43 +76,12 @@
       </div>
     </v-container>
   </div>
-  <!-- <v-card>
-    <v-container>
-      <hr>
-      <v-radio-group
-        v-model="inline"
-        inline
-      >
-      </v-radio-group>
-    </v-container>
-    <v-divider
-    :thickness="4"
-    class="border-opacity-100"
-    color="white"
-    inset
-    ></v-divider>
-  
-    <v-divider
-      :thickness="4"
-      class="border-opacity-100"
-      color="white"
-      
-    ></v-divider>
-  </v-card> -->
 </template>
 
 <script>
 export default {
   components: {},
   methods: {
-    // handleImageUpload(event) {
-    //   const file = event.target.files[0];
-    //   const reader = new FileReader();
-    //   reader.readAsDataURL(file);
-    //   reader.onload = () => {
-    //     this.image = reader.result;
-    //   };
-    // },
     getBase64() {
       const base64 = new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -299,10 +192,12 @@ export default {
   text-align: left;
   color: #ffffff;
 }
+
 .text-containerh1 {
   text-align: left;
   color: #939aff;
 }
+
 .bgc {
   color: #8b949e !important;
   background-color: #8b949e dark !important;
@@ -312,10 +207,12 @@ export default {
   background-color: #939aff !important;
   color: black;
 }
+
 .colorbtn1 {
   background-color: var(--primary-dark) !important;
   color: white !important;
 }
+
 .circle {
   width: 100px;
   height: 100px;
@@ -342,6 +239,7 @@ export default {
   color: #ccc;
   background-color: #f5f5f5;
 }
+
 #input-file {
   position: absolute;
   left: -99999px;
@@ -350,10 +248,7 @@ export default {
 label[for="input-file"] {
   cursor: pointer;
 }
-/* .my-icon-class {
-    margin-bottom: 50px;
-    margin-right: 50px;
-  } */
+
 .camera-input .v-icon.mdi.mdi-camera {
   margin-bottom: 60px;
   margin-left: 155px;
@@ -361,6 +256,7 @@ label[for="input-file"] {
   border-radius: 50px;
   padding: 8px;
 }
+
 .vue-editor--wrapper {
   background-color: white !important;
 }
@@ -368,19 +264,4 @@ label[for="input-file"] {
 .vue-editor--wrapper:focus {
   background-color: white;
 }
-/* .v-icon.mdi-camera:not(.v-icon--disabled)::before {
-    border: none;
-  } */
-
-/* .v-icon.mdi-camera{
-    margin-top: 50px;
-    color: #2c3e50; */
-/* background-color: var(--primary-dark); */
-/* } */
-/* .theme--light.v-file-input .v-icon.mdi-camera:before {
-    box-shadow: none;
-  } */
-/* .theme--light.v-btn.v-btn--has-bg{
-    background-color:#939AFF;
-  } */
 </style>
