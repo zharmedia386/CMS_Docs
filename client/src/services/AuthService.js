@@ -1,9 +1,10 @@
-import { API_URL } from './APIService';
 import axios from 'axios';
+
+const URL = process.env.VUE_APP_API_URL;
 
 const login = (user) => {
     return axios
-        .post(API_URL + 'auth', {
+        .post(URL + 'auth', {
             user: user.username,
             pwd: user.password 
         })
@@ -18,7 +19,7 @@ const login = (user) => {
 
 const logout = () => {
     return axios
-        .get(API_URL + 'logout')
+        .get(URL + 'logout')
         .then(() => {
             localStorage.removeItem('token')
         })
@@ -26,7 +27,7 @@ const logout = () => {
 
 const refreshToken = () => {
     return axios
-        .get(API_URL + `auth/${localStorage.token}`)
+        .get(URL + `auth/${localStorage.token}`)
         .then((response) => {
             localStorage.setItem('token', response.data)
         })
