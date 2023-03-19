@@ -8,11 +8,14 @@ const createVersion = async (req, res) => {
 
     const Documentation = await documentationDB();
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     try {
         // Add new version into documentation
         await Documentation.updateOne(
             {},
-            { $push: { "content": { version: versionName } } }
+            { $push: { "content": { version: versionName }, "createdBy": userDataSession.username } }
         )
     } catch (error) {
         res.status(400).send({ message: error.message })
@@ -27,11 +30,14 @@ const editVersion = async (req, res) => {
 
     const Documentation = await documentationDB();
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     try {
         // Replace current version name with new version name
         await Documentation.updateOne(
             {},
-            { $set: { "content.$[ct].version": newVersionName } },
+            { $set: { "content.$[ct].version": newVersionName, "content.$[ct].updatedBy": userDataSession.username } },
             { arrayFilters: [ { "ct.version": editedVersion } ] }
         )
     } catch (error) {

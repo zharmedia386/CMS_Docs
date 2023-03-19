@@ -10,6 +10,7 @@ const credentials = require('./middleware/credentials');
 const swaggerUI = require("swagger-ui-express");
 const YAML = require("yamljs");
 const swaggerJSDocs = YAML.load("./api.yaml");
+const session = require('express-session');
 
 // const { logger } = require('./middleware/logEvents');
 // const errorHandler = require('./middleware/errorHandler');
@@ -43,6 +44,14 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json 
 app.use(express.json());
 
+// Configure express-session middleware
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: false
+  }));
+
+// Swagger API Documentation
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
 
 //serve static files

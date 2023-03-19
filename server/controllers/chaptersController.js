@@ -35,11 +35,15 @@ const createNewChapter = async (req, res) => {
     const Chapters = await chapterDB();
     const Documentation = await documentationDB();
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     try {
         // masukan chapter baru
         const insertedChapter = await Chapters.insertOne({
             title: req.body.title,
             version: req.body.version,
+            createdBy: userDataSession.username,
             createdAt: new Date(),
             updatedAt: new Date() 
         })
@@ -47,7 +51,7 @@ const createNewChapter = async (req, res) => {
         // masukan chapter baru didalam dokumen
         const result = await Documentation.updateOne(
             { content: { $elemMatch: { "version": `${req.body.version[0]}` } } },
-            { $push: { "content.$.chapter": { "_id": insertedChapter.insertedId, "title": `${req.body.title}` } } }
+            { $push: { "content.$.chapter": { "_id": insertedChapter.insertedId, "title": `${req.body.title}`, "createdBy": userDataSession.username } } }
         )
 
         // cek ketika chapter baru dimasukan kedalam dokumen
@@ -75,9 +79,13 @@ const updateChapter = async (req, res) => {
     const Chapters = await chapterDB();
     const Documentation = await documentationDB();
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     const chapter = {
         title: req.body.title,
-        updatedAt: new Date() 
+        updatedAt: new Date(),
+        updatedBy: userDataSession.username
     }
 
     try {
@@ -90,7 +98,7 @@ const updateChapter = async (req, res) => {
         // update judul chapter
         await Documentation.updateOne(
             { "content.chapter._id": chapterId },
-            { $set: { "content.$[c].chapter.$[ch].title": `${chapter.title}` } },
+            { $set: { "content.$[c].chapter.$[ch].title": `${chapter.title}`, "content.$[c].chapter.$[ch].updatedBy": userDataSession.username } },
             { arrayFilters: [ { "c.chapter._id": chapterId }, { "ch._id": chapterId } ] }
         )
     } catch (error) {

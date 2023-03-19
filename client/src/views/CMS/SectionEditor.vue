@@ -1,9 +1,15 @@
 <template>
   <v-form @submit.prevent="saveData()">
     <v-container>
-      <h1 style="color: var(--primary-purple); text-align: left; margin-bottom: 10px;">Section Editor</h1>
+      <v-tour 
+        name="editorTour" 
+        :steps="steps" 
+        :options="{ highlight: true, enableScrolling: false }"
+        :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd }"
+      ></v-tour>
+      <h1 id="v-step-editor-0" style="color: var(--primary-purple); text-align: left; margin-bottom: 10px;">Section Editor</h1>
       <hr style="margin-bottom: 40px;">
-      <div style="color: white; width: 300px;" v-if="create">
+      <div id="v-step-editor-1" style="color: white; width: 300px;" v-if="create">
         <label for="select-section" style="text-align: left; display: block;">Load Section</label>
         <v-select
           id="select-section"
@@ -18,7 +24,7 @@
           >
         </v-select>
       </div>
-      <div style="color: white; width: 300px;">
+      <div id="v-step-editor-2" style="color: white; width: 300px;">
         <label for="input-title" style="text-align: left; display: block;">Input Section Title <span style="color:red">*</span></label>
         <v-text-field
           id="input-title"
@@ -29,7 +35,7 @@
           dark
         ></v-text-field>
       </div>
-      <div style="color: white; width: 300px;">
+      <div id="v-step-editor-3" style="color: white; width: 300px;">
         <label for="input-alias" style="text-align: left; display: block;">Input Section Alias (Opsional)</label>
         <v-text-field
           id="input-alias"
@@ -40,13 +46,15 @@
         ></v-text-field>
       </div>
     
-      <div class="" style="background-color: white; padding: 10px;">
-        <p style="margin-bottom: 0; text-align: left; font-weight: bold;"><v-icon class="mr-2">mdi-eye</v-icon>Section Preview</p>
+      <div id="v-step-editor-4">
+        <div class="" style="background-color: white; padding: 10px;">
+          <p style="margin-bottom: 0; text-align: left; font-weight: bold;"><v-icon class="mr-2">mdi-eye</v-icon>Section Preview</p>
+        </div>
+        <div class="mb-8 ql-editor" style="background-color: #37404D; color: white; border: 1px solid white;" v-html="content"></div>
       </div>
-      <div class="mb-8 ql-editor" style="background-color: #37404D; color: white; border: 1px solid white;" v-html="content"></div>
-      <vue-editor v-model="content"></vue-editor>
+      <vue-editor id="v-step-editor-5" v-model="content"></vue-editor>
       <div class="d-flex justify-end mt-4">
-        <v-btn class="mt-1 blue darken-4 white--text" type="submit" v-text="this.create ? 'Create' : 'Save' "></v-btn>
+        <v-btn id="v-step-editor-6" class="mt-1 blue darken-4 white--text" type="submit" v-text="this.create ? 'Create' : 'Save' "></v-btn>
       </div>
     </v-container>
   </v-form>
@@ -72,7 +80,61 @@ export default {
       title : "",
       create: true,
       sections : [],
-      selectedSection : ""
+      selectedSection : "",
+      steps: [
+        {
+          target: '#v-step-editor-0',
+          content: `<strong>Section Editor</strong><br>Here where you can create content for your section`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-editor-1',
+          content: `<strong>Load Section</strong><br>If you want to copy content from previous section, you can select it from here`,
+          params: {
+            placement: 'right',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-editor-2',
+          content: `<strong>Section Title</strong><br>Input the title of your section here`,
+          params: {
+            placement: 'right',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-editor-3',
+          content: `<strong>Section Alias</strong><br>If you want your section have an alias, you can input it in this form`,
+          params: {
+            placement: 'right',
+          }
+        },
+        {
+          target: '#v-step-editor-4',
+          content: `<strong>Section Preview</strong><br>You can preview how your content look in the portal in here`,
+          params: {
+            placement: 'top',
+          }
+        },
+        {
+          target: '#v-step-editor-5',
+          content: `<strong>Editor</strong><br>Here where you want to type any content you will have in the section`,
+          params: {
+            placement: 'top',
+          }
+        },
+        {
+          target: '#v-step-editor-6',
+          content: `<strong>Submit</strong><br>After you done change, don't forget to click this button to save it`,
+          params: {
+            placement: 'top',
+          }
+        },
+      ]
     }
   },
   methods: {
@@ -120,6 +182,7 @@ export default {
       try {
         const response = await SectionService.getAllSections();
         this.sections = response.data
+        this.startTour()
       } catch (error) {
         this.$root.SnackBar.show({ message: `Failed to fetch section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
@@ -148,6 +211,21 @@ export default {
         this.content = ""
         this.$root.SnackBar.show({ message: `Failed to load section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
+    },
+    startTour(){
+      if(!this.$vuetify.breakpoint.mobile){
+        const tour = JSON.parse(localStorage.getItem('tour'));
+        const isTourHaveBeenDone = tour?.editor;
+        if(!isTourHaveBeenDone) {
+          this.$tours['editorTour'].start()
+        }
+      }
+    },
+    handleTourEnd(){
+      let tour = JSON.parse(localStorage.getItem('tour'))
+      tour.editor = true;
+      tour = JSON.stringify(tour);
+      localStorage.setItem('tour', tour)
     }
   },
   created(){

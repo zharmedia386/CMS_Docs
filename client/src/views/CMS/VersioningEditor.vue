@@ -1,15 +1,24 @@
 <template>
   <v-container>
+    <v-tour 
+      name="manageTour" 
+      :steps="steps" 
+      :options="{ highlight: true, enableScrolling: false }"
+      :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd, onNextStep: handleNextStep }"
+    ></v-tour>
     <v-card dark color="#2D3748">
       <v-tabs v-model="tab" background-color="transparent" grow height="60">
-        <v-tab v-for="item in items" :key="item">
-          {{ item }}
+        <v-tab id="v-step-manage-0">
+          Manage Version
+        </v-tab>
+        <v-tab id="v-step-manage-3">
+          Manage Structure
         </v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="tab" dark>
         <v-tab-item>
-          <v-card color="#3A4052">
+          <v-card color="#3A4052" id="v-step-manage-1">
             <v-card-text style="overflow: auto;">
               <v-list color="#3A4052">
                 <v-list-item>
@@ -43,7 +52,7 @@
               </v-list>
             </v-card-text>
             <v-card-actions style="background-color: #2D3748; padding: 16px 16px; ">
-              <v-btn text @click="() => { createDialog = true }" style="text-transform:none;">
+              <v-btn text @click="() => { createDialog = true }" style="text-transform:none;" id="v-step-manage-2">
                 <v-icon style="color: var(--primary-purple); font-size: 20px;">mdi-plus</v-icon>
                 <strong style="color: var(--primary-purple); letter-spacing: normal;">Create Version</strong>
               </v-btn>
@@ -56,18 +65,25 @@
               <!-- Reorder Content -->
             <v-row class="d-flex px-5 mt-5">
               <v-col cols="9">
-                <v-select v-model="selectedVersion" :items="content" item-text="version" outlined return-object
-                  @change="() => { updateSection(); updateChapter() }"></v-select>
+                <v-select 
+                  id="v-step-manage-4"
+                  v-model="selectedVersion" 
+                  :items="content" 
+                  item-text="version" 
+                  outlined 
+                  return-object
+                  @change="() => { updateSection(); updateChapter() }"></v-select
+                >
               </v-col>
               <v-col cols="3" class="d-flex justify-start">
-                <v-btn @click="reorder()" color="var(--primary-purple)" class="mt-1" block large>
+                <v-btn @click="reorder()" color="var(--primary-purple)" class="mt-1" block large id="v-step-manage-5">
                   Reorder Content
                 </v-btn>
               </v-col>
             </v-row>
 
             <!-- List Chapter & Section -->
-            <v-list color="#3A4052">
+            <v-list color="#3A4052" id="v-step-manage-6">
               <!-- List Chapter -->
               <div v-for="(chapter, i) in selectedVersion.chapter" :key="i">
                 <v-row>
@@ -82,18 +98,57 @@
                         <v-list-item-title class="text-left"
                           v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-list-item-title>
                         <!-- Remove Section -->
-                        <v-btn class="mr-2" small outlined fab @click="removeSection(section)">
-                          <v-icon>mdi-close</v-icon>
-                        </v-btn>
+                        <v-tooltip top color="#2D3748">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn 
+                              v-bind="attrs" 
+                              v-on="on" 
+                              class="mr-2" 
+                              small 
+                              outlined
+                              fab 
+                              @click="removeSection(section)"
+                            >
+                              <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Remove Section</span>
+                        </v-tooltip>
                         <!-- Move Up Section -->
-                        <v-btn class="mr-2" small outlined fab :disabled="j == 0" @click="moveUpSection(i, j)">
-                          <v-icon>mdi-arrow-up</v-icon>
-                        </v-btn>
+                        <v-tooltip top color="#2D3748">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn 
+                              v-bind="attrs" 
+                              v-on="on" 
+                              class="mr-2" 
+                              small 
+                              outlined 
+                              fab 
+                              :disabled="j == 0" 
+                              @click="moveUpSection(i, j)"
+                            >
+                              <v-icon>mdi-arrow-up</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Move Up Section</span>
+                        </v-tooltip>
                         <!-- Move Down Section -->
-                        <v-btn small outlined fab :disabled="j == chapter.section.length - 1"
-                          @click="moveDownSection(i, j)">
-                          <v-icon>mdi-arrow-down</v-icon>
-                        </v-btn>
+                        <v-tooltip top color="#2D3748">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn 
+                              v-bind="attrs" 
+                              v-on="on" 
+                              small 
+                              outlined 
+                              fab 
+                              :disabled="j == chapter.section.length - 1"
+                              @click="moveDownSection(i, j)"
+                            >
+                              <v-icon>mdi-arrow-down</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Move Down Section</span>
+                        </v-tooltip>
                       </v-list-item>
                     </v-list-group>
                   </v-col>
@@ -101,33 +156,85 @@
                   <!-- Add/Remove Button -->
                   <v-col cols="2" class="my-auto">
                     <!-- Add Section -->
-                    <v-btn class="mr-2" small outlined fab @click="() => { dialog = true; sectionChapter = chapter }">
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          class="mr-2" 
+                          small 
+                          outlined 
+                          fab 
+                          @click="() => { dialog = true; sectionChapter = chapter }"
+                        >
+                          <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Add section</span>
+                    </v-tooltip>
+                    
                     <!-- Remove Chapter -->
-                    <v-btn small outlined fab @click="removeChapter(chapter)">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          small 
+                          outlined 
+                          fab 
+                          @click="removeChapter(chapter)"
+                        >
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Remove Chapter</span>
+                    </v-tooltip>
                   </v-col>
 
                   <!-- Move Up/Down Chapter -->
                   <v-col cols="2" class="my-auto">
                     <!-- Move Up Chapter -->
-                    <v-btn class="mr-2" small outlined fab :disabled="i == 0" @click="moveUpChapter(i)">
-                      <v-icon>mdi-arrow-up</v-icon>
-                    </v-btn>
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          class="mr-2" 
+                          small 
+                          outlined 
+                          fab 
+                          :disabled="i == 0" 
+                          @click="moveUpChapter(i)">
+                          <v-icon>mdi-arrow-up</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Move Up Chapter</span>
+                    </v-tooltip>
+                    
                     <!-- Move Down Chapter -->
-                    <v-btn small outlined fab :disabled="i == selectedVersion.chapter.length - 1"
-                      @click="moveDownChapter(i)">
-                      <v-icon>mdi-arrow-down</v-icon>
-                    </v-btn>
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          small 
+                          outlined 
+                          fab 
+                          :disabled="i == selectedVersion.chapter.length - 1"
+                          @click="moveDownChapter(i)"
+                        >
+                          <v-icon>mdi-arrow-down</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Move Down Chapter</span>
+                    </v-tooltip>
                   </v-col>
                 </v-row>
               </div>
             </v-list>
             </v-card-text>
             <v-card-actions style="background-color: #2D3748; padding: 16px 16px; ">
-              <v-btn text @click="() => { chapterDialog = true }" style="text-transform:none;">
+              <v-btn text @click="() => { chapterDialog = true }" style="text-transform:none;" id="v-step-manage-7">
                 <v-icon style="color: var(--primary-purple); font-size: 20px;">mdi-plus</v-icon>
                 <strong style="color: var(--primary-purple);">Add Chapter</strong>
               </v-btn>
@@ -303,10 +410,97 @@ export default {
 
       rules: {
         required: value => !!value || 'Required.',
-      }
+      },
+      
+      steps: [
+        {
+          target: '#v-step-manage-0',
+          content: `<strong>Manage Version</strong><br>Manage versions serves to create, modify, and delete versions of documentation`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-1',
+          content: `<strong>Version List</strong><br>Here where your version listed<br>Delete or edit your version here`,
+          params: {
+            placement: 'left',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-2',
+          content: `<strong>Create Version</strong><br>If you want to create new version, click this button`,
+          params: {
+            placement: 'top',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-3',
+          content: `<strong>Manage Structure</strong><br>Manage Structure serves to create, modify, and delete structures on the created documentation version`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-4',
+          content: `<strong>Select Version</strong><br>First select version you want to see the structure, by default it's your first version`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-5',
+          content: `<strong>Reorder Content</strong><br>If you finished restructuring your content, press this button to save it`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-6',
+          content: `<strong>Content Structure</strong><br>You can see the structure of your content in selected version, you can change the content or the order of the content`,
+          params: {
+            placement: 'left',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-7',
+          content: `<strong>Add Chapter</strong><br>If you want to add new chapter into your selected version, click this buttons`,
+          params: {
+            placement: 'top',
+            enableScrolling: false
+          }
+        },
+      ]
     }
   },
   methods: {
+    startTour(){
+      if(!this.$vuetify.breakpoint.mobile){
+        const tour = JSON.parse(localStorage.getItem('tour'));
+        const isTourHaveBeenDone = tour?.manage;
+        if(!isTourHaveBeenDone) {
+          this.$tours['manageTour'].start()
+        }
+      }
+    },
+    handleTourEnd(){
+      let tour = JSON.parse(localStorage.getItem('tour'))
+      tour.manage = true;
+      tour = JSON.stringify(tour);
+      localStorage.setItem('tour', tour)
+    },
+    handleNextStep(currentStep){
+      if(currentStep === 2) {
+        this.tab = 1;
+      }
+    },
     async createVersion() {
       // Validate forms
       if (!this.createFormValid) {
@@ -508,6 +702,7 @@ export default {
         this.selectedVersion = response.data[0].content[0]
         this.updateSection()
         this.updateChapter()
+        this.startTour()
       } catch (error) {
         this.$root.SnackBar.show({ message: `Failed to fetch documentation content, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }

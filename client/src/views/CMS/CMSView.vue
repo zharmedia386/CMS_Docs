@@ -12,13 +12,13 @@
           <img :src="documentation.logo" class="logo mr-2">
         </v-toolbar-title>
         <div class="ml-auto mr-2 d-flex justify-center align-center">
-          <v-btn class="mr-6" color="var(--primary-dark)"><v-icon class="mr-2">mdi-github</v-icon>Github</v-btn>
+          <a :href="documentation.githubLink" target="_blank"><v-btn class="mr-6" color="var(--primary-dark)"><v-icon class="mr-2" >mdi-github</v-icon>Github</v-btn></a>
 
           <v-menu dark class="avatar-menu" bottom min-width="200px" rounded offset-y>
             <template v-slot:activator="{ on }">
               <v-btn icon x-large v-on="on">
                 <v-avatar color="brown" size="48">
-                  <span class="white--text text-h5">{{ user2.initials }}</span>
+                  <span class="white--text text-h5">{{ user.initials }}</span>
                 </v-avatar>
               </v-btn>
             </template>
@@ -26,14 +26,14 @@
               <v-list-item-content class="justify-center">
                 <div class="mx-auto text-center">
                   <v-avatar color="brown">
-                    <span class="white--text text-h5">{{ user2.initials }}</span>
+                    <span class="white--text text-h5">{{ user.initials }}</span>
                   </v-avatar>
-                  <h3>{{ user2.fullName }}</h3>
+                  <h3>{{ user.username }}</h3>
                   <p class="text-caption mt-1">
-                    {{ user2.email }}
+                    {{ user.email }}
                   </p>
                   <v-divider class="my-3"></v-divider>
-                  <v-btn depressed rounded text>
+                  <v-btn depressed rounded text :to="{ name: 'profile' }">
                     Edit Profile
                   </v-btn>
                   <v-divider class="my-3"></v-divider>
@@ -55,13 +55,17 @@
               <v-card-title class="font-weight-bold">Manage</v-card-title>
               <v-list nav dense>
                 <v-list-item-group class="text-left">
-                  <v-list-item v-for="(menu, index) in menus" v-bind:key="index" :to="menu.ref">
+                  <v-list-item v-for="(menu, index) in menus" v-bind:key="index" :to="menu.ref" :id="'v-step-' + index">
                     <v-list-item-icon>
                       <v-icon v-text="menu.icon" color="var(--primary-purple)"></v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title class="text-left" style="white-space: break-spaces;"
-                        v-text="menu.title"></v-list-item-title>
+                      <v-list-item-title 
+                        class="text-left" 
+                        style="white-space: break-spaces;"
+                        v-text="menu.title"
+                        
+                      ></v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
@@ -72,13 +76,17 @@
               <v-card-title class="font-weight-bold">Other</v-card-title>
               <v-list nav dense>
                 <v-list-item-group class="text-left">
-                  <v-list-item @click="logout()" style="align-self: flex-end;">
+                  <v-list-item @click="logout()" style="align-self: flex-end;" id="v-step-5">
                     <v-list-item-icon>
                       <v-icon color="var(--primary-purple)">mdi-logout</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title class="text-left"
-                        style="white-space: break-spaces;"><strong>Logout</strong></v-list-item-title>
+                      <v-list-item-title 
+                        class="text-left"
+                        style="white-space: break-spaces;"
+                      >
+                        <strong>Logout</strong>
+                      </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
@@ -104,6 +112,8 @@
         <div class="animated-gradient progress-bar"></div>
       </v-container>
     </div>
+
+    <v-tour name="myTour" :steps="steps" :options="{ highlight: true, enableScrolling: false }"  :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd }"></v-tour>
   </v-app>
 </template>
 
@@ -154,12 +164,55 @@ export default {
           icon: 'mdi-account-multiple'
         }
       ],
-      user: true,
-      user2: {
+      user: {
         initials: 'JD',
         fullName: 'John Doe',
         email: 'john.doe@doe.com',
       },
+      steps: [
+        {
+          target: '#v-step-0',
+          content: `<strong>Manage Metadata</strong><br>If you want to change the setting of content header and footer, you can make adjustments using the metadata menu`,
+          params: {
+            placement: 'right'
+          }
+        },
+        {
+          target: '#v-step-1',
+          content: `<strong>Manage Chapter</strong><br>If you want to manage “Chapters“, you can customize it using the chapters menu`,
+          params: {
+            placement: 'right'
+          }
+        },
+        {
+          target: '#v-step-2',
+          content: `<strong>Manage Section</strong><br>If you want to manage "Sections", you can customize it using the sections menu`,
+          params: {
+            placement: 'right'
+          }
+        },
+        {
+          target: '#v-step-3',
+          content: `<strong>Manage Content</strong><br>If you want to manage "Content" such as manage versions and manage structure, you can customize it using the manage content menu`,
+          params: {
+            placement: 'right'
+          }
+        },
+        {
+          target: '#v-step-4',
+          content: `<strong>Manage Content</strong><br>If you want to change your profile such as your fullname, username, and password`,
+          params: {
+            placement: 'right'
+          }
+        },
+        {
+          target: '#v-step-5',
+          content: `<strong>Logout</strong><br>Exit the application using this button`,
+          params: {
+            placement: 'right'
+          }
+        },
+      ]
     }
   },
   setup() {
@@ -182,6 +235,7 @@ export default {
       const response = await DocumentationService.getMetadata();
       document.title = "CMS - " + response.data.title;
       this.$router.push("/cms/metadata")
+      this.startTour()
     },
     async logout() {
       try {
@@ -190,11 +244,38 @@ export default {
       } catch (error) {
         this.$router.push({ name: "error", params: { message: "Logout failed!", status: true, msgtype: 'false' } })
       }
+    },
+    startTour() {
+      if(!this.$vuetify.breakpoint.mobile){
+        const isTourHaveBeenDone = JSON.parse(localStorage.getItem('tour'))?.cms;
+        if(!isTourHaveBeenDone) {
+          this.$tours['myTour'].start()
+        }
+      }
+    },  
+    handleTourEnd(){
+      let tour = JSON.parse(localStorage.getItem('tour'))
+      tour.cms = true;
+      if(!tour?.metadata){
+        if(this.$route.name == 'metadata') {
+          const isTourHaveBeenDone = tour?.metadata;
+          if(!isTourHaveBeenDone) {
+            this.$tours['metadataTour'].start()
+          }
+        } else {
+          this.$router.push("/cms/metadata")
+        }
+      }
+
+      tour = JSON.stringify(tour);
+      localStorage.setItem('tour', tour)
     }
   },
   created() {
     this.getMetadata();
-  },
+    this.user = JSON.parse(localStorage.getItem('user'))
+    this.user.initials = this.user.firstname[0] + this.user.lastname[0]
+  }
 }
 </script>
 
@@ -248,9 +329,8 @@ export default {
 }
 
 .cms-navbar {
-  z-index: 99 !important;
+  z-index: 99999 !important;
   background-color: var(--primary-blue-lighter) !important;
-
 }
 
 .side-bar {
@@ -322,5 +402,8 @@ button {
 
 .cms-footer-mobile {
     margin-left: 0 !important;
+}
+.v-tour__target--highlighted {
+  box-shadow: 0 0 0 99999px rgba(0,0,0,.4);
 }
 </style>
