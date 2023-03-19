@@ -6,7 +6,6 @@ const { verifyJWT } = require("../../middleware/verifyJWT")
 router.route('/')
     .get(usersController.getAllUsers)
     .put(verifyJWT, usersController.updateUser)
-    .post(verifyJWT, usersController.resetPassword)
     .delete(verifyJWT, usersController.deleteUser);
 
 router.route('/:id')

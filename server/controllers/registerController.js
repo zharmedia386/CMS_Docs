@@ -7,9 +7,9 @@ const handleNewUser = async (req, res) => {
     if (!email || !firstname || !lastname || !username || !password) return res.status(400).json({ 'message': 'Email, Firstname, Lastname, Username and Password are required.' });
 
     // check for duplicate usernames in the db
-    const duplicate = await Users.find({ username: username }).toArray();
-    console.log(duplicate.length);
-    if (typeof duplicate === 'undefined' && duplicate.length !== 0) return res.sendStatus(409); //Conflict 
+    const duplicate = await Users.find({ username: req.body.username }).toArray();
+    // console.log(duplicate.length);
+    if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ message: 'Username is already taken.' }); //Conflict 
 
     try {
         //encrypt the password
