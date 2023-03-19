@@ -66,9 +66,12 @@ const updateUser = async (req,res) => {
     }
     
     // check for duplicate usernames in the db
-    const duplicate = await Users.find({ username: req.body.username }).toArray();
-    console.log(duplicate.length);
-    if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ message: 'Username is already taken.' }); //Conflict 
+    // only for if it is different from the current username
+    if(req.body.username != userDataSession.username) {
+        const duplicate = await Users.find({ username: req.body.username }).toArray();
+        console.log(duplicate.length);
+        if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ message: 'Username is already taken.' }); //Conflict 
+    }
     
     let userData = {
         "email" : req.body.email,
