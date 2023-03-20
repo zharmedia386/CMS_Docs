@@ -16,9 +16,51 @@
               <div class="text-center mt-2"></div>
 
               <v-form ref="form" v-model="form.valid" lazy-validation>
+                <!-- <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="form.first"
+                    :rules="rules.name"
+                    color="purple darken-2"
+                    label="First name"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="form.last"
+                    :rules="rules.name"
+                    color="blue darken-2"
+                    label="Last name"
+                    required
+                  ></v-text-field>
+                </v-col> -->
+                <v-row>
+                <v-col cols="12" sm="6">
+                <v-text-field
+                  id="input-firstname"
+                  class="mt-12"
+                  v-model="form.first"
+                  label="First name"
+                  variant="tonal"
+                  :rules="form.firstnameRules"
+                  required
+                ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                  id="input-lastname"
+                  class="mt-12"
+                  v-model="form.last"
+                  :rules="form.lastnameRules"
+                  label="Last name"
+                  variant="tonal"
+                  required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
                 <v-text-field
                   id="input-email"
-                  class="mt-12"
                   v-model="form.email"
                   label="Email"
                   variant="tonal"
@@ -84,7 +126,7 @@
             <img
               src="@/assets/docms1.jpeg"
               class="d-none d-sm-flex"
-              style="width: 100%; border-radius: 0 20px 20px 0"
+              style="width: 112%; border-radius: 0 20px 20px 0"
             />
           </v-col>
         </v-row>
@@ -109,14 +151,26 @@
 </template>
 
 <script>
+import UserService from '@/services/UserService'
+
 export default {
-  name: "LoginView",
+  name: "RegisterView",
   props: ["message", "status", "msgtype"],
   data() {
     return {
       show1: false,
 
       form: {
+        firstname: "",
+        firstnameRules: [
+          (v) => !!v || "Firstname is required",
+          (v) => v.length >= 4 || "Min 4 characters",
+        ],
+        lastname: "",
+        lastnameRules: [
+          (v) => !!v || "Lastname is required",
+          (v) => v.length >= 4 || "Min 4 characters",
+        ],
         email: "",
         emailRules: [
           (v) => !!v || "Email is required",
@@ -137,29 +191,28 @@ export default {
     };
   },
   methods: {
-    login() {
-      localStorage.removeItem("token");
+    async register() {
+      //localStorage.removeItem("token");
+      if (!this.$refs.form.validate()) {
+        return;
+      }
+      const user = {
+        username: this.form.username,
+        password: this.form.password,
+        firstname: this.form.firstname,
+        lastname: this.form.lastname,
+        email: this.form.email
+      }
 
-      if (this.$refs.form.validate()) {
-        this.axios
-          .post(`${this.$apiuri}/auth`, {
-            user: this.form.username,
-            pwd: this.form.password,
-          })
-          .then((res) => {
-            localStorage.setItem("token", res.data.accessToken);
-            this.$router.push({ name: "cms" });
-          })
-          .catch((err) => {
-            this.$root.SnackBar.show({
-              message: err.message,
-              color: "error",
-              icon: "mdi-close-circle",
-            });
-          });
+      try {
+        await UserService.register(user);
+        this.$router.push({ name: 'cms' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: error.message, color: 'error', icon: 'mdi-close-circle' })
       }
     },
   },
+ 
   created() {
     if (this.status) {
       this.$root.SnackBar.show({
