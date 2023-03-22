@@ -9,7 +9,7 @@ const handleNewUser = async (req, res) => {
     // check for duplicate usernames in the db
     const duplicate = await Users.find({ username: req.body.username }).toArray();
     // console.log(duplicate.length);
-    if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ message: 'Username is already taken.' }); //Conflict 
+    if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ 'message': 'Username is already taken.' }); //Conflict 
 
     try {
         //encrypt the password
