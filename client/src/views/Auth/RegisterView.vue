@@ -93,20 +93,6 @@
                   Create Account
                 </v-btn>
 
-                <!-- <v-row class="one">
-                            <v-col class="second">
-                              <v-sheet class="pa-2 ma-2">
-                                <h5>Already have an account?</h5> 
-                              </v-sheet>
-                            </v-col>
-                            <v-col class="third">
-                              <v-sheet class="pa-2 ma-2">
-                                <router-link to="/login" color="#FF00D6" class="text-decoration-none">
-                                  <h5 class="font1">Log in</h5>
-                                </router-link>
-                              </v-sheet>
-                            </v-col>
-                          </v-row> -->
                 <div class="mt-3">
                   <h5>
                     Already have an account?
@@ -201,7 +187,7 @@ export default {
         password: this.form.password,
         firstname: this.form.firstname,
         lastname: this.form.lastname,
-        email: this.form.email
+        email: this.form.email,
       }
 
       try {
@@ -247,18 +233,6 @@ html {
   overflow: hidden;
 }
 
-// .one{
-//   padding-left: 74px;
-//   padding-right: 200px;
-// }
-// .second{
-//   padding: -100px;
-//   margin-left: 110px;
-// }
-// .third{
-//   margin-left: -50px;
-//   padding-right: -200px;
-// }
 
 .gradient-btn {
   background: linear-gradient(90deg, #ff00d6 8.81%, #00e0ff 94.11%);
