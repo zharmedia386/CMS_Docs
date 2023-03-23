@@ -47,7 +47,7 @@
             </td>
             <td>
               <span>Author:</span>
-              <p>Fauzi</p>
+              <p>{{ section.createdBy }}</p>
             </td>
             <td>
               <span>Actions:</span>
