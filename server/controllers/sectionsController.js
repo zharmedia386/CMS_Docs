@@ -33,13 +33,17 @@ const createNewSection = async (req, res) => {
 
     const Sections = await sectionsDB()
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     try {
         // insert new sections
         let section = {
             title: req.body.title,
             content: req.body.content,
             createdAt: new Date(),
-            updatedAt: new Date() 
+            updatedAt: new Date(),
+            createdBy: userDataSession.username,
         }
         if(req.body.alias && req.body.alias.length != 0) section.alias = req.body.alias;
         const insertedSection = await Sections.insertOne(section)
@@ -62,9 +66,13 @@ const updateSection = async (req, res) => {
 
     const Sections = await sectionsDB()
 
+    // Get user data from the session
+    const userDataSession = req.session.user;
+
     let section = {
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        updatedBy: userDataSession.username
     }
 
     if(req.body.alias && req.body.alias.length != 0) section.alias = req.body.alias;
@@ -78,14 +86,11 @@ const updateSection = async (req, res) => {
     } catch (error) {
         res.status(400).send({ message: error.message })
     }
-
-
-
     res.status(201).send({ message : "Sections Data Updated!" })
 }
 
 const deleteSection = async (req, res) => {
-    console.log(req.body)
+    console.log(req.body) 
     if (!req?.body?.id) return res.status(400).json({ 'message': 'Sections ID required.' });
     
     let sectionId = new mongo.ObjectId(req.body.id)
@@ -101,7 +106,7 @@ const deleteSection = async (req, res) => {
         
         // updating section title in documentation content
         await Documentation.updateOne(
-            {},
+            { "content.chapter.section._id": sectionId },
             { $pull: { "content.$[].chapter.$[].section": { "_id": sectionId } } }
         )
     } catch (error) {

@@ -1,167 +1,262 @@
 <template>
   <v-container>
-    <!-- Manage Content Version -->
-    <v-card class="mx-auto mb-5 ">
-      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
-        Content Version
-      </v-card-title>
-      <v-container class="d-flex justify-start pt-5 pb-5">
-          <v-btn class="blue darken-4 white--text mr-5" @click="() => { deleteDialog = true }">Delete Version</v-btn>
-          <v-btn class="blue darken-4 white--text mr-5" @click="() => { editDialog = true }">Edit Version</v-btn>
-          <v-btn class="blue darken-4 white--text mr-5" @click="() => { createDialog = true }">Create Version</v-btn>
-      </v-container>
-    </v-card>
+    <v-tour 
+      name="manageTour" 
+      :steps="steps" 
+      :options="{ highlight: true, enableScrolling: false }"
+      :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd, onNextStep: handleNextStep }"
+    ></v-tour>
+    <v-card dark color="#2D3748">
+      <v-tabs v-model="tab" background-color="transparent" grow height="60">
+        <v-tab id="v-step-manage-0">
+          Manage Version
+        </v-tab>
+        <v-tab id="v-step-manage-3">
+          Manage Structure
+        </v-tab>
+      </v-tabs>
 
-    <!-- Manage Content Structure -->
-    <v-card class="mx-auto">
-      <v-card-title class="d-flex justify-space-between px-5 light-blue lighten-4 font-weight-bold">
-        Content Structure
-      </v-card-title>
-
-      <!-- Reorder Content -->
-      <v-row class="d-flex px-5 mt-5 ">
-        <v-col cols="9">
-          <v-select
-              v-model="selectedVersion" 
-              :items="content"
-              item-text="version"
-              outlined
-              return-object
-              @change="() => { updateSection(); updateChapter() }"
-          ></v-select>
-        </v-col>
-        <v-col cols="3">
-          <v-btn
-            @click="reorder()"
-            class="mt-1 blue darken-4 white--text"
-          >
-            Reorder Content
-          </v-btn>
-        </v-col>
-      </v-row>
-      
-      <!-- List Chapter & Section -->
-      <v-list>
-        <!-- List Chapter -->
-        <div v-for="(chapter, i) in selectedVersion.chapter" :key="i">
-          <v-row>
-            <v-col cols="8">
-              <v-list-group :value="false">
-                <template v-slot:activator>
-                    <v-list-item-title class="text-left" v-text="chapter.title"></v-list-item-title>
-                </template>
-
-                <!-- List Section -->
-                <v-list-item v-for="(section, j) in chapter.section" :key="j">
-                  <v-list-item-title class="text-left" v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-list-item-title>
-                  <!-- Remove Section -->
-                  <v-btn 
-                      small 
-                      outlined 
-                      fab 
-                      @click="removeSection(section)"
-                  >
-                      <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                  <!-- Move Up Section -->
-                  <v-btn 
-                      small 
-                      outlined 
-                      fab 
-                      :disabled="j == 0"
-                      @click="moveUpSection(i, j)"
-                  >
-                      <v-icon>mdi-arrow-up</v-icon>
-                  </v-btn>
-                  <!-- Move Down Section -->
-                  <v-btn 
-                      small 
-                      outlined 
-                      fab 
-                      :disabled="j == chapter.section.length-1"
-                      @click="moveDownSection(i, j)"
-                  >
-                      <v-icon>mdi-arrow-down</v-icon>
-                  </v-btn>
+      <v-tabs-items v-model="tab" dark>
+        <v-tab-item>
+          <v-card color="#3A4052" id="v-step-manage-1">
+            <v-card-text style="overflow: auto;">
+              <v-list color="#3A4052">
+                <v-list-item>
+                  <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <div style="min-width: 200px; text-align: left;">
+                      <strong>Version Name</strong>
+                    </div>
+                    <div style="min-width: 250px; display: flex; justify-content: start;">
+                      <strong>Action</strong>
+                    </div>
+                  </div>
                 </v-list-item>
-              </v-list-group>
-            </v-col>
-            
-            <!-- Add/Remove Button -->
-            <v-col cols="2" class="my-auto">
-              <!-- Remove Chapter -->
-              <v-btn 
-                small 
-                outlined 
-                fab 
-                @click="removeChapter(chapter)"
-              >
-                <v-icon>mdi-close</v-icon>
+                <v-list-item v-for="(ct, i) in content" :key="i" style="margin: 20px 0;">
+                  <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <div style="min-width: 200px; text-align: left;">
+                      {{ ct.version }}
+                    </div>
+                    <div style="min-width: 250px; display: flex; justify-content: start;">
+                      <v-btn class="edit-btn tonal mr-2" color="warning"
+                        @click="() => { editedVersion = ct.version; newVersionName = ct.version; editDialog = true }" rounded>
+                        <v-icon class="mr-2">mdi-pencil</v-icon>
+                        Edit
+                      </v-btn>
+                      <v-btn class="delete-btn tonal" color="error" @click="deleteVersion(ct)" rounded>
+                        <v-icon class="mr-2">mdi-delete</v-icon>
+                        Delete
+                      </v-btn>
+                    </div>
+                  </div>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+            <v-card-actions style="background-color: #2D3748; padding: 16px 16px; ">
+              <v-btn text @click="() => { createDialog = true }" style="text-transform:none;" id="v-step-manage-2">
+                <v-icon style="color: var(--primary-purple); font-size: 20px;">mdi-plus</v-icon>
+                <strong style="color: var(--primary-purple); letter-spacing: normal;">Create Version</strong>
               </v-btn>
-              <!-- Add Section -->
-              <v-btn 
-                small 
-                outlined 
-                fab 
-                @click="() => { dialog = true; sectionChapter = chapter }"
-              >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-col>
+            </v-card-actions>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card color="#3A4052" style="border-radius: 0;" dark>
+            <v-card-text style="overflow: auto;">
+              <!-- Reorder Content -->
+            <v-row class="d-flex px-5 mt-5">
+              <v-col cols="9">
+                <v-select 
+                  id="v-step-manage-4"
+                  v-model="selectedVersion" 
+                  :items="content" 
+                  item-text="version" 
+                  outlined 
+                  return-object
+                  @change="() => { updateSection(); updateChapter() }"></v-select
+                >
+              </v-col>
+              <v-col cols="3" class="d-flex justify-start">
+                <v-btn @click="reorder()" color="var(--primary-purple)" class="mt-1" block large id="v-step-manage-5">
+                  Reorder Content
+                </v-btn>
+              </v-col>
+            </v-row>
 
-            <!-- Move Up/Down Chapter -->
-            <v-col cols="2" class="my-auto">
-              <!-- Move Up Chapter -->
-              <v-btn 
-                small 
-                outlined 
-                fab 
-                :disabled="i == 0"
-                @click="moveUpChapter(i)"
-              >
-                <v-icon>mdi-arrow-up</v-icon>
+            <!-- List Chapter & Section -->
+            <v-list color="#3A4052" id="v-step-manage-6">
+              <!-- List Chapter -->
+              <div v-for="(chapter, i) in selectedVersion.chapter" :key="i">
+                <v-row>
+                  <v-col cols="8">
+                    <v-list-group :value="false">
+                      <template v-slot:activator>
+                        <v-list-item-title class="text-left" v-text="chapter.title"></v-list-item-title>
+                      </template>
+
+                      <!-- List Section -->
+                      <v-list-item v-for="(section, j) in chapter.section" :key="j">
+                        <v-list-item-title class="text-left"
+                          v-text="`${section.title} ${section.alias ? '- ' + section.alias : ''}`"></v-list-item-title>
+                        <!-- Remove Section -->
+                        <v-tooltip top color="#2D3748">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn 
+                              v-bind="attrs" 
+                              v-on="on" 
+                              class="mr-2" 
+                              small 
+                              outlined
+                              fab 
+                              @click="removeSection(section)"
+                            >
+                              <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Remove Section</span>
+                        </v-tooltip>
+                        <!-- Move Up Section -->
+                        <v-tooltip top color="#2D3748">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn 
+                              v-bind="attrs" 
+                              v-on="on" 
+                              class="mr-2" 
+                              small 
+                              outlined 
+                              fab 
+                              :disabled="j == 0" 
+                              @click="moveUpSection(i, j)"
+                            >
+                              <v-icon>mdi-arrow-up</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Move Up Section</span>
+                        </v-tooltip>
+                        <!-- Move Down Section -->
+                        <v-tooltip top color="#2D3748">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn 
+                              v-bind="attrs" 
+                              v-on="on" 
+                              small 
+                              outlined 
+                              fab 
+                              :disabled="j == chapter.section.length - 1"
+                              @click="moveDownSection(i, j)"
+                            >
+                              <v-icon>mdi-arrow-down</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Move Down Section</span>
+                        </v-tooltip>
+                      </v-list-item>
+                    </v-list-group>
+                  </v-col>
+
+                  <!-- Add/Remove Button -->
+                  <v-col cols="2" class="my-auto">
+                    <!-- Add Section -->
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          class="mr-2" 
+                          small 
+                          outlined 
+                          fab 
+                          @click="() => { dialog = true; sectionChapter = chapter }"
+                        >
+                          <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Add section</span>
+                    </v-tooltip>
+                    
+                    <!-- Remove Chapter -->
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          small 
+                          outlined 
+                          fab 
+                          @click="removeChapter(chapter)"
+                        >
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Remove Chapter</span>
+                    </v-tooltip>
+                  </v-col>
+
+                  <!-- Move Up/Down Chapter -->
+                  <v-col cols="2" class="my-auto">
+                    <!-- Move Up Chapter -->
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          class="mr-2" 
+                          small 
+                          outlined 
+                          fab 
+                          :disabled="i == 0" 
+                          @click="moveUpChapter(i)">
+                          <v-icon>mdi-arrow-up</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Move Up Chapter</span>
+                    </v-tooltip>
+                    
+                    <!-- Move Down Chapter -->
+                    <v-tooltip top color="#2D3748">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                          v-bind="attrs" 
+                          v-on="on" 
+                          small 
+                          outlined 
+                          fab 
+                          :disabled="i == selectedVersion.chapter.length - 1"
+                          @click="moveDownChapter(i)"
+                        >
+                          <v-icon>mdi-arrow-down</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Move Down Chapter</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </div>
+            </v-list>
+            </v-card-text>
+            <v-card-actions style="background-color: #2D3748; padding: 16px 16px; ">
+              <v-btn text @click="() => { chapterDialog = true }" style="text-transform:none;" id="v-step-manage-7">
+                <v-icon style="color: var(--primary-purple); font-size: 20px;">mdi-plus</v-icon>
+                <strong style="color: var(--primary-purple);">Add Chapter</strong>
               </v-btn>
-              <!-- Move Down Chapter -->
-              <v-btn 
-                small 
-                outlined 
-                fab 
-                :disabled="i == selectedVersion.chapter.length-1"
-                @click="moveDownChapter(i)"
-              >
-                <v-icon>mdi-arrow-down</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </div>
-      </v-list>
-      <!-- Add Chapter -->
-      <v-btn 
-        @click="() => { chapterDialog = true }"
-        class="mt-1 blue darken-4 white--text mb-5"
-      >
-        Add Chapter
-      </v-btn>
+            </v-card-actions>
+            <!-- Add Chapter -->
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
     </v-card>
 
     <!-- Add Section Dialog -->
-    <v-dialog 
-      v-model="dialog" 
-      width="800"
-      transition="dialog-bottom-transition"
-      scrollable
-      persistent
-    >
-      <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
+    <v-dialog v-model="dialog" width="800" transition="dialog-bottom-transition" scrollable persistent>
+      <v-card dark color="var(--primary-dark)">
+        <v-toolbar class="font-weight-bold" dark color="var(--primary-blue-lighter)">
           Add Section Into Chapter
         </v-toolbar>
 
         <v-card-text style="max-height: 500px; padding:0;">
           <!-- List of section in checkboxes -->
-          <v-list>
+          <v-list color="var(--primary-dark)" dark>
             <v-list-item v-for="(section, index) in sections" :key="index">
-              <v-checkbox v-model="selectedSections" :value="section" multiple/>
+              <v-checkbox v-model="selectedSections" :value="section" multiple />
               {{ `${section.title} ${section.alias ? '- ' + section.alias : ''}` }}
             </v-list-item>
           </v-list>
@@ -171,19 +266,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="() => {dialog = false}"
-          >
+          <v-btn color="var(--primary-dark)" @click="() => { dialog = false }">
             Cancel
           </v-btn>
 
-          <v-btn
-            color="primary"
-            text
-            @click="addSection()"
-          >
+          <v-btn color="var(--primary-blue-lighter)" @click="addSection()">
             Add
           </v-btn>
         </v-card-actions>
@@ -191,22 +278,16 @@
     </v-dialog>
 
     <!-- Add Chapter Dialog -->
-    <v-dialog 
-      v-model="chapterDialog"
-      width="800"
-      transition="dialog-bottom-transition"
-      scrollable
-      persistent
-    >
-      <v-card>
-        <v-toolbar color="primary" class="font-weight-bold" dark>
+    <v-dialog v-model="chapterDialog" width="800" transition="dialog-bottom-transition" scrollable persistent>
+      <v-card color="var(--primary-dark)">
+        <v-toolbar class="font-weight-bold" dark color="var(--primary-blue-lighter)">
           Add Chapter into Version
         </v-toolbar>
 
         <v-card-text style="max-height: 500px; padding:0;">
-          <v-list>
+          <v-list color="var(--primary-dark)" dark>
             <v-list-item v-for="(chapter, index) in chapters" :key="index">
-              <v-checkbox v-model="selectedChapters" :value="chapter" multiple/>
+              <v-checkbox v-model="selectedChapters" :value="chapter" multiple />
               {{ chapter.title }}
             </v-list-item>
           </v-list>
@@ -216,19 +297,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="() => {chapterDialog = false}"
-          >
+          <v-btn color="var(--primary-dark)" @click="() => { chapterDialog = false }" dark>
             Cancel
           </v-btn>
 
-          <v-btn
-            color="primary"
-            text
-            @click="addChapter"
-          >
+          <v-btn color="var(--primary-blue-lighter)" @click="addChapter" dark>
             Add
           </v-btn>
         </v-card-actions>
@@ -236,45 +309,26 @@
     </v-dialog>
 
     <!-- Create Version Dialog -->
-    <v-dialog 
-      v-model="createDialog"
-      width="600"
-      transition="dialog-bottom-transition"
-      persistent
-    >
+    <v-dialog v-model="createDialog" width="600" transition="dialog-bottom-transition" persistent>
       <v-form v-model="createFormValid">
-        <v-card>
-          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
+        <v-card dark color="var(--primary-dark)">
+          <v-toolbar color="var(--primary-blue-lighter)" class="text-h5 font-weight-medium d-flex justify-center">
             Create New Version
           </v-toolbar>
 
           <v-card-text style="max-height: 500px; padding:0;" class="mt-7 tb-2">
-          <v-text-field
-            v-model="versionName"
-            label="Version Name"
-            :rules="[rules.required]"
-            class="pl-5 pr-5"
-            outlined
-          ></v-text-field>
+            <v-text-field v-model="versionName" label="Version Name" :rules="[rules.required]" class="pl-5 pr-5"
+              outlined></v-text-field>
           </v-card-text>
           <v-divider></v-divider>
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              text
-              @click="() => {createDialog = false; versionName = ''}"
-            >
+            <v-btn color="var(--primary-dark)" @click="() => { createDialog = false; versionName = '' }">
               Cancel
             </v-btn>
 
-            <v-btn
-              color="primary"
-              text
-              :disabled="!createFormValid"
-              @click="createVersion"
-            >
+            <v-btn color="var(--primary-blue-lighter)" :disabled="!createFormValid" @click="createVersion">
               Create
             </v-btn>
           </v-card-actions>
@@ -283,117 +337,55 @@
     </v-dialog>
 
     <!-- Edit Version Dialog -->
-    <v-dialog 
-      v-model="editDialog"
-      width="600"
-      transition="dialog-bottom-transition"
-      persistent
-    >
+    <v-dialog v-model="editDialog" width="600" transition="dialog-bottom-transition" persistent>
       <v-form v-model="editFormValid">
-        <v-card>
-          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
+        <v-card dark color="var(--primary-dark)">
+          <v-toolbar color="var(--primary-blue-lighter)">
             Edit Version
           </v-toolbar>
 
-          <v-card-text class="mt-10">
-            <v-select
-                v-model="editedVersion" 
-                :items="content"
-                :rules="[rules.required]"
-                label="Choose Version"
-                item-text="version"
-                outlined
-                return-object
-            ></v-select>
-            <v-text-field
-              v-model="newVersionName"
-              label="New Version Name"
-              :rules="[rules.required]"
-              outlined
-            ></v-text-field>
+          <v-card-text class="mt-5">
+            <!-- <v-select v-model="editedVersion" :items="content" :rules="[rules.required]" label="Choose Version"
+              item-text="version" outlined return-object></v-select> -->
+            <v-text-field v-model="newVersionName" label="New Version Name" :rules="[rules.required]"
+              outlined></v-text-field>
           </v-card-text>
 
           <v-divider></v-divider>
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              text
-              @click="() => {editDialog = false; editedVersion = ''; newVersionName = ''}"
-            >
+            <v-btn color="var(--primary-dark)"
+              @click="() => { editDialog = false; editedVersion = ''; newVersionName = '' }">
               Cancel
             </v-btn>
 
-            <v-btn
-              color="primary"
-              text
-              @click="editVersion()"
-              :disabled="!editFormValid"
-            >
+            <v-btn color="var(--primary-blue-lighter)" @click="editVersion()" :disabled="!editFormValid">
               Save
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-form>
     </v-dialog>
-
-    <!-- Delete Dialog -->
-    <v-dialog 
-      v-model="deleteDialog"
-      width="800"
-      transition="dialog-bottom-transition"
-      scrollable
-      persistent
-    >
-      <v-card>
-        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium px-2">
-          Delete Version
-        </v-toolbar>
-
-        <v-card-text style="max-height: 500px; padding:0;">
-          <v-list>
-              <v-list-item v-for="(ct, index) in content" :key="index">
-                  <v-checkbox v-model="deletedVersion" :value="ct" multiple/>
-                  {{ ct.version }}
-              </v-list-item>
-          </v-list>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="() => {deleteDialog = false}"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="primary"
-            text
-            :disabled="!(!!this.deletedVersion.length)"
-            @click="deleteVersion"
-          >
-            Delete
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
 <script>
+import ChapterService from '@/services/ChapterService';
+import DocumentationService from '@/services/DocumentationService';
+import SectionService from '@/services/SectionService';
+import VersioningService from '@/services/VersioningService';
+
 export default {
-  data(){
+  data() {
     return {
+      tab: null,
+      items: ['Manage Version', "Manage Structure"],
+
       dialog: false,
       chapterDialog: false,
       createDialog: false,
       editDialog: false,
-      deleteDialog: false,
 
       createFormValid: false,
       editFormValid: false,
@@ -401,7 +393,7 @@ export default {
       editedVersion: '',
       newVersionName: '',
 
-      deletedVersion: [],
+      deletedVersion: '',
 
       versionName: '',
 
@@ -414,135 +406,154 @@ export default {
       chapters: [],
       selectedChapters: [],
 
-      selectedVersion : {},
-
-      snackbar: { 
-        isShow: false, 
-        text: '', 
-        type: '', 
-        timeout: 2000 
-      },
+      selectedVersion: {},
 
       rules: {
         required: value => !!value || 'Required.',
-      }
+      },
+      
+      steps: [
+        {
+          target: '#v-step-manage-0',
+          content: `<strong>Manage Version</strong><br>Manage versions serves to create, modify, and delete versions of documentation`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-1',
+          content: `<strong>Version List</strong><br>Here where your version listed<br>Delete or edit your version here`,
+          params: {
+            placement: 'left',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-2',
+          content: `<strong>Create Version</strong><br>If you want to create new version, click this button`,
+          params: {
+            placement: 'top',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-3',
+          content: `<strong>Manage Structure</strong><br>Manage Structure serves to create, modify, and delete structures on the created documentation version`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-4',
+          content: `<strong>Select Version</strong><br>First select version you want to see the structure, by default it's your first version`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-5',
+          content: `<strong>Reorder Content</strong><br>If you finished restructuring your content, press this button to save it`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-6',
+          content: `<strong>Content Structure</strong><br>You can see the structure of your content in selected version, you can change the content or the order of the content`,
+          params: {
+            placement: 'left',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-manage-7',
+          content: `<strong>Add Chapter</strong><br>If you want to add new chapter into your selected version, click this buttons`,
+          params: {
+            placement: 'top',
+            enableScrolling: false
+          }
+        },
+      ]
     }
   },
-  methods : {
-    createVersion(){
+  methods: {
+    startTour(){
+      if(!this.$vuetify.breakpoint.mobile){
+        const tour = JSON.parse(localStorage.getItem('tour'));
+        const isTourHaveBeenDone = tour?.manage;
+        if(!isTourHaveBeenDone) {
+          this.$tours['manageTour'].start()
+        }
+      }
+    },
+    handleTourEnd(){
+      let tour = JSON.parse(localStorage.getItem('tour'))
+      tour.manage = true;
+      tour = JSON.stringify(tour);
+      localStorage.setItem('tour', tour)
+    },
+    handleNextStep(currentStep){
+      if(currentStep === 2) {
+        this.tab = 1;
+      }
+    },
+    async createVersion() {
       // Validate forms
-      if(!this.createFormValid) {
+      if (!this.createFormValid) {
         this.$root.SnackBar.show({ message: 'Failed to create a version, please fill in the version name first', color: 'error', icon: 'mdi-close-circle' })
         return
       }
 
       const versionName = this.versionName;
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+
+      try {
+        await VersioningService.createVersion({ versionName })
+        this.$root.SnackBar.show({ message: "Section successfully created", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to create a version, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.put(`${this.$apiuri}/versioning/create`, {versionName}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-            }
-          this.$root.SnackBar.show({ message: `Failed to create a version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.versionName = ''
-          this.createDialog = false
-          this.updateDocumentationContent()
-        })
+
+      this.versionName = ''
+      this.createDialog = false
+      this.updateDocumentationContent()
     },
-    editVersion(){
+    async editVersion() {
       // Validate Forms
-      if(!this.editFormValid) {
+      if (!this.editFormValid) {
         this.$root.SnackBar.show({ message: 'Failed to edit version, please fill all available form input', color: 'error', icon: 'mdi-close-circle' })
         return
       }
 
-      const editedVersion = this.editedVersion.version;
+      const editedVersion = this.editedVersion;
       const newVersionName = this.newVersionName;
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.editVersion({ editedVersion, newVersionName })
+        this.$root.SnackBar.show({ message: "Version successfully edited", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to edit a version, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      this.axios.put(`${this.$apiuri}/versioning/edit`, {editedVersion, newVersionName}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-          this.$root.SnackBar.show({ message: `Failed to edit a version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.editedVersion = ''
-          this.newVersionName = ''
-          this.editDialog = false
-          this.updateDocumentationContent()
-        })
+      this.editedVersion = ''
+      this.newVersionName = ''
+      this.editDialog = false
+      this.updateDocumentationContent()
     },
-    deleteVersion(){
-      if(this.deletedVersion.length==0){
-        this.$root.SnackBar.show({ message: 'Failed to delete version, please choose at least one version', color: 'error', icon: 'mdi-close-circle' })
-        return
+    async deleteVersion(version) {
+      const content = [version]
+
+      try {
+        await VersioningService.deleteVersion({ content })
+        this.$root.SnackBar.show({ message: "Version successfully deleted", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to delete version, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      const content = this.deletedVersion;
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
-      }
-
-      this.axios.put(`${this.$apiuri}/versioning/delete`, {content}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-          this.$root.SnackBar.show({ message: `Failed to remove version, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.updateDocumentationContent()
-          this.deletedVersion = []
-          this.deleteDialog = false
-        })
+      this.updateDocumentationContent()
     },
     findVersionIndex() {
       // Get index of version from current selected version
@@ -552,234 +563,180 @@ export default {
 
       return versionIdx
     },
-    addSection(){
+    async addSection() {
       const version = this.selectedVersion.version;
       const chapter = this.sectionChapter._id
       const sections = this.selectedSections
-        .map(section => (!section?.alias) ? 
-          ({_id: section._id, title: section.title}) : 
-          ({_id: section._id, title: section.title, alias: section.alias})
+        .map(section => (!section?.alias) ?
+          ({ _id: section._id, title: section.title }) :
+          ({ _id: section._id, title: section.title, alias: section.alias })
         )
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
-      }  
+      try {
+        await VersioningService.addSection({ sections, chapter, version })
+        this.$root.SnackBar.show({ message: "Section successfully added", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to add section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
 
-      this.axios.put(`${this.$apiuri}/versioning/section`, {sections, chapter, version}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-          this.$root.SnackBar.show({ message: `Failed to add section, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.dialog = false;
-          this.selectedSections = []
-          this.updateDocumentationContent()
-        })
+      this.dialog = false;
+      this.selectedSections = []
+      this.updateDocumentationContent()
     },
-    removeSection(section){
+    async removeSection(section) {
       const version = this.selectedVersion.version;
       const sectionId = section._id;
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.removeSection({ sectionId, version })
+        this.$root.SnackBar.show({ message: "Section successfully removed", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to remove section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.put(`${this.$apiuri}/versioning/section/delete`, {sectionId, version}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-          this.$root.SnackBar.show({ message: `Failed to remove section, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.updateDocumentationContent()
-        })
+
+      this.updateDocumentationContent();
     },
-    addChapter(){
+    async addChapter() {
       const version = this.selectedVersion.version;
       const chapters = this.selectedChapters
         .map(ch => ({ _id: ch._id, title: ch.title }))
-      
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+
+      try {
+        await VersioningService.addChapter({ chapters, version })
+        this.$root.SnackBar.show({ message: "Chapter successfully added", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to add chapter, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      
-      this.axios.put(`${this.$apiuri}/versioning/chapter`, {chapters, version}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-          this.$root.SnackBar.show({ message: `Failed to add chapter, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-        .finally(() => {
-          this.chapterDialog = false;
-          this.selectedChapters = []
-          this.updateDocumentationContent()
-        })
+
+      this.chapterDialog = false;
+      this.selectedChapters = []
+      this.updateDocumentationContent()
     },
-    removeChapter(chapter){
+    async removeChapter(chapter) {
       const version = this.selectedVersion.version;
       const chapterId = chapter._id
       const sectionsId = (chapter?.section) ? chapter?.section.map(sc => sc._id) : []
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.removeChapter({ chapterId, sectionsId, version })
+        this.$root.SnackBar.show({ message: "Chapter successfully removed", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to remove chapter, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.put(`${this.$apiuri}/versioning/chapter/delete`, {chapterId, sectionsId, version}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-              }
-          this.$root.SnackBar.show({ message: `Failed to remove chapter, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        }).finally(() => {
-          this.updateDocumentationContent()
-        })
+
+      this.updateDocumentationContent()
     },
-    reorder(){
+    async reorder() {
       const content = this.content
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      try {
+        await VersioningService.reorderContent({ content });
+        this.$root.SnackBar.show({ message: "Content successfully reordered", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to reorder content structure, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
-
-      this.axios.put(`${this.$apiuri}/versioning/reorder`, {content}, header)
-        .then(response => {
-          this.$root.SnackBar.show({ message: response.data.message, color: 'success', icon: 'mdi-check-circle' })
-        })
-        .catch(error => {
-          if(error.response.status == 401){
-                localStorage.removeItem('token')
-                this.$router.push({
-                  name: "login",
-                  params : {
-                    message : "Invalid session",
-                    status : true,
-                    msgtype : 'error'
-                  }
-                })
-            }
-          this.$root.SnackBar.show({ message: `Failed to modify content structure, an error occurred ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
     },
     moveUpChapter(index) {
       let versionIdx = this.findVersionIndex()
-      let prevChapter = this.content[versionIdx].chapter[index-1]
+      let prevChapter = this.content[versionIdx].chapter[index - 1]
       let crntChapter = this.content[versionIdx].chapter[index]
 
-      this.content[versionIdx].chapter.splice(index-1, 2, crntChapter, prevChapter)
+      this.content[versionIdx].chapter.splice(index - 1, 2, crntChapter, prevChapter)
     },
     moveDownChapter(index) {
       let versionIdx = this.findVersionIndex()
       let crntChapter = this.content[versionIdx].chapter[index]
-      let nextChapter = this.content[versionIdx].chapter[index+1]
+      let nextChapter = this.content[versionIdx].chapter[index + 1]
 
       this.content[versionIdx].chapter.splice(index, 2, nextChapter, crntChapter)
     },
     moveUpSection(chapterIdx, sectionIdx) {
       let versionIdx = this.findVersionIndex()
-      let prevSection = this.content[versionIdx].chapter[chapterIdx].section[sectionIdx-1]
+      let prevSection = this.content[versionIdx].chapter[chapterIdx].section[sectionIdx - 1]
       let crntSection = this.content[versionIdx].chapter[chapterIdx].section[sectionIdx]
 
-      this.content[versionIdx].chapter[chapterIdx].section.splice(sectionIdx-1, 2, crntSection, prevSection)
+      this.content[versionIdx].chapter[chapterIdx].section.splice(sectionIdx - 1, 2, crntSection, prevSection)
     },
     moveDownSection(chapterIdx, sectionIdx) {
       let versionIdx = this.findVersionIndex()
       let crntSection = this.content[versionIdx].chapter[chapterIdx].section[sectionIdx]
-      let nextSection = this.content[versionIdx].chapter[chapterIdx].section[sectionIdx+1]
+      let nextSection = this.content[versionIdx].chapter[chapterIdx].section[sectionIdx + 1]
 
       this.content[versionIdx].chapter[chapterIdx].section.splice(sectionIdx, 2, nextSection, crntSection)
     },
-    updateSection() {
-      this.axios.get(`${this.$apiuri}/sections`)
-      .then(response => {
-        const sections = response.data
-        this.sections = (!sections) ? sections : sections.filter(section => !section?.version?.includes(this.selectedVersion.version))                    
-      })
+    async updateSection() {
+      try {
+        const response = await SectionService.getAllSections()
+        this.sections = (!response) ? response : response.data.filter(section => !section?.version?.includes(this.selectedVersion.version))
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
     },
-    updateChapter() {
-      this.axios.get(`${this.$apiuri}/chapters`)
-      .then(response => {
+    async updateChapter() {
+      try {
+        const response = await ChapterService.getAllChapters()
         this.chapters = response.data.filter(chapter => !chapter.version.includes(this.selectedVersion.version))
-      })
+      } catch (error) {
+        console.log(error.message)
+        this.$root.SnackBar.show({ message: `Failed to fetch chapter, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
     },
-    updateDocumentationContent() {
-      this.axios.get(`${this.$apiuri}/documentations`)
-        .then(response => {
-          this.content = response.data[0].content
-          const versionIdx = this.findVersionIndex()
-          this.selectedVersion = response.data[0].content[versionIdx]
-          this.updateSection()
-          this.updateChapter()
-        })
+    async updateDocumentationContent() {
+      try {
+        const response = await DocumentationService.getDocumentations()
+        this.content = response.data[0].content
+        const versionIdx = this.findVersionIndex()
+        this.selectedVersion = response.data[0].content[versionIdx] ?? response.data[0].content[0]
+        this.updateSection()
+        this.updateChapter()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch documentation, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
     }
   },
-  created(){
-    this.axios.get(`${this.$apiuri}/documentations`)
-      .then(response => {
-          this.content = response.data[0].content
-          this.selectedVersion = response.data[0].content[0]
-          this.updateSection()
-          this.updateChapter()
-      })
+  created() {
+    (async () => {
+      try {
+        const response = await DocumentationService.getDocumentations()
+        this.content = response.data[0].content
+        this.selectedVersion = response.data[0].content[0]
+        this.updateSection()
+        this.updateChapter()
+        this.startTour()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to fetch documentation content, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    })()
   }
 }
 </script>
 
 <style>
+.v-tab {
+  text-transform: none !important;
+  letter-spacing: normal;
+  font-weight: bold;
+  font-size: 18px;
+}
 
+.v-tab.v-tab--active {
+  color: var(--primary-purple) !important;
+}
+
+.v-tabs-slider {
+  color: var(--primary-purple) !important;
+}
+
+.v-window-item {
+  background-color: #3A4052;
+}
+
+.v-list-item--active .v-list-item__title {
+  color: var(--primary-purple) !important;
+  font-weight: bold;
+}
+
+.v-list-item--active .v-list-item__icon {
+  color: var(--primary-purple) !important;
+}
 </style>

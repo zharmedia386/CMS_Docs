@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import SectionService from "@/services/SectionService";
 import $ from "jquery";
 import { useDocumentationStore } from '../../stores/DocumentationStore';
 
@@ -45,7 +46,19 @@ export default {
         innerSection: []
     }),
     methods: {
+        async initializeContent(){
+            const documentationStore = useDocumentationStore()
+            try {
+                const response = await SectionService.getSectionById(this.$route.params.id);
+                this.content = response.data[0].content
+                document.title = await response.data[0].title + " - " + documentationStore.documentation.title
+                this.wrapContentInDiv();
+            } catch (error) {
+                console.log('error')
+            }
+        },
         wrapContentInDiv() {
+            console.log('run wrap')
             const IDs = [];
             $("h1, h2").each(function() {
                 const id = "section-" + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
@@ -58,18 +71,7 @@ export default {
         }
     },
     created(){
-        const documentationStore = useDocumentationStore()
-
-        this.axios.get(`${this.$apiuri}/sections/${this.$route.params.id}`)
-            .then(response => {
-                this.content = response.data[0].content
-
-                // Set page title
-                document.title = response.data[0].title + " - " + documentationStore.documentation.title
-            })
-            .then(() => {
-                this.wrapContentInDiv();
-            })
+        this.initializeContent()
     }
 }
 </script>
@@ -80,16 +82,6 @@ export default {
 .content{
     text-align: left;
 }
-
-/* .content > pre{
-    padding: 10px 15px 10px 15px;
-    background-color: rgba(0, 0, 0, 0.875);
-    border-radius: 5px;
-    color: yellowgreen;
-    font-family: "Consolas";
-    font-size: 13px;
-    white-space: pre-wrap;  
-} */
 
 pre {
   background-color: #94a3b825;

@@ -8,9 +8,6 @@ const documentationDB = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         })
-        console.log(client)
-        console.log("\n\n\n");
-        console.log(client.db('cms_docs'));
         return client.db('cms_docs').collection('documentations')
     } catch (err) {
         console.error('Error connecting to MongoDB: ', err);

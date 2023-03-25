@@ -1,9 +1,24 @@
 <template>
   <v-container>
+    <v-tour 
+      name="chapterTour" 
+      :steps="steps" 
+      :options="{ highlight: true, enableScrolling: false }"
+      :callbacks="{ onFinish: handleTourEnd, onSkip: handleTourEnd }"
+    ></v-tour>
     <v-card class="chapter-header elevation-0" dark>
       <v-card-title class="d-flex justify-space-between pa-0">
-        <v-text-field dense outlined placeholder="Search..." class="search-input"></v-text-field>
+        <v-text-field 
+          id="v-step-chapter-1"
+          dense 
+          outlined 
+          placeholder="Search..." 
+          class="search-input" 
+          v-model="searchKeyword"
+          >
+        </v-text-field>
         <v-btn 
+          id="v-step-chapter-0"
           @click="dialog = true"
           color="#939AFF"
           class="black--text d-flex align-start flex-column"
@@ -14,8 +29,13 @@
       </v-card-title>
     </v-card>
 
-    <div class="chapter-list">
-      <v-card variant="tonal" class="chapter-card table-responsive mb-3" dark v-for="(chapter, index) in cloneItems" v-bind:key="index">
+    <div class="chapter-list" id="v-step-chapter-2">
+      <div v-if="filteredChapter.length === 0">
+        <v-card variant="tonal" class="chapter-card table-responsive mb-3" dark>
+          <span>No result found</span>
+        </v-card>
+      </div>
+      <v-card variant="tonal" class="chapter-card table-responsive mb-3" dark v-for="(chapter, index) in (searchKeyword) ? filteredChapter: cloneItems" v-bind:key="index">
         <table style="width: 100%;">
           <tr>
             <td>
@@ -43,7 +63,8 @@
     </div>
 
     <v-pagination
-      v-if="pagination.total >= pagination.rowsPerPage"
+      id="v-step-chapter-3"
+      v-if="(pagination.total >= pagination.rowsPerPage) && (!searchKeyword)"
       v-model="pagination.page"
       :length="pages"
       :total-visible="5"
@@ -60,29 +81,31 @@
       width="500"
     >
       <v-form>
-        <v-card>
-          <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium">
-            Create New Chapter
-          </v-toolbar>
+        <v-card class="card-dialog" dark>
+          <v-card-title class="text-h5 font-weight-medium justify-center">
+            <span>Create New Chapter</span>
+          </v-card-title>
           <br>
-          <v-text-field
+          <v-card-text>
+            <v-text-field
             v-model="title"
             label="Input Title"
             class="pl-5 pr-5"
             :rules="[v => !!v || 'Chapter title is required']"
-            outlined
+            filled
             required
           ></v-text-field>
 
           <v-select
               v-model="choosenVersion"
               :items="versions"
-              outlined
+              filled
               label="Choose Version"
               class="pl-5 pr-5"
               :rules="[v => !!v || 'Please choose version']"
               required
           ></v-select>
+          </v-card-text>
 
           <v-divider></v-divider>
 
@@ -93,6 +116,7 @@
               color="primary"
               text
               @click="save"
+              dark
             >
               Save
             </v-btn>
@@ -107,10 +131,10 @@
       v-model="updateDialog"
       width="500"
     >
-      <v-card>
-        <v-toolbar class="light-blue lighten-4 text-h5 font-weight-medium">
-          Update Chapter
-        </v-toolbar>
+      <v-card class="card-dialog" dark>
+        <v-card-title class="text-h5 font-weight-medium justify-center">
+          <span>Update Chapter</span>
+        </v-card-title>
         <br>
 
         <v-text-field
@@ -142,6 +166,9 @@
 </template>
 
 <script>
+import ChapterService from '@/services/ChapterService'
+import DocumentationService from '@/services/DocumentationService'
+
 export default {
   data(){
     return {
@@ -156,97 +183,130 @@ export default {
         page: 1,
         total: 0,
         rowsPerPage: 5
-      }
+      },
+      searchKeyword: '',
+      steps: [
+        {
+          target: '#v-step-chapter-0',
+          content: `<strong>Add New Chapter</strong><br>You can add new chapter into your documentation by clicking this button`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-chapter-1',
+          content: `<strong>Search Chapter</strong><br>Is it hard to find your spesific chapter? search it here by it's name`,
+          params: {
+            placement: 'bottom',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-chapter-2',
+          content: `<strong>Chapter List</strong><br>Here your chapter listed, you can do action such as edit it or deleted it`,
+          params: {
+            placement: 'left',
+            enableScrolling: false
+          }
+        },
+        {
+          target: '#v-step-chapter-3',
+          content: `<strong>Navigation</strong><br>Switch between pages if you want to see other side of you chapter`,
+          params: {
+            placement: 'top',
+          }
+        },
+      ]
     }
   },
   methods: {
-    deleteChapter(id, version){
-      let header = {
-        'Authorization' : "Bearer " + localStorage.token
+    async deleteChapter(id, version){
+      try {
+        const response = await DocumentationService.getDocumentations()
+        await ChapterService.deleteChapter({
+          chapterId : id,
+          version : version,
+          content : response.data[0].content
+        })
+        console.log('success')
+        this.$root.SnackBar.show({ message: 'Chapter deleted successfully', color: 'success', icon: 'mdi-check-circle' })
+        this.fetchChapters()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured`, color: 'error', icon: 'mdi-close-circle' })
       }
-      this.axios.get(`${this.$apiuri}/documentations`)
-        .then(res => {
-          this.axios.delete(`${this.$apiuri}/chapters`, { 
-            data : {
-              chapterId : id,
-              version : version,
-              content : res.data[0].content
-            }, 
-            headers: header
-          })
-          .then(() => {
-            this.$root.SnackBar.show({ message: 'Chapter deleted successfully', color: 'success', icon: 'mdi-check-circle' })
-            this.updateChapter()
-          })
-          .catch(error => {
-            this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-          })
-        })
-        .catch(err => {
-            this.$root.SnackBar.show({ message: `Failed to delete chapter, an error has occured ${err.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-      
     },
-    save(){
+    async save(){
       const chapter = {
         title: this.title,
         version: [ this.choosenVersion ]
       }
 
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      try {
+        await ChapterService.createChapter(chapter);
+        this.$root.SnackBar.show({ message: 'Chapter created successfully', color: 'success', icon: 'mdi-check-circle' })
+        this.fetchChapters()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to create a chapter, an error has occured`, color: 'error', icon: 'mdi-close-circle' })
       }
-
-      this.axios.post(`${this.$apiuri}/chapters`, chapter, header)
-        .then(response => {
-          // send flash message
-          console.log(response.data)
-          this.$root.SnackBar.show({ message: 'Chapter created successfully', color: 'success', icon: 'mdi-check-circle' })
-          this.updateChapter()
-        })
-        .catch(error => {
-          this.$root.SnackBar.show({ message: `Failed to create a chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
 
       this.dialog = false
       this.title = ''
       this.choosenVersion = ''
     },
-    update(){
+    async update(){
       const chapter = {
         id: this.choosenChapter._id,
         title: this.title
       }
-
-      let header = {
-        headers: {
-          'Authorization' : "Bearer " + localStorage.token
-        }
+      
+      try {
+        await ChapterService.updateChapter(chapter);
+        this.$root.SnackBar.show({ message: 'Chapter changed successfully', color: 'success', icon: 'mdi-check-circle' })
+        this.fetchChapters()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to update a chapter, an error has occured`, color: 'error', icon: 'mdi-close-circle' })
       }
 
-      this.axios.put(`${this.$apiuri}/chapters`, chapter, header)
-        .then(response => {
-          console.log(response.data)
-          this.$root.SnackBar.show({ message: 'Chapter changed successfully', color: 'success', icon: 'mdi-check-circle' })
-          this.updateChapter()
-        })
-        .catch(error => {
-          this.$root.SnackBar.show({ message: `Failed to update a chapter, an error has occured ${error.message}`, color: 'error', icon: 'mdi-close-circle' })
-        })
-
-        this.updateDialog = false
-        this.title = ''
-        this.choosenChapter = ''
+      this.updateDialog = false
+      this.title = ''
+      this.choosenChapter = ''
     },
-    updateChapter(){
-      this.axios.get(`${this.$apiuri}/chapters`)
-      .then(response => {
+    async fetchChapters() {
+      try {
+        const response = await ChapterService.getAllChapters()
         this.chapters = response.data
         this.pagination.total = this.chapters.length
-      })
+        this.startTour()
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to get chapters data`, color: 'error', icon: 'mdi-close-circle' })
+      }
     },
+    async getDocumentationVersions() {
+      try {
+        const response = await DocumentationService.getAllVersions();
+        response.data[0].content.forEach(v => {
+            this.versions.push(v.version)
+        });
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to get available documentation version`, color: 'error', icon: 'mdi-close-circle' })
+      }
+    },
+    startTour(){
+      if(!this.$vuetify.breakpoint.mobile){
+        const tour = JSON.parse(localStorage.getItem('tour'));
+        const isTourHaveBeenDone = tour?.chapter;
+        if(!isTourHaveBeenDone) {
+          this.$tours['chapterTour'].start()
+        }
+      }
+    },
+    handleTourEnd(){
+      let tour = JSON.parse(localStorage.getItem('tour'))
+      tour.chapter = true;
+      tour = JSON.stringify(tour);
+      localStorage.setItem('tour', tour)
+    }
   },
   computed: {
     pages () {
@@ -256,19 +316,16 @@ export default {
         var clone = JSON.parse(JSON.stringify(this.chapters));
         var startFrom = (this.pagination.page*this.pagination.rowsPerPage)-this.pagination.rowsPerPage;
         return clone.splice(startFrom, this.pagination.rowsPerPage);
+    },
+    filteredChapter() {
+      return this.chapters.filter((chapter) =>
+        chapter.title.toLowerCase().includes(this.searchKeyword.toLowerCase())
+      );
     }
   },
   created(){
-    this.updateChapter()
-  },
-  beforeCreate(){
-    // get all version list
-    this.axios.get(`${this.$apiuri}/documentations/version`)
-      .then((response) => {
-          response.data[0].content.forEach(v => {
-              this.versions.push(v.version)
-          });
-      })
+    this.getDocumentationVersions();
+    this.fetchChapters()
   }
 }
 </script>
@@ -342,4 +399,12 @@ export default {
   table tr td div .delete-btn {
     background-color: #a40d14 !important;
   }
+
+  .card-dialog .v-card__title{
+    background-color: var(--primary-blue-lighter);
+  }
+  .card-dialog {
+    background-color: var(--primary-dark);
+  }
+  
 </style>
