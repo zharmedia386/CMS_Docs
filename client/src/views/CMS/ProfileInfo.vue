@@ -15,7 +15,7 @@
             <div>
               <label for="input-file">
                 <div class="circle">
-                  <img src="" />
+                  <img src="" id="image-preview" />
                   <div class="placeholder">Choose an image</div>
                 </div>
               </label>
@@ -191,20 +191,32 @@ export default {
     };
   },
   methods: {
+    // getBase64() {
+    //   const base64 = new Promise((resolve, reject) => {
+    //     const reader = new FileReader();
+    //     reader.readAsDataURL(this.metadata.logo);
+    //     reader.onload = () => resolve(reader.result);
+    //     reader.onerror = (error) => reject(error);
+    //   });
+    //   base64
+    //     .then((res) => {
+    //       this.metadata.logo = res;
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // },
     getBase64() {
-      const base64 = new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(this.metadata.logo);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      });
-      base64
-        .then((res) => {
-          this.metadata.logo = res;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      const file = document.getElementById('input-file').files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        document.getElementById('image-preview').src = reader.result;
+        this.metadata.logo = reader.result;
+      };
+      reader.onerror = (error) => {
+        console.log(error);
+      };
     },
     updateMetadata() {
       let header = {
