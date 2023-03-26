@@ -19,19 +19,31 @@
                     v-show="this.$vuetify.breakpoint.mobile"></v-app-bar-nav-icon>
 
                 <v-toolbar-title class="d-flex justify-center align-center px-0">
-                    <img :src="documentation.logo" class="logo mr-2">
-                    <!-- <span class="mr-2" v-show="documentation.title">{{documentation.title}}</span> -->
-                    <!-- Kayaknya udh gk butuh, soalnya kurang bagus di desain -->
-                    <v-select v-model="selectedVersion" :items="getVersions"
+                    <img v-if="!this.$vuetify.breakpoint.mobile" :src="documentation.logo" class="logo mr-2">
+                    <v-select v-if="!this.$vuetify.breakpoint.mobile" v-model="selectedVersion" :items="getVersions"
                         @change="changeVersion(getContentInVersion(selectedVersion))" outlined dense rounded
                         class="version-dropdown ml-auto"></v-select>
                 </v-toolbar-title>
 
 
                 <div class="ml-auto mr-2 d-flex justify-center align-center">
-                    <v-text-field v-if="!this.$vuetify.breakpoint.mobile" outlined placeholder="Search section..."
-                        append-icon="mdi-magnify" class="mr-4 pt-6" dense readonly></v-text-field>
-                    <v-btn v-else icon><v-icon>mdi-magnify</v-icon></v-btn>
+                    <v-text-field 
+                        @click="dialog = true"
+                        v-if="!this.$vuetify.breakpoint.mobile" 
+                        placeholder="Search section..."
+                        append-icon="mdi-magnify" 
+                        class="mr-4 pt-6" 
+                        outlined 
+                        dense 
+                        readonly
+                    ></v-text-field>
+                    <v-btn 
+                        @click="dialog = true"
+                        v-else 
+                        icon
+                    >
+                        <v-icon>mdi-magnify</v-icon>
+                    </v-btn>
                     <v-btn :href="documentation.githubLink" target="_blank" icon><v-icon>mdi-github</v-icon></v-btn>
                 </div>
             </v-app-bar>
@@ -39,7 +51,20 @@
 
             <!-- Sidebar Starts Here -->
             <v-navigation-drawer fixed dark class="side-bar fontstyle px-0 py-0" v-model="drawer">
-
+                <div class="d-flex justify-center align-center flex-column">
+                    <img v-if="this.$vuetify.breakpoint.mobile" :src="documentation.logo" class="mr-2" style="height: 100px;">
+                    <v-select 
+                        v-if="this.$vuetify.breakpoint.mobile"
+                        v-model="selectedVersion" 
+                        :items="getVersions"
+                        @change="changeVersion(getContentInVersion(selectedVersion))" 
+                        class="version-dropdown-mobile"
+                        outlined 
+                        dense 
+                        rounded
+                        >
+                    </v-select>
+                </div>
                 <v-container v-for="(chapter, i) in getContentInVersion(selectedVersion)" :key="i">
                     <v-card-title class="chapter-title font-weight-bold" v-text="chapter.title"></v-card-title>
                     <v-list flat>
@@ -68,6 +93,33 @@
             </v-footer>
             <!-- Footer Stops Here -->
         </div>
+        <v-dialog
+            v-model="dialog"
+            width="1000px"
+        >
+            <div>
+                <div class="search-container-portal">
+                    <v-icon color="#8B949E" class="mr-3">mdi-magnify</v-icon>
+                    <input 
+                        v-model="searchKeyword" 
+                        class="search-portal-dialog"
+                        placeholder="Search section..." type="text" 
+                    >
+                </div>
+                <div class="search-content-container pa-3 mt-2 d-flex justify-center align-center">
+                    <div class="search-result-found mt-2" v-if="filteredSection.length > 0">
+                        <div 
+                            class="search-result-list mb-2 pa-5" 
+                            v-for="section in filteredSection" :key="section._id"
+                            @click="redirect(section._id)"
+                        >
+                            <p class="text-left ma-0">{{ section.title }}</p>
+                        </div>
+                    </div>
+                    <div v-else>No results found "{{ searchKeyword }}"</div>
+                </div>
+            </div>
+        </v-dialog>
     </v-app>
 </template>
 
@@ -79,7 +131,9 @@ import { useDocumentationStore } from '../../stores/DocumentationStore';
 export default {
     data() {
         return {
-            drawer: true
+            drawer: true,
+            dialog: false,
+            searchKeyword: ''
         }
     },
     setup() {
@@ -105,12 +159,57 @@ export default {
             if (content && content[0]?.section) {
                 router.push(`/docs/${content[0].section[0]._id}`)
             }
+        },
+        redirect(id){
+            router.push(`/docs/${id}`)
+            this.dialog = false
+        }
+    },
+    computed: {
+        sections() {
+            const content = this.getContentInVersion(this.selectedVersion)
+            return content.map(item => item?.section).flat()
+        },
+        filteredSection() {
+            return this.sections.filter((item) => item.title.toLowerCase().includes(this.searchKeyword.toLowerCase()))
         }
     }
 }
 </script>
 
 <style scoped>
+.search-container-portal {
+    display: flex;
+    background-color: #2D3748; 
+    color: white; 
+    padding: 20px; 
+    border-radius: 5px;
+}
+
+.search-portal-dialog:focus{
+    outline: none !important;
+    width: 100%; 
+    height: 100%; 
+    color: white;
+}
+
+.search-content-container {
+    background-color: #2D3748; 
+    min-height: 200px; 
+    color: #8B949E; 
+    border-radius: 5px;
+}
+
+.search-result-found{
+    width: 100%;
+}
+
+.search-result-list {
+    background-color: #242C3A; 
+    cursor: pointer; 
+    border-radius: 5px;
+}
+
 .linear-wipe {
     --bg-size: 400%;
     font-weight: bold;
@@ -183,6 +282,15 @@ export default {
     background-color: none;
     line-height: 1 !important;
     width: 120px;
+}
+
+.version-dropdown-mobile {
+    /* width: 120px;  */
+    max-height: 45px;
+    font-size: 11px;
+    background-color: none;
+    line-height: 1 !important;
+    margin: 0 20px;
 }
 
 /* Side bar styling */
