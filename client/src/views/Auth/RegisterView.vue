@@ -138,6 +138,7 @@
 
 <script>
 import UserService from '@/services/UserService'
+import DocumentationService from '@/services/DocumentationService'
 
 export default {
   name: "RegisterView",
@@ -207,6 +208,11 @@ export default {
         icon: "mdi-check-circle",
       });
     }
+
+    (async () => {
+      const response = await DocumentationService.getMetadata()
+      document.title = response.data.title
+    })()
   },
 };
 </script>

@@ -49,6 +49,7 @@
 
 <script>
 import AuthService from '@/services/AuthService'
+import DocumentationService from '@/services/DocumentationService';
 
 export default {
   name: 'LoginView',
@@ -96,6 +97,11 @@ export default {
     if (this.status) {
       this.$root.SnackBar.show({ message: this.message, color: this.msgtype, icon: 'mdi-check-circle' })
     }
+
+    (async () => {
+      const response = await DocumentationService.getMetadata()
+      document.title = response.data.title
+    })()
   },
 }
 </script>

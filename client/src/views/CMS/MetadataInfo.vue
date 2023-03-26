@@ -86,8 +86,6 @@ export default {
         logo: null,
         footer: "",
         githubLink: "",
-        username: "",
-        image: null
       },
       rules: {
         title: [
