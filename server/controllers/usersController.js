@@ -34,6 +34,10 @@ const getUserByUsername = async (req, res) => {
     res.status(200).send(await Users.find({username : req.params.username}).toArray())
 }
 
+
+//////////////////////////////////////////////////
+////   UPDATE USER PROFILE WITH RESET PASSWORD
+/////////////////////////////////////////////////
 const updateUser = async (req,res) => {
     if (!req?.body?.id) return res.status(400).json({ 'message': 'Users ID required.' });
 
@@ -48,12 +52,34 @@ const updateUser = async (req,res) => {
     // Get user data from the session
     const userDataSession = req.session.user;
 
+    // Check if old password is correct before updating new password
+    let hashedPassword
+    if(req.body.oldPassword && req.body.newPassword) {
+        const user = await Users.find({_id : userId}).toArray()
+        console.log(user)
+        const match = await bcrypt.compare(req.body.oldPassword, user[0].password);
+        if(!match) res.status(401).send({ message : "Old Password is incorrect" })
+        
+        // New Password Config
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(req.body.newPassword, saltRounds);
+    }
+    
+    // check for duplicate usernames in the db
+    // only for if it is different from the current username
+    if(req.body.username != userDataSession.username) {
+        const duplicate = await Users.find({ username: req.body.username }).toArray();
+        console.log(duplicate.length);
+        if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ message: 'Username is already taken.' }); //Conflict 
+    }
+    
     let userData = {
         "email" : req.body.email,
         "firstname" : req.body.firstname,
         "lastname" : req.body.lastname,
         "username" : req.body.username,
-        "updatedBy": userDataSession.username
+        "updatedBy": userDataSession.username,
+        "profilePicture" : req.body.profilePicture
     }
 
     if(req.body.alias && req.body.alias.length != 0) userData.alias = req.body.alias;
@@ -64,6 +90,18 @@ const updateUser = async (req,res) => {
             { _id: userId },
             { $set: userData }
         )
+        
+        if(req.body.oldPassword && req.body.newPassword) {
+            // update password 
+            await Users.updateOne(
+                { _id: userId },
+                { 
+                    $set : {
+                        "password" : hashedPassword
+                    }
+                }
+            )
+        }
     } catch (error) {
         res.status(400).send(error.message)
     }
@@ -80,62 +118,10 @@ const deleteUser = async (req, res) => {
     res.json(result);
 }
 
-const resetPassword = async (req, res) => {
-    if(!req?.body?.email) return res.status(400).json({"message" : "Email is required"})
-
-    const Users = await UserDB()
-
-    if (!Users) return res.status(204).json({ 'message': 'No user found.' });
-
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let newPassword = ""
-    for(let i = 0; i < 10; i++){
-        newPassword += characters.charAt(Math.floor(Math.random() * characters.length))
-    }
-
-    try {
-        let [user] = await Users.find().toArray()
-        const update = await Users.updateOne({}, {
-            $set : {
-                "password" : await bcrypt.hash(newPassword, 10)
-            }
-        })
-        if(update.modifiedCount == 1){
-            const transport = nodemailer.createTransport({
-                host: "smtp.mailtrap.io",
-                port: 2525,
-                auth: {
-                  user: "0330f88642c22f",
-                  pass: "7abf325262f679"
-                }
-            });
-
-            const send = transport.sendMail({
-                from: '"CMS Team" <cmsteam@example.com>',
-                to : req.body.email,
-                subject: "Reset Password",
-                text: "New Password : " + newPassword,
-                html: "<h1>New Password : " + newPassword + "</h1>"
-            })
-            console.log(newPassword)
-            res.status(200).send({
-                "message" : "Reset password success!"
-            })
-        }
-        else{
-            throw "Reset password failed!"
-        }
-        
-    } catch (error) {
-        res.status(400).send({"message" : error.message})
-    }
-}
-
 module.exports = {
     getAllUsers,
     updateUser,
     deleteUser,
     getUserById,
     getUserByUsername,
-    resetPassword
 }

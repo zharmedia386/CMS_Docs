@@ -261,7 +261,6 @@ export default {
   color: #ccc;
   background-color: #f5f5f5;
 }
-
 #input-file {
   position: absolute;
   left: -99999px;

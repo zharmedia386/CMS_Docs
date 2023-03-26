@@ -30,7 +30,7 @@ const handleLogin = async (req, res) => {
         );
 
         const result = await Users.updateOne(
-            { _id: foundUser._id },
+            { _id: foundUser[0]._id },
             { $set: { refreshToken: refreshToken } }
           );
 

@@ -86,14 +86,11 @@ const updateSection = async (req, res) => {
     } catch (error) {
         res.status(400).send({ message: error.message })
     }
-
-
-
     res.status(201).send({ message : "Sections Data Updated!" })
 }
 
 const deleteSection = async (req, res) => {
-    console.log(req.body)
+    console.log(req.body) 
     if (!req?.body?.id) return res.status(400).json({ 'message': 'Sections ID required.' });
     
     let sectionId = new mongo.ObjectId(req.body.id)

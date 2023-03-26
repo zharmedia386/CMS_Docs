@@ -29,10 +29,15 @@
         <v-col cols="4" class="mt-4 ml-16 text-container">
           <span>Full Name</span>
         </v-col>
-
+        
         <v-col cols="3" class="mt-1">
-          <v-text-field dark v-model="user.firstname" :rules="rules.firstname" outlined required
-            solo-inverted></v-text-field>
+          <v-text-field 
+          dark v-model="user.firstname" 
+          :rules="rules.firstname" 
+          outlined 
+          required
+          solo-inverted>
+        </v-text-field>
         </v-col>
         <v-col cols="3" class="mt-1">
           <v-text-field dark v-model="user.lastname" :rules="rules.lastname" outlined required
