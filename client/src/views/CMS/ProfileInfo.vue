@@ -15,12 +15,17 @@
             <div>
               <label for="input-file">
                 <div class="circle">
-                  <img src="" id="image-preview" />
+                  <img :src="this.user.profilePicture" id="image-preview" />
                   <div class="placeholder">Choose an image</div>
                 </div>
               </label>
-              <v-file-input id="input-file" accept="image/*" prepend-icon="mdi-camera" class="camera-input"
-                @change="getBase64()" />
+              <v-file-input 
+                id="input-file" 
+                accept="image/*" 
+                prepend-icon="mdi-camera" 
+                class="camera-input"
+                @change="getBase64()" 
+              />
             </div>
           </v-col>
         </v-row>
@@ -90,13 +95,15 @@
       <v-divider :thickness="4" class="border-opacity-100 mt-8" color="white"></v-divider>
 
       <div class="d-flex justify-end">
-        <v-btn type="submit" class="mt-3 mr-6 colorbtn" id="v-step-profile-6">Save Changes</v-btn>
+        <v-btn type="button" class="mt-3 mr-6 colorbtn" id="v-step-profile-6" @click="save">Save Changes</v-btn>
       </div>
     </v-container>
   </div>
 </template>
 
 <script>
+import UserService from '@/services/UserService';
+
 export default {
   components: {},
   data() {
@@ -191,67 +198,47 @@ export default {
     };
   },
   methods: {
-    // getBase64() {
-    //   const base64 = new Promise((resolve, reject) => {
-    //     const reader = new FileReader();
-    //     reader.readAsDataURL(this.metadata.logo);
-    //     reader.onload = () => resolve(reader.result);
-    //     reader.onerror = (error) => reject(error);
-    //   });
-    //   base64
-    //     .then((res) => {
-    //       this.metadata.logo = res;
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
     getBase64() {
       const file = document.getElementById('input-file').files[0];
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
         document.getElementById('image-preview').src = reader.result;
-        this.metadata.logo = reader.result;
+        this.user.profilePicture = reader.result;
       };
       reader.onerror = (error) => {
         console.log(error);
       };
     },
-    updateMetadata() {
-      let header = {
-        headers: {
-          Authorization: "Bearer " + localStorage.token,
-        },
-      };
-      if (this.$refs.form.validate()) {
-        this.axios
-          .put(`${this.$apiuri}/documentations/metadata`, this.metadata, header)
-          .then((res) => {
-            this.$root.SnackBar.show({
-              message: res.data.message,
-              color: "success",
-              icon: "mdi-check-circle",
-            });
-          })
-          .catch((err) => {
-            if (err.response.status == 401) {
-              localStorage.removeItem("token");
-              this.$router.push({
-                name: "login",
-                params: {
-                  message: "Invalid session",
-                  status: true,
-                  msgtype: "error",
-                },
-              });
-            }
-            this.$root.SnackBar.show({
-              message: err.message,
-              color: "error",
-              icon: "mdi-close-circle",
-            });
-          });
+    async syncUserData() {
+      const response = await UserService.getUserById(this.user._id)
+      const user = response.data[0]
+      delete user.password
+
+      this.user = user;
+      localStorage.setItem('user', JSON.stringify(user))
+    },
+    async save() {
+      let user = {
+        id: this.user._id,
+        email: this.user.email,
+        firstname: this.user.firstname,
+        lastname: this.user.lastname,
+        username: this.user.username,
+        profilePicture: this.user.profilePicture
+      }
+      
+      if(this.oldPassword && this.newPassword) {
+        user.oldPassword = this.oldPassword;
+        user.newPassword = this.newPassword;
+      }
+
+      try {
+        await UserService.updateProfile(user)
+        await this.syncUserData()
+        this.$root.SnackBar.show({ message: "Profile successfully updated", color: 'success', icon: 'mdi-check-circle' })
+      } catch (error) {
+        this.$root.SnackBar.show({ message: `Failed to update profile, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
     },
     startTour() {
@@ -347,6 +334,10 @@ label[for="input-file"] {
   background-color: #ff00d6;
   border-radius: 50px;
   padding: 8px;
+}
+
+.camera-input .v-input__slot {
+  display: none !important;
 }
 
 .vue-editor--wrapper {
