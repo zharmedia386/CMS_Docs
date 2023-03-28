@@ -16,30 +16,12 @@
               <div class="text-center mt-2"></div>
 
               <v-form ref="form" v-model="form.valid" lazy-validation>
-                <!-- <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="form.first"
-                    :rules="rules.name"
-                    color="purple darken-2"
-                    label="First name"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="form.last"
-                    :rules="rules.name"
-                    color="blue darken-2"
-                    label="Last name"
-                    required
-                  ></v-text-field>
-                </v-col> -->
                 <v-row>
                 <v-col cols="12" sm="6">
                 <v-text-field
                   id="input-firstname"
                   class="mt-12"
-                  v-model="form.first"
+                  v-model="form.firstname"
                   label="First name"
                   variant="tonal"
                   :rules="form.firstnameRules"
@@ -50,7 +32,7 @@
                   <v-text-field
                   id="input-lastname"
                   class="mt-12"
-                  v-model="form.last"
+                  v-model="form.lastname"
                   :rules="form.lastnameRules"
                   label="Last name"
                   variant="tonal"
@@ -138,6 +120,7 @@
 
 <script>
 import UserService from '@/services/UserService'
+import DocumentationService from '@/services/DocumentationService'
 
 export default {
   name: "RegisterView",
@@ -192,7 +175,8 @@ export default {
 
       try {
         await UserService.register(user);
-        this.$router.push({ name: 'cms' })
+        this.$root.SnackBar.show({ message: 'Account created successfully', color: 'success', icon: 'mdi-check-circle' })
+        this.$router.push({ name: 'login' })
       } catch (error) {
         this.$root.SnackBar.show({ message: error.message, color: 'error', icon: 'mdi-close-circle' })
       }
@@ -207,6 +191,11 @@ export default {
         icon: "mdi-check-circle",
       });
     }
+
+    (async () => {
+      const response = await DocumentationService.getMetadata()
+      document.title = response.data.title
+    })()
   },
 };
 </script>
