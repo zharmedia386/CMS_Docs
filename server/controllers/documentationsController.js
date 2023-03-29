@@ -90,7 +90,7 @@ const updateMetadata = async (req,res) => {
     
     if (!Documentations || !User) return res.status(204).json({ 'message': 'Metadata not found.'});
 
-    if (!req?.body?.title || !req?.body?.logo || !req?.body?.githubLink || !req?.body?.footer || !req?.body?.username) {
+    if (!req?.body?.title || !req?.body?.logo || !req?.body?.githubLink || !req?.body?.footer) {
         return res.status(400).json({'message': 'Please fill all required field'});
     }
 
@@ -105,18 +105,9 @@ const updateMetadata = async (req,res) => {
         const updateDoc = await Documentations.updateOne({}, {
             $set : data
         })
-        let user = {
-            "username" : req.body.username
-        }
-        if(req.body.password.length >= 4){
-            user.password = await bcrypt.hash(req.body.password, 10)
-        }
-        const updateUser = await User.updateOne({}, {
-            $set : user
-        })
+        
         let update = {
             updateDoc,
-            updateUser,
             "message" : "Metadata updated!"
         }
         res.status(200).send(update)
