@@ -50,6 +50,31 @@ components:
           type: string
           description: password for authentication purposes
 
+    registerAuthentication:
+      type: object
+      required:
+        - username
+        - firstname
+        - lastname
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          description: username for authentication purposes
+        password:
+          type: string
+          description: password for authentication purposes
+        firstname:
+          type: string
+          description: firstname for authentication purposes
+        lastname:
+          type: string
+          description: lastname for authentication purposes
+        email:
+          type: string
+          description: email for authentication purposes
+
     Documentation: 
       type: object
       required:
@@ -187,6 +212,29 @@ paths:
       responses:
         200:
           description: Token was successfully refreshed
+        500:
+          description: Server error
+  # Registration Token
+  /register:
+    post:
+      description: Register Account authentication request
+      tags: [Authentication]
+      requestBody:
+        description: register request body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerAuthentication'
+            example:
+              firstname: muhammad
+              lastname: azhar
+              username: zharmedia
+              password: azhar123
+              email: azhar123@gmail.com
+      responses:
+        200:
+          description: User was successfully registered
         500:
           description: Server error
 
