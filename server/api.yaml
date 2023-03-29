@@ -26,6 +26,8 @@ tags:
     description: Section API
   - name: Versionings
     description: Versioning API
+  - name: Users
+    description: Users API
 
 
 components:
@@ -111,6 +113,7 @@ components:
         updatedAt:
           type: object
           description: documentation updatedAt
+    
 
     Chapter:
       type: object
