@@ -1,6 +1,10 @@
 <template>
     <v-app>
-        <div v-if="loading" class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100%;">
+        <div 
+            v-if="loading" 
+            class="d-flex justify-content-center align-items-center" 
+            style="width: 100%; height: 100%;"
+        >
             <v-container>
                 <img src="@/assets/docmslogo.png" alt="logo" height="400" class="mb-16">
                 <p class="linear-wipe">Loading your content...</p>
@@ -14,15 +18,32 @@
 
         <div v-if="documentation" class="mt-16">
             <!-- Header Starts Here -->
-            <v-app-bar app dark class="portal-navbar">
-                <v-app-bar-nav-icon @click.stop="drawer = !drawer"
-                    v-show="this.$vuetify.breakpoint.mobile"></v-app-bar-nav-icon>
+            <v-app-bar 
+                class="portal-navbar"
+                app 
+                dark 
+            >
+                <v-app-bar-nav-icon 
+                    @click.stop="drawer = !drawer"
+                    v-show="this.$vuetify.breakpoint.mobile"
+                ></v-app-bar-nav-icon>
 
                 <v-toolbar-title class="d-flex justify-center align-center px-0">
-                    <img v-if="!this.$vuetify.breakpoint.mobile" :src="documentation.logo" class="logo mr-2">
-                    <v-select v-if="!this.$vuetify.breakpoint.mobile" v-model="selectedVersion" :items="getVersions"
-                        @change="changeVersion(getContentInVersion(selectedVersion))" outlined dense rounded
-                        class="version-dropdown ml-auto"></v-select>
+                    <img 
+                        class="logo mr-2"
+                        v-if="!this.$vuetify.breakpoint.mobile" 
+                        :src="documentation.logo" 
+                    >
+                    <v-select 
+                        class="version-dropdown ml-auto"
+                        v-model="selectedVersion" 
+                        v-if="!this.$vuetify.breakpoint.mobile" 
+                        :items="getVersions"
+                        @change="changeVersion(getContentInVersion(selectedVersion))" 
+                        outlined 
+                        dense 
+                        rounded
+                    ></v-select>
                 </v-toolbar-title>
 
 
@@ -44,15 +65,35 @@
                     >
                         <v-icon>mdi-magnify</v-icon>
                     </v-btn>
-                    <v-btn :href="documentation.githubLink" target="_blank" icon><v-icon>mdi-github</v-icon></v-btn>
+                    <v-btn 
+                        :href="documentation.githubLink" 
+                        target="_blank" 
+                        icon
+                    >
+                        <v-icon>mdi-github</v-icon>
+                    </v-btn>
                 </div>
             </v-app-bar>
             <!-- Header Stop Here -->
 
             <!-- Sidebar Starts Here -->
-            <v-navigation-drawer fixed dark class="side-bar fontstyle px-0 py-0" v-model="drawer">
-                <div class="d-flex justify-center align-center flex-column">
-                    <img v-if="this.$vuetify.breakpoint.mobile" :src="documentation.logo" class="mr-2" style="height: 100px;">
+            <v-navigation-drawer 
+                class="side-bar fontstyle px-0 py-0" 
+                v-model="drawer" 
+                :permanent="$vuetify.breakpoint.mdAndUp"
+                fixed 
+                dark 
+            >
+                <div 
+                    v-if="this.$vuetify.breakpoint.mobile"
+                    class="d-flex justify-center align-center flex-column"
+                >
+                    <img 
+                        v-if="this.$vuetify.breakpoint.mobile" 
+                        class="mr-2" 
+                        :src="documentation.logo" 
+                        style="height: 100px;"
+                    >
                     <v-select 
                         v-if="this.$vuetify.breakpoint.mobile"
                         v-model="selectedVersion" 
@@ -83,7 +124,7 @@
 
             <v-main class="portal-main" :class="{ 'portal-main-mobile': this.$vuetify.breakpoint.mobile }">
                 <v-container>
-                    <router-view :key="$route.path"></router-view>
+                    <router-view :key="$route.path" :title="documentation.title"></router-view>
                 </v-container>
             </v-main>
 

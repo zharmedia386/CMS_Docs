@@ -11,7 +11,6 @@ import Versioning from '../views/CMS/VersioningEditor.vue'
 import Login from '../views/Auth/LoginView.vue'
 import Register from '../views/Auth/RegisterView.vue'
 import ProfileInfo from '../views/CMS/ProfileInfo.vue'
-// import axios from 'axios'
 import AuthService from '@/services/AuthService'
 
 Vue.use(VueRouter)
@@ -25,7 +24,8 @@ const routes = [
       {
         path: 'docs/:id',
         name: 'section',
-        component: SectionView
+        component: SectionView,
+        props: true
       }
     ]
   },
