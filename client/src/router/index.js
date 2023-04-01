@@ -99,13 +99,13 @@ const requireAuth = async (to, from, next) => {
 
   // If token doesn't exist
   if(!localStorage.token) {
-    next({name: "login", replace: true })
+    next({name: "login", replace: true });
     return;
   }
 
   try {
     await AuthService.refreshToken();
-    next()
+    next();
   } catch (error) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -117,7 +117,7 @@ const requireAuth = async (to, from, next) => {
         status: true,
         msgtype: 'error'
       }
-    })
+    });
   }
 };
 

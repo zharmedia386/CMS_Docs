@@ -1,21 +1,5 @@
 <template>
     <v-app>
-        <div 
-            v-if="loading" 
-            class="d-flex justify-content-center align-items-center" 
-            style="width: 100%; height: 100%;"
-        >
-            <v-container>
-                <img src="@/assets/docmslogo.png" alt="logo" height="400" class="mb-16">
-                <p class="linear-wipe">Loading your content...</p>
-                <div class="animated-gradient progress-bar"></div>
-            </v-container>
-        </div>
-
-        <div v-if="error">
-            Error
-        </div>
-
         <div v-if="documentation" class="mt-16">
             <!-- Header Starts Here -->
             <v-app-bar 
@@ -161,6 +145,21 @@
                 </div>
             </div>
         </v-dialog>
+
+        <div 
+            v-if="loading" 
+            class="d-flex justify-center align-center" 
+            style="width: 100%; height: 100%;"
+        >
+            <v-container>
+                <img src="@/assets/docmslogo.png" alt="logo" height="400" class="mb-16">
+                <p class="linear-wipe">Loading your content...</p>
+                <div class="animated-gradient progress-bar"></div>
+            </v-container>
+        </div>
+        <div v-if="error">
+            Error
+        </div>
     </v-app>
 </template>
 
