@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const documentationsController = require('../../controllers/documentationsController')
+const { verifyJWT } = require("../../middleware/verifyJWT")
 
 router.route('/')
     .get(documentationsController.getAllDocumentationContent)
-    .post(documentationsController.createNewDocumentation)
-    .put(documentationsController.updateDocumentation)
-    .delete(documentationsController.deleteDocumentation);
+    .post(verifyJWT, documentationsController.createNewDocumentation)
+    .put(verifyJWT, documentationsController.updateDocumentation)
+    .delete(verifyJWT, documentationsController.deleteDocumentation);
 
 router.route('/version')
     .get(documentationsController.getAllVersions);

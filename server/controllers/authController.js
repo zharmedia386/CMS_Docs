@@ -5,17 +5,23 @@ const jwt = require('jsonwebtoken');
 const handleLogin = async (req, res) => {
     const Users = await User()
     const { user, pwd } = req.body;
-    if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
+    if (!user || !pwd) return res.status(400).json({ 'message': 'Masukan Username dan Password.' });
     
     let foundUser = await Users.find({ username: user }).toArray();
-    if (!foundUser) return res.sendStatus(401); //Unauthorized 
+    if (!foundUser) return res.sendStatus(401);
+
+    // Create a copy of foundUser and delete the password field
+    let foundUserWithoutPassword = {
+        ...foundUser[0],
+        password: undefined
+      };
     
-    // evaluate password 
-    // console.log(pwd)
-    // console.log(foundUser[0].password)
+    if(!foundUser[0]) {
+        res.sendStatus(401)
+    }
+
     const match = await bcrypt.compare(pwd, foundUser[0].password);
     if (match) {
-        // create JWTs
         const accessToken = jwt.sign(
             { "username": foundUser[0].username },
             process.env.ACCESS_TOKEN_SECRET,
@@ -27,25 +33,36 @@ const handleLogin = async (req, res) => {
             { expiresIn: '1d' }
         );
 
-        // Saving refreshToken with current user
-        // foundUser[0].refreshToken = refreshToken;
-        const result = await Users.updateOne({}, {$set: {
-            refreshToken: refreshToken
-        }});
-        console.log(result);
+        const result = await Users.updateOne(
+            { _id: foundUser[0]._id },
+            { $set: { refreshToken: refreshToken } }
+          );
 
-        // Users.refreshToken = refreshToken;
-        // const result = await Users.updateOne();
-        // console.log(result);
+        // Set user data in the session
+        req.session.user = foundUserWithoutPassword;
         
-        // Creates Secure Cookie with refresh token
-        res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
-        
-        // Send authorization roles and access token to user
-        res.json({ accessToken });
+        res.json({ accessToken, user: foundUserWithoutPassword });
     } else {
         res.sendStatus(401);
     }
 }
 
-module.exports = { handleLogin };
+const checkToken = async (req,res) => {
+    const Users = await User()
+    const token = req.params.token
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        let foundUser = await Users.find({ username: decoded.username }).toArray();
+        if (!foundUser) return res.status(401).send("Username Tidak Ditemukan");
+        const accessToken = jwt.sign(
+            { "username": decoded.username },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '30m' }
+        )
+        res.status(200).send(accessToken)
+    } catch (err) {
+        res.status(401).send(err.message)
+    }
+}
+
+module.exports = { handleLogin, checkToken };

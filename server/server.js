@@ -7,6 +7,11 @@ const corsOptions = require('./config/corsOptions');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
+const swaggerJSDocs = YAML.load("./api.yaml");
+const session = require('express-session');
+
 // const { logger } = require('./middleware/logEvents');
 // const errorHandler = require('./middleware/errorHandler');
 const port = process.env.PORT || 5000
@@ -39,11 +44,21 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json 
 app.use(express.json());
 
+// Configure express-session middleware
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: false
+  }));
+
+// Swagger API Documentation
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
+
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
-// routes
 app.use('/', require('./routes/root'));
+
 app.use('/documentations', require('./routes/api/documentations'));
 app.use('/versioning', require('./routes/api/versioning'))
 app.use('/chapters', require('./routes/api/chapters'));
