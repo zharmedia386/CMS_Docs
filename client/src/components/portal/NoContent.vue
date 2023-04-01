@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex justify-center align-center" style="width: 100%; height: 100%;">
         <v-container>
-            <h1 class="linear-wipe">404 Page Not Found</h1>
+            <h1 class="linear-wipe">No content available <br>at this time</h1>
         </v-container>
     </div>
 </template>
