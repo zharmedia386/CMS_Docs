@@ -15,32 +15,38 @@ const cmsChildRoutes = (prefix) => [
   {
     path: 'section',
     name: prefix + '.section',
+    meta: { requireAuth: true },
     component: () => import('@/views/CMS/SectionList.vue'),
-    props : true
+    props: true
   },
   {
     path: 'section/:id',
     name: prefix + '.section-editor',
+    meta: { requireAuth: true },
     component: () => import('@/views/CMS/SectionEditor.vue')
   },
   {
     path: 'chapter',
-    name : prefix + '.chapter',
+    name: prefix + '.chapter',
+    meta: { requireAuth: true },
     component: () => import('@/views/CMS/ChapterList.vue')
   },
   {
     path: 'metadata',
     name: prefix + '.metadata',
+    meta: { requireAuth: true },
     component: () => import('@/views/CMS/MetadataInfo.vue')
   },
   {
     path: 'version',
     name: prefix + '.version',
+    meta: { requireAuth: true },
     component: () => import('@/views/CMS/VersioningEditor.vue')
   },
   {
     path: 'profile',
     name: prefix + '.profile',
+    meta: { requireAuth: true },
     component: () => import('@/views/CMS/ProfileInfo.vue')
   }
 ];
@@ -55,6 +61,7 @@ const routes = [
   {
     path: '/cms',
     name: 'cms',
+    meta: { requireAuth: true },
     component: () => import('@/views/CMS/CMSView.vue'),
     children: cmsChildRoutes('cms')
   },
@@ -62,13 +69,13 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('@/views/Auth/LoginView.vue'),
-    props : true
+    props: true
   },
   {
     path: '/register',
     name: 'register',
     component: () => import('@/views/Auth/RegisterView.vue'),
-    props : true
+    props: true
   },
   {
     path: '*',
@@ -83,34 +90,37 @@ const router = new VueRouter({
   routes
 });
 
-router.beforeEach(async (to, from, next) => {
-  if(to.path.includes("cms")){
-    if(localStorage.token){
-      try {
-        await AuthService.refreshToken();
-        next()
-      } catch (error) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        next({
-          name: "login",
-          replace: true,
-          params : {
-            message : "Your login session is expired",
-            status : true,
-            msgtype : 'error'
-          }
-        })
-      }
-    }
-    else{
-      next({
-        name: "login",
-        replace: true
-      })
-    }
+const requireAuth = async (to, from, next) => {
+  // Check if the access routes doesn't required an authentication
+  if (!to.matched.some((record) => record.meta.requireAuth)) {
+    next();
+    return;
   }
-  next()
-});
+
+  // If token doesn't exist
+  if(!localStorage.token) {
+    next({name: "login", replace: true })
+    return;
+  }
+
+  try {
+    await AuthService.refreshToken();
+    next()
+  } catch (error) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    next({
+      name: "login",
+      replace: true,
+      params: {
+        message: "Your login session is expired",
+        status: true,
+        msgtype: 'error'
+      }
+    })
+  }
+};
+
+router.beforeEach(requireAuth);
 
 export default router;
