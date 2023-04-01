@@ -15,11 +15,12 @@
     --secondary-purple-darker: #939AFF;
 }
 
-html { 
-    scroll-behavior:smooth 
+html {
+    scroll-behavior: smooth
 }
 
-body, body * {
+body,
+body * {
     font-family: 'Inter', sans-serif;
 }
 
@@ -39,4 +40,18 @@ body, body * {
 .v-btn {
     text-transform: none !important;
     letter-spacing: normal !important;
+}
+
+/* Quil Editor */
+.quillWrapper {
+    background-color: #37404D;
+    color: white;
+}
+
+.quillWrapper .ql-toolbar {
+    background-color: white;
+}
+
+.quillWrapper .ql-toolbar>svg {
+    border: 1px solid red !important;
 }

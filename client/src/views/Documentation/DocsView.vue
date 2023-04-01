@@ -111,7 +111,7 @@
                     <v-list flat>
                         <v-list-item-group class="text-left ml-5">
                             <v-list-item dense class="section" v-for="(section, j) in chapter.section" :key="j"
-                                :to="{ name: 'section', params: { id: section._id } }">
+                                :to="{ name: 'portal.section', params: { id: section._id } }">
                                 <v-list-item-content>
                                     <v-list-item-title class="section-title" v-text="section.title"></v-list-item-title>
                                 </v-list-item-content>
