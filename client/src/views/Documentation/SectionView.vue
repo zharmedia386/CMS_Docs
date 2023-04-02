@@ -31,7 +31,7 @@ export default {
                 // Set tab with format << section title - documentation title >>
                 document.title = await response.data[0].title + " - " + this.title
             } catch (error) {
-                this.$root.SnackBar.show({ message: "An error occurred when displaying section", color: 'error', icon: 'mdi-close-circle' })
+                this.$emit('error');
             }
         }
     },
@@ -44,5 +44,19 @@ export default {
 <style src="quill/dist/quill.snow.css"></style>
 
 <style>
-
+h1 {
+    font-size: 2rem;
+}
+h2 {
+    font-size: 1.7rem;
+}
+h3 {
+    font-size: 1.5rem;
+}
+h4 {
+    font-size: 1.3rem;
+}
+h5 {
+    font-size: 1.2rem;
+}
 </style>

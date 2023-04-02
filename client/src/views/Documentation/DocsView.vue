@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <div v-if="documentation && isContentExist" class="mt-16">
+        <div v-if="documentation && isContentExist && !error" class="mt-16">
             <!-- Header Starts Here -->
             <v-app-bar 
                 class="portal-navbar"
@@ -109,7 +109,7 @@
 
             <v-main class="portal-main" :class="{ 'portal-main-mobile': this.$vuetify.breakpoint.mobile }">
                 <v-container v-if="documentation">
-                    <router-view :key="$route.path" :title="documentation.title"></router-view>
+                    <router-view :key="$route.path" :title="documentation.title" @error="handleError"></router-view>
                 </v-container>
             </v-main>
 
@@ -218,6 +218,9 @@ export default {
         redirect(id){
             router.push(`/docs/${id}`)
             this.dialog = false
+        },
+        handleError() {
+            this.error = true;
         }
     },
     computed: {

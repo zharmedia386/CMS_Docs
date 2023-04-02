@@ -1,6 +1,13 @@
 <template>
-    <div class="not-found-container d-flex justify-center align-center" style="width: 100%; height: 100%;">
-        <v-container>
+    <div class="d-flex justify-center align-center" style="width: 100%; height: 100%;">
+        <LineDrop />
+        <div style="width: 100%; height: 100%; position: absolute; overflow: hidden;">
+            <div class="line" style="left: 20%; --duration: 2s; --delay: .5s;"></div>
+            <div class="line" style="left: 40%; --duration: 3s; --delay: .3s;"></div>
+            <div class="line" style="left: 60%; --duration: 2.5s; --delay: .8s;"></div>
+            <div class="line" style="left: 80%; --duration: 3.5s; --delay: .2s;"></div>
+        </div>
+        <v-container class="not-found-container">
             <img 
                 src="@/assets/images/404.png" 
                 alt="Not Found" 
@@ -28,7 +35,12 @@
 </template>
 
 <script>
+import LineDrop from '@/components/portal/LineDrop.vue';
+
 export default {
+    components: {
+        LineDrop
+    },
     methods: {
         backToHomePage(){
             this.$router.push({ name: 'docs' });
@@ -38,6 +50,11 @@ export default {
 </script>
 
 <style scoped>
+.not-found-container {
+    position: relative; 
+    z-index: 99;
+}
+
 img {
     width: 50%;
 }
@@ -45,6 +62,10 @@ img {
 h2 {
     color: #AEAEAE;
     font-weight: normal;
+}
+
+button {
+    width: fit-content;
 }
 
 .not-found-mobile {
