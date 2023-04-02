@@ -55,3 +55,23 @@ body * {
 .quillWrapper .ql-toolbar>svg {
     border: 1px solid red !important;
 }
+
+.animated-gradient {
+    background: repeating-linear-gradient(to right, var(--secondary-purple) 0%, var(--secondary-blue) 50%, var(--secondary-purple) 100%);
+    width: 200px;
+    background-size: 200% auto;
+    background-position: 0 100%;
+    animation: gradient 2s infinite;
+    animation-fill-mode: forwards;
+    animation-timing-function: linear;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
