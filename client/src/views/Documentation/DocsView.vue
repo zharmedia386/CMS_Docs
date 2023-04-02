@@ -208,7 +208,7 @@ export default {
         },
         changeVersion(content) {
             // Load first section in first chapter of the selected version
-            if (content.length > 0 && content[0]?.section) {
+            if (content?.length > 0 && content[0]?.section) {
                 router.push(`/docs/${content[0].section[0]._id}`)
             }
         },
@@ -225,7 +225,11 @@ export default {
     },
     computed: {
         getVersions(){
-            return this.documentation?.content
+            if(!this.documentation?.content) {
+                return []
+            }
+            
+            return this.documentation.content
                 .filter(content => content?.chapter?.length > 0)
                 .map(content => content.version);
         },
