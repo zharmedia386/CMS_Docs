@@ -16,6 +16,10 @@ const handleLogin = async (req, res) => {
         password: undefined
       };
     
+    if(!foundUser[0]) {
+        res.sendStatus(401)
+    }
+
     const match = await bcrypt.compare(pwd, foundUser[0].password);
     if (match) {
         const accessToken = jwt.sign(

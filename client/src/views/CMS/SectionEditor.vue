@@ -141,7 +141,7 @@ export default {
     async createSection(section){
       try {
         await SectionService.createSection(section)
-        this.$router.push({name: "sectionList", params: {message: "Section created!", status: true}})
+        this.$router.push({name: "cms.section", params: {message: "Section created!", status: true}})
       } catch (error) {
         this.$root.SnackBar.show({ message: `Failed to create section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
@@ -150,7 +150,7 @@ export default {
       section.id = this.$route.params.id
       try {
         await SectionService.updateSection(section);
-        this.$router.push({name: "sectionList", params: {message: "Section updated!", status: true}})
+        this.$router.push({name: "cms.section", params: {message: "Section updated!", status: true}})
       } catch (error) {
         this.$root.SnackBar.show({ message: `Failed to update section, an error occurred`, color: 'error', icon: 'mdi-close-circle' })
       }
@@ -241,19 +241,6 @@ export default {
 </script>
 
 <style>
-.quillWrapper {
-  background-color: #37404D;
-  color: white;
-}
-
-.quillWrapper .ql-toolbar {
-  background-color: white;
-}
-
-.quillWrapper .ql-toolbar > svg {
-  border: 1px solid red !important;
-}
-
 .section-editor-input .v-select__slot {
   background-color: #37404D !important;
   padding: 5px 10px;
