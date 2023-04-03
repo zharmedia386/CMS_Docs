@@ -30,6 +30,7 @@ export default {
                 this.content = response.data[0].content
                 // Set tab with format << section title - documentation title >>
                 document.title = await response.data[0].title + " - " + this.title
+                throw new Error('error')
             } catch (error) {
                 this.$emit('error');
             }
