@@ -52,12 +52,13 @@ img {
     width: 500px;
 }
 h1 {
-    font-size: 5rem;
+    font-size: 3rem;
 }
 
 h2 {
     color: #AEAEAE;
     font-weight: normal;
+    font-size: 1.5rem;
 }
 
 button {

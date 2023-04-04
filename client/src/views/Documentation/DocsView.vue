@@ -64,8 +64,9 @@
             <!-- Sidebar Starts Here -->
             <v-navigation-drawer 
                 class="side-bar fontstyle px-0 py-0" 
+                style="margin-top: 55px;"
                 v-model="drawer" 
-                :permanent="$vuetify.breakpoint.mdAndUp"
+                :permanent="$vuetify.breakpoint.lgAndUp"
                 fixed 
                 dark 
             >
@@ -91,7 +92,7 @@
                         >
                     </v-select>
                 </div>
-                <v-container v-for="(chapter, i) in getContentInVersion(selectedVersion)" :key="i">
+                <v-container v-for="(chapter, i) in getContentInVersion(selectedVersion)" :key="i" class="chapter-container">
                     <v-card-title class="chapter-title font-weight-bold" v-text="chapter.title"></v-card-title>
                     <v-list flat>
                         <v-list-item-group class="text-left ml-5">
@@ -107,8 +108,8 @@
             </v-navigation-drawer>
             <!-- Sidebar Stop Here -->
 
-            <v-main class="portal-main" :class="{ 'portal-main-mobile': this.$vuetify.breakpoint.mobile }">
-                <v-container v-if="documentation">
+            <v-main class="portal-main" :class="{ 'portal-main-mobile': this.$vuetify.breakpoint.mobile }" style="margin-top: -10px;">
+                <v-container v-if="documentation" class="mt-6">
                     <router-view :key="$route.path" :title="documentation.title" @error="handleError"></router-view>
                 </v-container>
             </v-main>
@@ -133,6 +134,7 @@
                         v-model="searchKeyword" 
                         class="search-portal-dialog"
                         placeholder="Search section..." type="text" 
+                        style="color: white;"
                     >
                 </div>
                 <div class="search-content-container pa-3 mt-2 d-flex justify-center align-center">
@@ -249,6 +251,11 @@ export default {
 </script>
 
 <style scoped>
+
+.chapter-container:last-child {
+    margin-bottom: 50px;
+}
+
 .search-container-portal {
     display: flex;
     background-color: #2D3748; 
