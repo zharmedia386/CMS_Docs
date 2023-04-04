@@ -127,6 +127,16 @@ const createNewDocumentation = async (req, res) => {
     // Get user data from the session
     const userDataSession = req.session.user;
 
+    // Documentations collection should be only 1 document at a time
+    Documentations.countDocuments({}, function(err, count) {
+        if(err) throw err;
+        else if (count >= 1) {
+            res.status(409).send({
+                message : "There's already another documentations. Documentation should be only one data/document" 
+            })
+        }
+    })
+
     try {
         // insert documentation
         const insertedDocumentation = await Documentations.insertOne({
