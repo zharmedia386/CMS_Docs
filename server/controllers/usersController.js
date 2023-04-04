@@ -110,12 +110,16 @@ const updateUser = async (req,res) => {
 
 const deleteUser = async (req, res) => {
     if (!req?.body?.id) return res.status(400).json({ "message": 'UserDB ID required' });
-    const user = await UserDB.findOne({ _id: req.body.id }).exec();
-    if (!user) {
-        return res.status(204).json({ 'message': `UserDB ID ${req.body.id} not found` });
-    }
-    const result = await user.deleteOne({ _id: req.body.id });
-    res.json(result);
+
+    const Users = await UserDB()
+    let objectId = new mongo.ObjectId(req.body.id)
+
+    const result = await Users.deleteOne({ _id: objectId });
+
+    if(result.deletedCount != 0) 
+        res.status(201).send({ message : "Users Data Deleted!" })
+    else
+        res.status(400).json({ message: `No users matches ID ${req.body.id}.` });
 }
 
 module.exports = {
