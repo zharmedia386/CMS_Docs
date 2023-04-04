@@ -56,7 +56,7 @@ const updateUser = async (req,res) => {
     let hashedPassword
     if(req.body.oldPassword && req.body.newPassword) {
         const user = await Users.find({_id : userId}).toArray()
-        console.log(user)
+        // console.log(user)
         const match = await bcrypt.compare(req.body.oldPassword, user[0].password);
         if(!match) res.status(401).send({ message : "Old Password is incorrect" })
         
@@ -69,7 +69,7 @@ const updateUser = async (req,res) => {
     // only for if it is different from the current username
     if(req.body.username != userDataSession.username) {
         const duplicate = await Users.find({ username: req.body.username }).toArray();
-        console.log(duplicate.length);
+        // console.log(duplicate.length);
         if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ message: 'Username is already taken.' }); //Conflict 
     }
     
