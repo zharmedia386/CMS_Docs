@@ -60,10 +60,11 @@
       </v-app-bar>
 
       <!-- Sidebar -->
-      <v-navigation-drawer
-        v-model="drawer"
-        dark
-        fixed
+      <v-navigation-drawer 
+        :permanent="$vuetify.breakpoint.lgAndUp"
+        v-model="drawer" 
+        dark 
+        fixed 
         class="side-bar fontstyle px-0 py-0"
       >
         <v-container class="nav-wrapper">
@@ -180,35 +181,35 @@ export default {
         {
           title: "Metadata",
           ref: {
-            name: "metadata",
+            name: "cms.metadata"
           },
           icon: "mdi-database",
         },
         {
           title: "Chapter",
           ref: {
-            name: "chapterList",
+            name: 'cms.chapter'
           },
           icon: "mdi-book",
         },
         {
           title: "Section",
           ref: {
-            name: "sectionList",
+            name: 'cms.section'
           },
           icon: "mdi-file-document",
         },
         {
           title: "Manage Content",
           ref: {
-            name: "version",
+            name: 'cms.version'
           },
           icon: "mdi-folder",
         },
         {
           title: "Profile",
           ref: {
-            name: "profile",
+            name: 'cms.profile'
           },
           icon: "mdi-account-multiple",
         },
@@ -319,14 +320,14 @@ export default {
     handleTourEnd() {
       let tour = JSON.parse(localStorage.getItem("tour"));
       tour.cms = true;
-      if (!tour?.metadata) {
-        if (this.$route.name == "metadata") {
+      if(!tour?.metadata){
+        if(this.$route.name == 'cms.metadata') {
           const isTourHaveBeenDone = tour?.metadata;
           if (!isTourHaveBeenDone) {
             this.$tours["metadataTour"].start();
           }
         } else {
-          this.$router.push("/cms/metadata");
+          this.$router.push({ name: 'cms.metadata' })
         }
       }
 

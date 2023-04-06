@@ -1,28 +1,33 @@
 <template>
     <v-app>
-        <div v-if="loading" class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100%;">
-            <v-container>
-                <img src="@/assets/docmslogo.png" alt="logo" height="400" class="mb-16">
-                <p class="linear-wipe">Loading your content...</p>
-                <div class="animated-gradient progress-bar"></div>
-            </v-container>
-        </div>
-
-        <div v-if="error">
-            Error
-        </div>
-
-        <div v-if="documentation" class="mt-16">
+        <div v-if="documentation && isContentExist && !error" class="mt-16">
             <!-- Header Starts Here -->
-            <v-app-bar app dark class="portal-navbar">
-                <v-app-bar-nav-icon @click.stop="drawer = !drawer"
-                    v-show="this.$vuetify.breakpoint.mobile"></v-app-bar-nav-icon>
+            <v-app-bar 
+                class="portal-navbar"
+                app 
+                dark 
+            >
+                <v-app-bar-nav-icon 
+                    @click.stop="drawer = !drawer"
+                    v-show="this.$vuetify.breakpoint.mobile"
+                ></v-app-bar-nav-icon>
 
                 <v-toolbar-title class="d-flex justify-center align-center px-0">
-                    <img v-if="!this.$vuetify.breakpoint.mobile" :src="documentation.logo" class="logo mr-2">
-                    <v-select v-if="!this.$vuetify.breakpoint.mobile" v-model="selectedVersion" :items="getVersions"
-                        @change="changeVersion(getContentInVersion(selectedVersion))" outlined dense rounded
-                        class="version-dropdown ml-auto"></v-select>
+                    <img 
+                        class="logo mr-2"
+                        v-if="!this.$vuetify.breakpoint.mobile" 
+                        :src="documentation.logo" 
+                    >
+                    <v-select 
+                        class="version-dropdown ml-auto"
+                        v-model="selectedVersion" 
+                        v-if="!this.$vuetify.breakpoint.mobile" 
+                        :items="getVersions"
+                        @change="changeVersion(getContentInVersion(selectedVersion))" 
+                        outlined 
+                        dense 
+                        rounded
+                    ></v-select>
                 </v-toolbar-title>
 
 
@@ -44,15 +49,37 @@
                     >
                         <v-icon>mdi-magnify</v-icon>
                     </v-btn>
-                    <v-btn :href="documentation.githubLink" target="_blank" icon><v-icon>mdi-github</v-icon></v-btn>
+                    <v-btn 
+                        v-if="documentation.githubLink"
+                        :href="documentation.githubLink" 
+                        target="_blank" 
+                        icon
+                    >
+                        <v-icon>mdi-github</v-icon>
+                    </v-btn>
                 </div>
             </v-app-bar>
             <!-- Header Stop Here -->
 
             <!-- Sidebar Starts Here -->
-            <v-navigation-drawer fixed dark class="side-bar fontstyle px-0 py-0" v-model="drawer">
-                <div class="d-flex justify-center align-center flex-column">
-                    <img v-if="this.$vuetify.breakpoint.mobile" :src="documentation.logo" class="mr-2" style="height: 100px;">
+            <v-navigation-drawer 
+                class="side-bar fontstyle px-0 py-0" 
+                style="margin-top: 55px;"
+                v-model="drawer" 
+                :permanent="$vuetify.breakpoint.lgAndUp"
+                fixed 
+                dark 
+            >
+                <div 
+                    v-if="this.$vuetify.breakpoint.mobile"
+                    class="d-flex justify-center align-center flex-column"
+                >
+                    <img 
+                        v-if="this.$vuetify.breakpoint.mobile" 
+                        class="mr-2" 
+                        :src="documentation.logo" 
+                        style="height: 100px;"
+                    >
                     <v-select 
                         v-if="this.$vuetify.breakpoint.mobile"
                         v-model="selectedVersion" 
@@ -65,12 +92,12 @@
                         >
                     </v-select>
                 </div>
-                <v-container v-for="(chapter, i) in getContentInVersion(selectedVersion)" :key="i">
+                <v-container v-for="(chapter, i) in getContentInVersion(selectedVersion)" :key="i" class="chapter-container">
                     <v-card-title class="chapter-title font-weight-bold" v-text="chapter.title"></v-card-title>
                     <v-list flat>
                         <v-list-item-group class="text-left ml-5">
-                            <v-list-item dense class="section" v-for="(section, j) in chapter.section" :key="j"
-                                :to="{ name: 'section', params: { id: section._id } }">
+                            <v-list-item dense class="section" v-for="(section, j) in chapter?.section" :key="j"
+                                :to="{ name: 'portal.section', params: { id: section._id } }">
                                 <v-list-item-content>
                                     <v-list-item-title class="section-title" v-text="section.title"></v-list-item-title>
                                 </v-list-item-content>
@@ -81,9 +108,9 @@
             </v-navigation-drawer>
             <!-- Sidebar Stop Here -->
 
-            <v-main class="portal-main" :class="{ 'portal-main-mobile': this.$vuetify.breakpoint.mobile }">
-                <v-container>
-                    <router-view :key="$route.path"></router-view>
+            <v-main class="portal-main" :class="{ 'portal-main-mobile': this.$vuetify.breakpoint.mobile }" style="margin-top: -10px;">
+                <v-container v-if="documentation" class="mt-6">
+                    <router-view :key="$route.path" :title="documentation.title" @error="handleError"></router-view>
                 </v-container>
             </v-main>
 
@@ -93,7 +120,10 @@
             </v-footer>
             <!-- Footer Stops Here -->
         </div>
+
+        <!-- Search Bar Modal -->
         <v-dialog
+            v-if="documentation"
             v-model="dialog"
             width="1000px"
         >
@@ -104,6 +134,7 @@
                         v-model="searchKeyword" 
                         class="search-portal-dialog"
                         placeholder="Search section..." type="text" 
+                        style="color: white;"
                     >
                 </div>
                 <div class="search-content-container pa-3 mt-2 d-flex justify-center align-center">
@@ -120,64 +151,111 @@
                 </div>
             </div>
         </v-dialog>
+
+        <!-- Display Loader if documentation is not ready -->
+        <PortalLoader v-if="!documentation && !error" />
+        <!-- Display No Content View if in documentation there is no content exist -->
+        <NoContentView v-if="documentation && !isContentExist && !error" />
+        <!-- Display Error View when error exist -->
+        <ErrorView v-if="error" />
     </v-app>
 </template>
 
 <script>
-import router from '@/router'
-import { storeToRefs } from 'pinia';
-import { useDocumentationStore } from '../../stores/DocumentationStore';
+import router from '@/router';
+import PortalLoader from '@/components/portal/PortalLoader.vue';
+import ErrorView from '@/components/portal/ErrorPortal.vue';
+import NoContentView from '@/components/portal/NoContent.vue';
+import DocumentationService from '@/services/DocumentationService';
 
 export default {
+    components: {
+        PortalLoader,
+        ErrorView,
+        NoContentView
+    },
     data() {
         return {
+            documentation: null,
+            selectedVersion: null,
+            isContentExist: true,
             drawer: true,
             dialog: false,
-            searchKeyword: ''
-        }
-    },
-    setup() {
-        // Use documentation store and fetch the data from db
-        const documentationStore = useDocumentationStore()
-        documentationStore.fetchData(true);
-
-        // Extract the required data and getters as refs
-        const {
-            documentation, loading, error, selectedVersion,
-            getVersions, getContentInVersion,
-        } = storeToRefs(useDocumentationStore());
-
-        // Return the data so it's can be used in template
-        return {
-            documentation, loading, error, selectedVersion,
-            getVersions, getContentInVersion
+            searchKeyword: '',
+            error: false
         }
     },
     methods: {
+        async fetchData(){
+            try {
+                const response = await DocumentationService.getDocumentations();
+                this.documentation = response.data[0];
+
+                // Check if there is content exist in documentation
+                if(this.documentation.content.length === 0) {
+                    this.isContentExist = false;
+                    return;
+                }
+                
+                this.selectedVersion = response.data[0]?.content[0]?.version;
+
+                if(router.currentRoute.name !== 'portal.section') {
+                    let sectionId = this.documentation?.content[0]?.chapter[0]?.section[0]?._id;
+                    router.push({ name: 'portal.section', params: { id: sectionId }})
+                }
+            } catch (error) {
+                console.log(error)
+                this.error = true
+            }
+        },
         changeVersion(content) {
             // Load first section in first chapter of the selected version
-            if (content && content[0]?.section) {
+            if (content?.length > 0 && content[0]?.section) {
                 router.push(`/docs/${content[0].section[0]._id}`)
             }
+        },
+        getContentInVersion(version) {
+            return this.documentation.content.filter((content) => content.version == version)[0]?.chapter
         },
         redirect(id){
             router.push(`/docs/${id}`)
             this.dialog = false
+        },
+        handleError() {
+            this.error = true;
         }
     },
     computed: {
+        getVersions(){
+            if(!this.documentation?.content) {
+                return []
+            }
+            
+            return this.documentation.content
+                .filter(content => content?.chapter?.length > 0)
+                .map(content => content.version);
+        },
         sections() {
             const content = this.getContentInVersion(this.selectedVersion)
-            return content.map(item => item?.section).flat()
+
+            return content ? content.map(item => item?.section).flat() : []
         },
         filteredSection() {
-            return this.sections.filter((item) => item.title.toLowerCase().includes(this.searchKeyword.toLowerCase()))
+            return this.sections.filter((item) => item?.title.toLowerCase().includes(this.searchKeyword.toLowerCase()))
         }
+    },
+    created(){
+        this.fetchData()
     }
 }
 </script>
 
 <style scoped>
+
+.chapter-container:last-child {
+    margin-bottom: 50px;
+}
+
 .search-container-portal {
     display: flex;
     background-color: #2D3748; 
