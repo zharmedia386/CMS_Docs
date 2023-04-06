@@ -7,12 +7,12 @@ const { verifyJWT } = require("../../middleware/verifyJWT")
 const { validate } = require("../../middleware/validation")
 
 // Validators Rules
-const { createUserRules } = require("../../validators/chaptersValidator")
+const { createChapterRules, updateChapterRules } = require("../../validators/chaptersValidator")
 
 router.route('/')
     .get(chaptersController.getAllChapters)
-    .post(verifyJWT, createUserRules, validate, chaptersController.createNewChapter)
-    .put(verifyJWT, chaptersController.updateChapter)
+    .post(verifyJWT, createChapterRules, validate, chaptersController.createNewChapter)
+    .put(verifyJWT, updateChapterRules, validate, chaptersController.updateChapter)
     .delete(verifyJWT, chaptersController.deleteChapter);
 
 router.route('/:id')
