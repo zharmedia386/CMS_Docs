@@ -4,37 +4,51 @@ const mongo = require('mongodb')
 
 // Get all sections info
 const getAllSections = async (req, res) => {
-    const Sections = await sectionsDB()
-    if (!Sections) return res.status(204).json({ 'message': 'No section found.' });
+    try {
+        const Sections = await sectionsDB();
 
-    res.status(200).send(await Sections.find({}).toArray())
+        const sections = await Sections.find({}).toArray();
+
+        if (!sections.length) {
+            return res.status(200).json([]);
+        }
+
+        res.status(200).send(sections);
+    } catch (error) {
+        return res.status(500).json({ "message": "Failed to get sections" });
+    }
 }
 
 // Get specified sections info
 const getSectionsById = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ 'message': 'Sections ID required.' });
+    try {
+        const sectionId = req.params.id;
+        const Sections = await sectionsDB();
 
-    const Sections = await sectionsDB()
-    let objectId = new mongo.ObjectId(req.params.id)
+        // Convert section id to mongo object id
+        let objectId = new mongo.ObjectId(sectionId);
 
-    if (!Sections) {
-        return res.status(204).json({ "message": `No sections matches ID ${req.params.id}.` });
+        const sections = await Sections.find({_id : objectId}).toArray();
+
+        if(!sections.length){
+            return res.status(404).json({ "message": `No sections matches ID ${sectionId}.` });
+        }
+        
+        res.status(200).send(sections);
+    } catch (error) {
+        return res.status(500).json({ "message": "Failed to get section" });
     }
-    
-    res.status(200).send(await Sections.find({_id : objectId}).toArray())
 }
 
 // Create documentation info
 const createNewSection = async (req, res) => {
-    // check all field required
-    if (!req?.body?.title || !req?.body?.content) {
-        return res.status(400).json({ 'message': 'Title and content is required' });
-    }
-
     const Sections = await sectionsDB()
 
     // Get user data from the session
     const userDataSession = req.session.user;
+    if(!userDataSession) {
+        return res.status(404).send({ message: "Unauthorized" });
+    }
 
     try {
         // insert new sections
@@ -47,11 +61,10 @@ const createNewSection = async (req, res) => {
         }
         if(req.body.alias && req.body.alias.length != 0) section.alias = req.body.alias;
         const insertedSection = await Sections.insertOne(section)
-        console.log(insertedSection)
 
         res.status(200).send({ message : "Sections Data Created!" })
     } catch (err) {
-        res.status(400).send({ message: err.message })
+        res.status(500).send({ message: err.message })
     }
 }
 

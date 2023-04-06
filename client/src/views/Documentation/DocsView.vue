@@ -8,6 +8,7 @@
                 dark 
             >
                 <v-app-bar-nav-icon 
+                    id="toggle-sidebar"
                     @click.stop="drawer = !drawer"
                     v-show="this.$vuetify.breakpoint.mobile"
                 ></v-app-bar-nav-icon>
@@ -19,6 +20,7 @@
                         :src="documentation.logo" 
                     >
                     <v-select 
+                        id="version-dropdown"
                         class="version-dropdown ml-auto"
                         v-model="selectedVersion" 
                         v-if="!this.$vuetify.breakpoint.mobile" 
@@ -33,6 +35,7 @@
 
                 <div class="ml-auto mr-2 d-flex justify-center align-center">
                     <v-text-field 
+                        id="search-bar"
                         @click="dialog = true"
                         v-if="!this.$vuetify.breakpoint.mobile" 
                         placeholder="Search section..."
@@ -43,6 +46,7 @@
                         readonly
                     ></v-text-field>
                     <v-btn 
+                        id="search-bar"
                         @click="dialog = true"
                         v-else 
                         icon
@@ -50,6 +54,7 @@
                         <v-icon>mdi-magnify</v-icon>
                     </v-btn>
                     <v-btn 
+                        id="github-link-button"
                         v-if="documentation.githubLink"
                         :href="documentation.githubLink" 
                         target="_blank" 
@@ -409,14 +414,6 @@ export default {
 .portal-main {
     margin-left: 270px;
     padding-top: 0 !important;
-
-    /* background: #212542;
-        background: -moz-radial-gradient(top right, ellipse cover, #272c52 0%, var(--primary-dark) 57%);
-        background: -webkit-gradient(radial, top right, 0px, top right, 100%, color-stop(0%,#272c52), color-stop(57%,var(--primary-dark)));
-        background: -webkit-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
-        background: -o-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
-        background: -ms-radial-gradient(top right, ellipse cover, #272c52 0%,var(--primary-dark) 57%);
-        background: radial-gradient(ellipse at top right, #272c52 0%,var(--primary-dark) 57%); */
     background-image: url('@/assets/portalbg.png');
     background-size: 100% auto;
 }
