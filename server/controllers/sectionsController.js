@@ -15,7 +15,7 @@ const getAllSections = async (req, res) => {
 
         res.status(200).send(sections);
     } catch (error) {
-        return res.status(500).json({ "message": "Failed to get sections" });
+        res.status(500).json({ "message": "Failed to get sections" });
     }
 }
 
@@ -36,7 +36,7 @@ const getSectionsById = async (req, res) => {
         
         res.status(200).send(sections);
     } catch (error) {
-        return res.status(500).json({ "message": "Failed to get section" });
+        res.status(500).json({ "message": "Failed to get section" });
     }
 }
 
@@ -47,7 +47,7 @@ const createNewSection = async (req, res) => {
     // Get user data from the session
     const userDataSession = req.session.user;
     if(!userDataSession) {
-        return res.status(404).send({ message: "Unauthorized" });
+        return res.status(401).send({ message: "Unauthorized" });
     }
 
     try {
@@ -58,23 +58,21 @@ const createNewSection = async (req, res) => {
             createdAt: new Date(),
             updatedAt: new Date(),
             createdBy: userDataSession.username,
+            ...(req.body?.alias && { alias: req.body.alias })
         }
-        if(req.body.alias && req.body.alias.length != 0) section.alias = req.body.alias;
-        const insertedSection = await Sections.insertOne(section)
+        
+        const result = await Sections.insertOne(section)
+        if(!result?.acknowledged) {
+            return res.status(500).send({ message: "Failed to insert section into database" });
+        }
 
-        res.status(200).send({ message : "Sections Data Created!" })
+        res.status(200).send({ message : "Sections Data Created!", data: section })
     } catch (err) {
-        res.status(500).send({ message: err.message })
+        res.status(500).send({ message: "Failed to create section" })
     }
 }
 
 const updateSection = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ 'message': 'Sections ID required.' });
-
-    if (!req?.body?.title || !req?.body?.content) {
-        return res.status(400).json({ 'message': 'Title and content is required' });
-    }
-
     let sectionId = new mongo.ObjectId(req.body.id)
 
     const Sections = await sectionsDB()
@@ -85,21 +83,23 @@ const updateSection = async (req, res) => {
     let section = {
         title: req.body.title,
         content: req.body.content,
-        updatedBy: userDataSession.username
+        updatedBy: userDataSession.username,
+        updatedAt: new Date(),
+        ...(req.body?.alias && { alias: req.body.alias })
     }
 
-    if(req.body.alias && req.body.alias.length != 0) section.alias = req.body.alias;
-
     try {
+        const sections = await Sections.find({_id : objectId}).toArray();
+        console.log(sections)
         // update section in section collections
-        await Sections.updateOne(
+        const result = await Sections.updateOne(
             { _id: sectionId },
             { $set: section }
         )
+        res.status(200).send({ message : "Sections Data Updated!" })
     } catch (error) {
         res.status(400).send({ message: error.message })
     }
-    res.status(201).send({ message : "Sections Data Updated!" })
 }
 
 const deleteSection = async (req, res) => {

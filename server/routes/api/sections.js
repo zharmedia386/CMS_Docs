@@ -5,13 +5,14 @@ const { verifyJWT } = require("../../middleware/verifyJWT");
 const { validate } = require("../../middleware/validation");
 const { 
     getSectionByIdRules,
-    createSectionRules 
+    createSectionRules,
+    updateSectionRules
 } = require("../../validators/sectionsValidator");
 
 router.route('/')
     .get(sectionsController.getAllSections)
     .post(verifyJWT, createSectionRules, validate, sectionsController.createNewSection)
-    .put(verifyJWT, sectionsController.updateSection)
+    .put(verifyJWT, updateSectionRules, validate, sectionsController.updateSection)
     .delete(verifyJWT, sectionsController.deleteSection);
 
 router.route('/:id')
