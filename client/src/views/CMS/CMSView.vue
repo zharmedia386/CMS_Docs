@@ -216,15 +216,7 @@ export default {
           icon: "mdi-account-multiple",
         },
       ],
-<<<<<<< HEAD
       user: null,
-=======
-      user: {
-        initials: "JD",
-        fullName: "John Doe",
-        email: "john.doe@doe.com",
-      },
->>>>>>> 25d380f36362a2bcd5877d067b6820820662acff
       steps: [
         {
           target: "#v-step-0",
