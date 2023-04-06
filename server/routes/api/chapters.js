@@ -3,9 +3,11 @@ const router = express.Router();
 const chaptersController = require('../../controllers/chaptersController')
 const { verifyJWT } = require("../../middleware/verifyJWT")
 
+// Validations Middleware
+const { validate } = require("../../middleware/validation")
+
 // Validators Rules
 const { createUserRules } = require("../../validators/chaptersValidator")
-const { validate } = require("../../validators/rootValidator")
 
 router.route('/')
     .get(chaptersController.getAllChapters)
