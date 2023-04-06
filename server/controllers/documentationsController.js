@@ -66,9 +66,16 @@ const getMetadata = async (req, res) => {
             "githubLink": 1,
             "footer": 1
         }).toArray()
+        
         let userMetadata = await User.find({}).project({
             "username" : 1
         }).toArray()
+
+        // If database is empty, returns 200 status code with empty array (Tester: Rafli)
+        if (webMetadata.length === 0 || userMetadata.length === 0) {
+            return res.status(200).send([]);
+        }
+
         res.status(200).send({
             "title" : webMetadata[0].title,
             "logo": webMetadata[0].logo,
