@@ -60,10 +60,11 @@
       </v-app-bar>
 
       <!-- Sidebar -->
-      <v-navigation-drawer
-        v-model="drawer"
-        dark
-        fixed
+      <v-navigation-drawer 
+        :permanent="$vuetify.breakpoint.lgAndUp"
+        v-model="drawer" 
+        dark 
+        fixed 
         class="side-bar fontstyle px-0 py-0"
       >
         <v-container class="nav-wrapper">

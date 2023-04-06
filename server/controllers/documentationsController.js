@@ -90,7 +90,7 @@ const updateMetadata = async (req,res) => {
     
     if (!Documentations || !User) return res.status(204).json({ 'message': 'Metadata not found.'});
 
-    if (!req?.body?.title || !req?.body?.logo || !req?.body?.githubLink || !req?.body?.footer) {
+    if (!req?.body?.title || !req?.body?.logo || !req?.body?.footer) {
         return res.status(400).json({'message': 'Please fill all required field'});
     }
 
@@ -98,7 +98,7 @@ const updateMetadata = async (req,res) => {
         let data = {
             "title" : req.body.title,
             "logo" : req.body.logo,
-            "githubLink" : req.body.githubLink,
+            "githubLink" : req?.body?.githubLink,
             "footer" : req.body.footer,
             "updatedBy": userDataSession.username
         }
@@ -118,7 +118,7 @@ const updateMetadata = async (req,res) => {
 
 // Create documentation info
 const createNewDocumentation = async (req, res) => {
-    if (!req?.body?.title || !req?.body?.description || !req?.body?.logo || !req?.body?.logoLink || !req?.body?.footer || !req?.body?.content) {
+    if (!req?.body?.title || !req?.body?.description || !req?.body?.logo || !req?.body?.footer || !req?.body?.content) {
         return res.status(400).json({ 'message': 'Title, Description, Logo, LogoLink, Footer, Content are required' });
     }
 
@@ -127,13 +127,23 @@ const createNewDocumentation = async (req, res) => {
     // Get user data from the session
     const userDataSession = req.session.user;
 
+    // Documentations collection should be only 1 document at a time
+    Documentations.countDocuments({}, function(err, count) {
+        if(err) throw err;
+        else if (count >= 1) {
+            res.status(409).send({
+                message : "There's already another documentations. Documentation should be only one data/document" 
+            })
+        }
+    })
+
     try {
         // insert documentation
         const insertedDocumentation = await Documentations.insertOne({
             title : req.body.title,
             logo : req.body.logo,
             description : req.body.description,
-            githubLink : req.body.githubLink,
+            githubLink : req?.body?.githubLink,
             footer : req.body.footer,
             content : req.body.content,
             createdBy: userDataSession.username,
