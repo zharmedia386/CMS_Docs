@@ -1,10 +1,11 @@
 const { body, param } = require('express-validator');
+const { isObjectId } = require('./customValidator');
 
 const getSectionByIdRules = [
     param('id')
         .notEmpty().withMessage("id is required").bail()
         .isString().withMessage("id must be a string").bail()
-        .isLength({ min: 24, max: 24 }).withMessage("id must have length of 24 characters")
+        .custom(isObjectId).withMessage("id is invalid")
 ];
 
 const createSectionRules = [
@@ -24,7 +25,7 @@ const updateSectionRules = [
     body('id')
         .notEmpty().withMessage("id is required").bail()
         .isString().withMessage("id must be a string").bail()
-        .isLength({ min: 24, max: 24 }).withMessage("id must have length of 24 characters"),
+        .custom(isObjectId).withMessage("id is invalid"),
     body('title')
         .notEmpty().withMessage("title is required").bail()
         .isString().withMessage("id must be a string"),
@@ -37,8 +38,16 @@ const updateSectionRules = [
         .isString().withMessage("content must be a string")
 ];
 
+const deleteSectionRules = [
+    param('id')
+        .notEmpty().withMessage("id is required").bail()
+        .isString().withMessage("id must be a string").bail()
+        .custom(isObjectId).withMessage("id is invalid")
+];
+
 module.exports = {
     getSectionByIdRules,
     createSectionRules,
-    updateSectionRules
+    updateSectionRules,
+    deleteSectionRules
 };
