@@ -128,7 +128,7 @@ export default {
   methods :{
     async deleteSection(id){
       try {
-        await SectionService.deleteSection({ id });
+        await SectionService.deleteSection(id);
         this.$root.SnackBar.show({ message: "Section successfully deleted", color: 'success', icon: 'mdi-check-circle' })
         this.fetchSections()
       } catch (error) {

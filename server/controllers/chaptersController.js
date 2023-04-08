@@ -28,8 +28,8 @@ const getChaptersById = async (req, res) => {
 // Create chapters info
 const createNewChapter = async (req, res) => {
     // cek field
-    if (!req?.body?.title || !req?.body?.version) {
-        return res.status(400).json({ 'message': 'Judul dan Versi harus diisi' });
+    if (!req?.body?.title || !req?.body?.version || !req?.body?.documentationId) {
+        return res.status(400).json({ 'message': 'Title, documentationId and version fields should be filled in Request Body!' });
     }
 
     const Chapters = await chapterDB();
@@ -58,10 +58,10 @@ const createNewChapter = async (req, res) => {
         if ( result.modifiedCount == 0 ) {
             // Cancel inserting new sections
             await Chapters.deleteOne({ _id: insertedChapter.insertedId });
-            throw new Error ("Error ketika memasukan chapter")
+            throw new Error ("Chapter is not created in documentations database. Please check ID Documentation properly!")
         }
 
-        res.status(201).send({ message : "Chapter berhasil dibuat!" })
+        res.status(201).send({ message : "Chapter is successfully created!" })
     } catch (err) {
         res.status(400).send({ message: err.message })
     }

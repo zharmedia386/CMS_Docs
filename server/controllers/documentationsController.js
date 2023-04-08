@@ -4,71 +4,59 @@ const mongo = require('mongodb')
 const bcrypt = require('bcrypt')
 
 const getAllDocumentationContent = async (req, res) => {
-    const Documentations = await documentationDB()
+    try {
+        const Documentations = await documentationDB()
+        const documentations = await Documentations.find({}).toArray()
 
-    // res.status(200).send(await Documentations.find({})
-    // .project({
-    //     "content": 1
-    // }).toArray())
-    res.status(200).send(await Documentations.find({}).toArray())
-}
+        if (!documentations.length) {
+            return res.status(200).json([]);
+        }
 
-// Get all documentation info
-const getDocumentations = async (req, res) => {
-    if (!req?.params?.version) {
-        return res.status(400).json({ 'message': 'Version is required' });
+        res.status(200).send(documentations)
+    } catch (e) {
+        return res.status(500).json({ "message": "Failed to get documentations" });
     }
-
-    const Documentations = await documentationDB()
-    let documentationVersion = req.params.version
-    
-    if (!Documentations) return res.status(204).json({ 'message': 'No documentation found.' });
-
-    res.status(200).send(await Documentations.find(
-        {
-        content: { 
-            $elemMatch: { 
-            "version": documentationVersion
-            } 
-        }
-        }
-    ).project(
-        {
-            "title": 1,
-            "logo": 1,
-            "githubLink": 1,
-            "footer": 1,
-            "content.$": 1
-        }
-    ).toArray())
 }
 
 // Get all versions
 const getAllVersions = async (req, res) => {
-    const Documentations = await documentationDB()
-    
-    if (!Documentations) return res.status(204).json({ 'message': 'No documentation found.' });
+    try {
+        const Documentations = await documentationDB()
 
-    res.status(200).send(await Documentations.find({}).project({"content.version": 1}).toArray())
+        const documentations = await Documentations.find({}).project({"content.version": 1}).toArray()
+
+        if (!documentations.length) {
+            return res.status(200).json([]);
+        }
+
+        res.status(200).send(documentations)
+    } catch (error) {
+        return res.status(500).json({ "message": "Failed to get all versions" });
+    }
 }
 
 // Get all Metadatas
 const getMetadata = async (req, res) => {
-    const Documentations = await documentationDB()
-    const User = await userCollection()
-    
-    if (!Documentations || !User) return res.status(204).json({ 'message': 'Metadata not found.' });
-    
     try {
+        const Documentations = await documentationDB()
+        const User = await userCollection()
+
         let webMetadata = await Documentations.find({}).project({
             "title": 1,
             "logo": 1,
             "githubLink": 1,
             "footer": 1
         }).toArray()
+        
         let userMetadata = await User.find({}).project({
             "username" : 1
         }).toArray()
+
+        // If database is empty, returns 200 status code with empty array (Tester: Rafli)
+        if (webMetadata.length === 0 || userMetadata.length === 0) {
+            return res.status(200).send([]);
+        }
+
         res.status(200).send({
             "title" : webMetadata[0].title,
             "logo": webMetadata[0].logo,
@@ -77,7 +65,7 @@ const getMetadata = async (req, res) => {
             "username" : userMetadata[0].username
         })
     } catch (error) {
-        res.status(400).send(error.message)
+        return res.status(500).json({ "message": "Failed to get metadata" });
     }
 }
 
@@ -220,7 +208,6 @@ const deleteDocumentation = async (req, res) => {
 
 module.exports = {
     getAllDocumentationContent,
-    getDocumentations,
     getAllVersions,
     createNewDocumentation,
     updateDocumentation,
