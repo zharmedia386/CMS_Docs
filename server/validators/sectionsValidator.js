@@ -11,14 +11,14 @@ const getSectionByIdRules = [
 const createSectionRules = [
     body('title')
         .notEmpty().withMessage("title is required").bail()
-        .isString().withMessage("id must be a string"),
+        .isString().withMessage("title must be a string"),
     body('content')
         .notEmpty().withMessage("content is required").bail()
         .isString().withMessage("content must be a string"),
     body('alias')
         .optional()
-        .notEmpty().withMessage("content is required").bail()
-        .isString().withMessage("content must be a string")
+        .notEmpty().withMessage("alias is required").bail()
+        .isString().withMessage("alias must be a string")
 ];
 
 const updateSectionRules = [
@@ -28,14 +28,14 @@ const updateSectionRules = [
         .custom(isObjectId).withMessage("id is invalid"),
     body('title')
         .notEmpty().withMessage("title is required").bail()
-        .isString().withMessage("id must be a string"),
+        .isString().withMessage("title must be a string"),
     body('content')
         .notEmpty().withMessage("content is required").bail()
         .isString().withMessage("content must be a string"),
     body('alias')
         .optional()
-        .notEmpty().withMessage("content is required").bail()
-        .isString().withMessage("content must be a string")
+        .notEmpty().withMessage("alias is required").bail()
+        .isString().withMessage("alias must be a string")
 ];
 
 const deleteSectionRules = [
