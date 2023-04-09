@@ -16,6 +16,6 @@ router.route('/')
     .delete(verifyJWT, chaptersController.deleteChapter);
 
 router.route('/:id')
-    .get(chaptersController.getChaptersById);
+    .get(getChapterByIdRules, validate, chaptersController.getChaptersById);
 
 module.exports = router;
