@@ -5,48 +5,64 @@ const mongo = require('mongodb')
 
 // Get all chapters info
 const getAllChapters = async (req, res) => {
-    const Chapters = await chapterDB()
-    if (!Chapters) return res.status(204).json({ 'message': 'Chapter tidak ditemukan.' });
+    try {
+        const Chapters = await chapterDB()
+        const chapters = await Chapters.find({}).toArray()
 
-    res.status(200).send(await Chapters.find({}).toArray())
+        if (!chapters.length) {
+            return res.status(200).json([]);
+        }
+
+        return res.status(200).send(chapters)
+    } catch (err) {
+        return res.status(500).json({ "message": "Failed to get chapters" });
+    }
 }
 
 // Get specified chapters info
 const getChaptersById = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ 'message': 'Masukan Chapter ID.' });
+    try {
+        const chapterId = req.params.id;
+        const Chapters = await chaptersDB();
 
-    const Chapters = await chapterDB()
-    let objectId = new mongo.ObjectId(req.params.id)
+        // Convert chapter id to mongo object id
+        let objectId = new mongo.ObjectId(chapterId);
 
-    if (!Chapters) {
-        return res.status(204).json({ "message": `Chapter tidak cocok dengan ID ${req.params.id}.` });
+        const chapters = await Chapters.find({_id : objectId}).toArray();
+
+        // Check if any chapter found
+        if(!chapters.length){
+            return res.status(404).json({ "message": `No chapters matches ID ${chapterId}.` });
+        }
+        
+        return res.status(200).send(chapters);
+    } catch (err) {
+        return res.status(500).json({ "message": "Failed to get chapter by id" });
     }
-    
-    res.status(200).send(await Chapters.find({_id : objectId}).toArray())
 }
 
 // Create chapters info
 const createNewChapter = async (req, res) => {
-    // cek field
-    if (!req?.body?.title || !req?.body?.version || !req?.body?.documentationId) {
-        return res.status(400).json({ 'message': 'Title, documentationId and version fields should be filled in Request Body!' });
-    }
-
-    const Chapters = await chapterDB();
-    const Documentation = await documentationDB();
-
-    // Get user data from the session
-    const userDataSession = req.session.user;
-
     try {
-        // masukan chapter baru
-        const insertedChapter = await Chapters.insertOne({
+        const Chapters = await chapterDB();
+        const Documentation = await documentationDB();
+
+        // Get user data from the session
+        const userDataSession = req.session?.user;
+        if(!userDataSession) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        const chapter = {
             title: req.body.title,
             version: req.body.version,
             createdBy: userDataSession.username,
             createdAt: new Date(),
             updatedAt: new Date() 
-        })
+        }
+
+        // masukan chapter baru
+        const insertedChapter = await Chapters.insertOne(chapter)
 
         // masukan chapter baru didalam dokumen
         const result = await Documentation.updateOne(
@@ -58,42 +74,47 @@ const createNewChapter = async (req, res) => {
         if ( result.modifiedCount == 0 ) {
             // Cancel inserting new sections
             await Chapters.deleteOne({ _id: insertedChapter.insertedId });
-            throw new Error ("Chapter is not created in documentations database. Please check ID Documentation properly!")
+            return res.status(500).send({ message: "Chapter is not created in documentations database. Please check ID Documentation properly!" });
         }
 
-        res.status(201).send({ message : "Chapter is successfully created!" })
+        return res.status(201).send({ message : "Chapter is successfully created!", data: chapter })
     } catch (err) {
-        res.status(400).send({ message: err.message })
+        return res.status(500).json({ message: "Failed to create chapter" });
     }
 }
 
 const updateChapter = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ 'message': 'Chapter ID harus diisi.' });
-
-    if (!req?.body?.title) {
-        return res.status(400).json({ 'message': 'Judul harus diisi' });
-    }
-
-    let chapterId = new mongo.ObjectId(req.body.id)
-
-    const Chapters = await chapterDB();
-    const Documentation = await documentationDB();
-
-    // Get user data from the session
-    const userDataSession = req.session.user;
-
-    const chapter = {
-        title: req.body.title,
-        updatedAt: new Date(),
-        updatedBy: userDataSession.username
-    }
-
     try {
-        // update chapter
-        await Chapters.updateOne(
+        let chapterId = new mongo.ObjectId(req.body.id)
+
+        const Chapters = await chapterDB();
+        const Documentation = await documentationDB();
+    
+        // Get user data from the session
+        const userDataSession = req.session?.user;
+        if(!userDataSession) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+    
+        const chapter = {
+            title: req.body.title,
+            updatedAt: new Date(),
+            updatedBy: userDataSession.username
+        }
+
+        // update section in section collections
+        const result = await Chapters.findOneAndUpdate(
             { _id: chapterId },
-            { $set: chapter }
-        )
+            { $set: chapter },
+            { returnDocument: 'after' }
+        );
+
+        const updatedChapter = result.value;
+
+        // Check if update success for id
+        if(!updatedChapter) {
+            return res.status(404).json({ "message": `No chapters matches ID ${chapterId}.` });
+        }
         
         // update judul chapter
         await Documentation.updateOne(
@@ -101,43 +122,51 @@ const updateChapter = async (req, res) => {
             { $set: { "content.$[c].chapter.$[ch].title": `${chapter.title}`, "content.$[c].chapter.$[ch].updatedBy": userDataSession.username } },
             { arrayFilters: [ { "c.chapter._id": chapterId }, { "ch._id": chapterId } ] }
         )
-    } catch (error) {
-        res.status(400).send({ message: error.message })
-    }
 
-    res.status(201).send({ message : "Chapter Diperbaharui!" })
+        return res.status(200).send({ message : "Chapter is successfully Updated!", data: updatedChapter })
+    } catch (err) {
+        return res.status(500).json({ message: "Failed to update chapter" });
+    }
 }
 
 const deleteChapter = async (req, res) => {
-    let content = req.body.content;
-    let chapterId = req.body.chapterId;
-
-    const section = []
-
-    for (const ct of content) {
-        // Cek jka chapter sudah ada
-        if(!ct?.chapter) { break }
-
-        const chapter = ct.chapter.find((c) => c._id == chapterId)
-
-        if(!chapter?.section) { continue }
-
-        const sectionId = chapter.section.map((sc) => new mongo.ObjectId(sc._id))
-
-        section.push({version: ct.version, section: sectionId})
-    }
-
-    chapterId = new mongo.ObjectId(chapterId);
-
-    const Sections = await sectionsDB();
-    const Chapter = await chapterDB();
-    const Documentation = await documentationDB();
-
     try {
-        // menghapus chapter di colection
-        let result = await Chapter.deleteOne(
-            { _id: chapterId }
+        let content = req.body.content;
+        let chapterId = req.body.chapterId;
+
+        const section = []
+
+        for (const ct of content) {
+            // Cek jka chapter sudah ada
+            if(!ct?.chapter) { break }
+
+            const chapter = ct.chapter.find((c) => c._id == chapterId)
+
+            if(!chapter?.section) { continue }
+
+            const sectionId = chapter.section.map((sc) => new mongo.ObjectId(sc._id))
+
+            section.push({version: ct.version, section: sectionId})
+        }
+
+        chapterId = new mongo.ObjectId(chapterId);
+
+        const Sections = await sectionsDB();
+        const Chapter = await chapterDB();
+        const Documentation = await documentationDB();
+
+        // Delete chapter in chapter collections
+        let result = await Chapter.findOneAndDelete(
+            { _id: chapterId },
+            { returnDocument: 'after' }
         )
+
+        const deletedChapter = result.value;
+
+        // Check if delete success for id
+        if(!deletedChapter) {
+            return res.status(404).json({ "message": `No chapters matches ID ${chapterId}.` });
+        }
 
         // menghapus chapter di struktur dokumentasi
         result = await Documentation.updateOne(
@@ -152,11 +181,11 @@ const deleteChapter = async (req, res) => {
                 { $pull: { version: sc.version } }
             )
         }
-    } catch (error) {
-        res.status(400).send({ message: error.message })
-    }
 
-    res.status(201).send({ message : "Berhasil menghapus chapter" })
+        return res.status(200).send({ message : "Chapter is successfully deleted!", data: deletedChapter });
+    } catch (err) {
+        return res.status(500).send({ message: "Failed to delete chapter" });
+    }
 }
 
 module.exports = {

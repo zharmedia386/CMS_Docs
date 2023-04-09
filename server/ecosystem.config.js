@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name   : "serverBackend",
+    name   : "do-cms-backend",
     script : "npm run start"
   }]
 }
