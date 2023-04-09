@@ -69,7 +69,7 @@ const createNewSection = async (req, res) => {
             return res.status(500).send({ message: "Failed to insert section into database" });
         }
 
-        return res.status(200).send({ message : "Sections Data Created!", data: section })
+        return res.status(201).send({ message : "Sections Data Created!", data: section })
     } catch (err) {
         return res.status(500).send({ message: "Failed to create section" })
     }
@@ -110,12 +110,11 @@ const updateSection = async (req, res) => {
             return res.status(404).json({ "message": `No sections matches ID ${sectionId}.` });
         }
 
-        // Masih error
-        // await Documentation.updateOne(
-        //     { "content.chapter?.section._id": sectionId },
-        //     { $set: { "content.$[].chapter.$[]?.section.$[sc].title": section.title } },
-        //     { arrayFilters: [ { "sc._id": sectionId } ] }
-        // );
+        await Documentation.updateOne(
+            {},
+            { $set: { "content.$[].chapter.$[].section.$[sc].title": section.title } },
+            { arrayFilters: [ { "sc._id": sectionId } ] }
+        );
 
         return res.status(200).send({ message : "Sections Data Updated!", data: updatedSection });
     } catch (error) {
@@ -131,20 +130,17 @@ const deleteSection = async (req, res) => {
 
         let sectionId = new mongo.ObjectId(req.params.id)
 
-        // Check if deleted section exist
-        const foundSection = await Sections.find({_id : sectionId}).toArray();
-        if(foundSection.length == 0) {
-            return res.status(404).json({ "message": `No sections matches ID ${sectionId}.` });
-        }
-
         // Delete section in section collections
-        const deleteResult = await Sections.deleteOne(
-            { _id: sectionId }
+        const result = await Sections.findOneAndDelete(
+            { _id: sectionId },
+            { returnDocument: 'after' }
         )
 
-        // Check if delete success
-        if(deleteResult.deletedCount === 0) {
-            return res.status(500).send({ message: "Failed to delete section from database" });
+        const deletedSection = result.value;
+
+        // Check if delete success for id
+        if(!deletedSection) {
+            return res.status(404).json({ "message": `No sections matches ID ${sectionId}.` });
         }
         
         // Delete section from documentation content if exist
@@ -160,7 +156,7 @@ const deleteSection = async (req, res) => {
                 } 
             }
         );
-        return res.status(200).send({ message : "Sections Data Deleted!", data: foundSection });
+        return res.status(200).send({ message : "Sections Data Deleted!", data: deletedSection });
     } catch (error) {
         return res.status(500).send({ message: "Failed to delete section" });
     }

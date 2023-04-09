@@ -4,10 +4,7 @@ const URL = process.env.VUE_APP_API_URL;
 
 const login = (user) => {
     return axios
-        .post(URL + 'auth', {
-            user: user.username,
-            pwd: user.password 
-        })
+        .post(URL + 'auth', user)
         .then((response) => {
             const token = response.data.accessToken;
             const user = response.data.user;
