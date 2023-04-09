@@ -28,8 +28,8 @@ const getChaptersById = async (req, res) => {
 // Create chapters info
 const createNewChapter = async (req, res) => {
     // cek field
-    if (!req?.body?.title || !req?.body?.version || !req?.body?.documentationId) {
-        return res.status(400).json({ 'message': 'Title, documentationId and version fields should be filled in Request Body!' });
+    if (!req?.body?.title || !req?.body?.version) {
+        return res.status(400).json({ 'message': 'Title and version fields should be filled in Request Body!' });
     }
 
     const Chapters = await chapterDB();
@@ -68,12 +68,6 @@ const createNewChapter = async (req, res) => {
 }
 
 const updateChapter = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ 'message': 'Chapter ID harus diisi.' });
-
-    if (!req?.body?.title) {
-        return res.status(400).json({ 'message': 'Judul harus diisi' });
-    }
-
     let chapterId = new mongo.ObjectId(req.body.id)
 
     const Chapters = await chapterDB();
