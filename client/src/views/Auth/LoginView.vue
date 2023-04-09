@@ -89,7 +89,7 @@ export default {
         await AuthService.login(user);
         this.$router.push({ name: 'cms' })
       } catch (error) {
-        this.$root.SnackBar.show({ message: error.message, color: 'error', icon: 'mdi-close-circle' })
+        this.$root.SnackBar.show({ message: error.response.data.message, color: 'error', icon: 'mdi-close-circle' })
       }
     },
   },

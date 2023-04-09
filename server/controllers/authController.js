@@ -3,47 +3,57 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const handleLogin = async (req, res) => {
-    const Users = await User()
-    const { user, pwd } = req.body;
-    if (!user || !pwd) return res.status(400).json({ 'message': 'Masukan Username dan Password.' });
-    
-    let foundUser = await Users.find({ username: user }).toArray();
-    if (!foundUser) return res.sendStatus(401);
+    try {
+        const Users = await User()
+        const { username, password } = req.body;
+        
+        // Check if user with username exist
+        let foundUser = await Users.find({ username: username }).toArray();
+        if (!foundUser.length) {
+            return res.status(401).send({ message: "Invalid username" });
+        }
 
-    // Create a copy of foundUser and delete the password field
-    let foundUserWithoutPassword = {
-        ...foundUser[0],
-        password: undefined
-      };
-    
-    if(!foundUser[0]) {
-        res.sendStatus(401)
-    }
+        // Compare password inputed with database
+        const user = foundUser[0];
+        const match = await bcrypt.compare(password, user.password);
 
-    const match = await bcrypt.compare(pwd, foundUser[0].password);
-    if (match) {
+        if(!match) {
+            return res.status(401).send({ message: "Invalid password" });
+        }
+
+        // Set access token
         const accessToken = jwt.sign(
-            { "username": foundUser[0].username },
+            { "username": user.username },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '30m' }
         );
+
+        // Set refresh token
         const refreshToken = jwt.sign(
-            { "username": foundUser[0].username },
+            { "username": user.username },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
 
+        // update refresh token
         const result = await Users.updateOne(
-            { _id: foundUser[0]._id },
+            { _id: user._id },
             { $set: { refreshToken: refreshToken } }
-          );
+        );
+
+        if(result.modifiedCount === 0) {
+            return res.status(500).send({ message: "Unable to update user data in database" });
+        }
+
+        // Remove password from user
+        delete user.password;
 
         // Set user data in the session
-        req.session.user = foundUserWithoutPassword;
+        req.session.user = user;
         
-        res.json({ accessToken, user: foundUserWithoutPassword });
-    } else {
-        res.sendStatus(401);
+        return res.json({ accessToken, user: user });
+    } catch (error) {
+        return res.status(500).send({ message: "Unable to login due server error" });
     }
 }
 
