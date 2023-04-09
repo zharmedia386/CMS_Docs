@@ -69,7 +69,7 @@ const createNewSection = async (req, res) => {
             return res.status(500).send({ message: "Failed to insert section into database" });
         }
 
-        return res.status(200).send({ message : "Sections Data Created!", data: section })
+        return res.status(201).send({ message : "Sections Data Created!", data: section })
     } catch (err) {
         return res.status(500).send({ message: "Failed to create section" })
     }

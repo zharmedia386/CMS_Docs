@@ -2,16 +2,16 @@ const User = require('../model/users');
 const bcrypt = require('bcrypt');
 
 const handleNewUser = async (req, res) => {
-    const Users = await User()
-    const { email, firstname, lastname, username, password } = req.body;
-    if (!email || !firstname || !lastname || !username || !password) return res.status(400).json({ 'message': 'Email, Firstname, Lastname, Username and Password are required.' });
-
-    // check for duplicate usernames in the db
-    const duplicate = await Users.find({ username: req.body.username }).toArray();
-    // console.log(duplicate.length);
-    if (typeof duplicate != 'undefined' && duplicate.length > 0) return res.status(409).json({ 'message': 'Username is already taken.' }); //Conflict 
-
     try {
+        const Users = await User()
+        const { email, firstname, lastname, username, password } = req.body;
+
+        // check for duplicate usernames in the db
+        const duplicate = await Users.find({ username: req.body.username }).toArray();
+        if (typeof duplicate != 'undefined' && duplicate.length > 0) {
+            return res.status(409).json({ 'message': 'Username is already taken.' }); //Conflict 
+        }
+
         //encrypt the password
         const hashedPwd = await bcrypt.hash(password, 10);
 
@@ -24,11 +24,13 @@ const handleNewUser = async (req, res) => {
             "password": hashedPwd
         });
 
-        console.log(result);
+        if(!result?.acknowledged) {
+            return res.status(500).send({ message: "Failed to insert user into database" });
+        }
 
         res.status(201).json({ 'success': `New user ${username} created!` });
     } catch (err) {
-        res.status(500).json({ 'message': err.message });
+        res.status(500).json({ 'message': "Failed to register new user" });
     }
 }
 
