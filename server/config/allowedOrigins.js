@@ -6,7 +6,8 @@ const allowedOrigins = [
     'http://localhost:8080',
     'http://localhost:8081',
     'https://topoci-nasution.com',
-    'https://cms-docs.netlify.app'
+    'https://cms-docs.netlify.app',
+    'https://phys-site.xyz'
 ];
 
 module.exports = allowedOrigins;
