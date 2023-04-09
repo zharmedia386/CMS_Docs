@@ -10,18 +10,32 @@ const createVersion = async (req, res) => {
 
     // Get user data from the session
     const userDataSession = req.session.user;
+    if(!userDataSession) {
+        return res.status(401).send({ message: "Unauthorized" });
+    }
 
     try {
         // Add new version into documentation
         await Documentation.updateOne(
             {},
-            { $push: { "content": { version: versionName }, "createdBy": userDataSession.username } }
+            { 
+                $push: { 
+                    "content": { 
+                        version: versionName, 
+                        chapter: [],
+                        createdBy: userDataSession.username,
+                        createdAt: new Date(),
+                        updatedBy: userDataSession.username,
+                        updatedAt: new Date()
+                    } 
+                } 
+            }
         )
     } catch (error) {
-        res.status(400).send({ message: error.message })
+        return res.status(400).send({ message: error.message })
     }
 
-    res.status(201).send({ message: "Successfully created a version" })
+    return res.status(201).send({ message: "Successfully created a version" })
 }
 
 const editVersion = async (req, res) => {
@@ -37,7 +51,7 @@ const editVersion = async (req, res) => {
         // Replace current version name with new version name
         await Documentation.updateOne(
             {},
-            { $set: { "content.$[ct].version": newVersionName, "content.$[ct].updatedBy": userDataSession.username } },
+            { $set: { "content.$[ct].version": newVersionName, "content.$[ct].updatedBy": userDataSession.username , "content.$[ct].updatedAt": new Date()} },
             { arrayFilters: [ { "ct.version": editedVersion } ] }
         )
     } catch (error) {
@@ -201,7 +215,7 @@ const deleteSection = async (req, res) => {
 }
 
 const addChapter = async (req, res) => {
-    const chapters = req.body.chapters.map(ch => ({_id: new mongo.ObjectId(ch._id), title: ch.title}));
+    const chapters = req.body.chapters.map(ch => ({_id: new mongo.ObjectId(ch._id), title: ch.title, section: []}));
     const chaptersId = chapters.map(ch => ch._id)
     const version = req.body.version;
 
