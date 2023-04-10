@@ -215,7 +215,7 @@ export default {
         },
         changeVersion(content) {
             // Load first section in first chapter of the selected version
-            if (content?.length > 0 && content[0]?.section) {
+            if (content?.length > 0 && content[0]?.section.length > 0) {
                 router.push(`/docs/${content[0].section[0]._id}`)
             }
         },
