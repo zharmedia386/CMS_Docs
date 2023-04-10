@@ -132,7 +132,7 @@ const updateChapter = async (req, res) => {
 const deleteChapter = async (req, res) => {
     try {
         let content = req.body.content;
-        let chapterId = req.body.chapterId;
+        let chapterId = new mongo.ObjectId(req.params.id)
 
         const section = []
 
@@ -148,8 +148,6 @@ const deleteChapter = async (req, res) => {
 
             section.push({version: ct.version, section: sectionId})
         }
-
-        chapterId = new mongo.ObjectId(chapterId);
 
         const Sections = await sectionsDB();
         const Chapter = await chapterDB();

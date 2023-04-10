@@ -13,9 +13,9 @@ router.route('/')
     .get(chaptersController.getAllChapters)
     .post(verifyJWT, createChapterRules, validate, chaptersController.createNewChapter)
     .put(verifyJWT, updateChapterRules, validate, chaptersController.updateChapter)
-    .delete(verifyJWT, deleteChapterRules, validate, chaptersController.deleteChapter);
-
+    
 router.route('/:id')
-    .get(getChapterByIdRules, validate, chaptersController.getChaptersById);
+    .get(getChapterByIdRules, validate, chaptersController.getChaptersById)
+    .delete(verifyJWT, deleteChapterRules, validate, chaptersController.deleteChapter);
 
 module.exports = router;

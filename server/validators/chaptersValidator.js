@@ -31,7 +31,7 @@ const updateChapterRules = [
 ];
 
 const deleteChapterRules = [
-  body('id')
+  param('id')
       .notEmpty().withMessage("id is required").bail()
       .isString().withMessage("id must be a string").bail()
       .custom(isObjectId).withMessage("id is invalid")
