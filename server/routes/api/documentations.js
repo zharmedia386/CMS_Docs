@@ -16,7 +16,4 @@ router.route('/metadata')
     .get(documentationsController.getMetadata)
     .put(documentationsController.updateMetadata)
 
-router.route('/:version')
-    .get(documentationsController.getDocumentations)
-
 module.exports = router;
