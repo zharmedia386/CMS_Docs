@@ -58,9 +58,9 @@ const handleLogin = async (req, res) => {
 }
 
 const checkToken = async (req,res) => {
+    try {
     const Users = await User()
     const token = req.params.token
-    try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         let foundUser = await Users.find({ username: decoded.username }).toArray();
         if (!foundUser) return res.status(401).send("Username Tidak Ditemukan");
