@@ -22,6 +22,6 @@ router.route('/version')
 
 router.route('/metadata')
     .get(documentationsController.getMetadata)
-    .put(updateMetadataRules, validate, documentationsController.updateMetadata)
+    .put(verifyJWT, updateMetadataRules, validate, documentationsController.updateMetadata)
 
 module.exports = router;

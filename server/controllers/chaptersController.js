@@ -132,7 +132,7 @@ const updateChapter = async (req, res) => {
 const deleteChapter = async (req, res) => {
     try {
         let content = req.body.content;
-        let chapterId = new mongo.ObjectId(req.body.id)
+        let chapterId = new mongo.ObjectId(req.body.chapterId)
 
         const section = []
 
