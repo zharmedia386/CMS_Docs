@@ -12,7 +12,7 @@ const getAllDocumentationContent = async (req, res) => {
             return res.status(200).json([]);
         }
 
-        res.status(200).send(documentations)
+        return res.status(200).send(documentations)
     } catch (e) {
         return res.status(500).json({ "message": "Failed to get documentations" });
     }
@@ -22,14 +22,13 @@ const getAllDocumentationContent = async (req, res) => {
 const getAllVersions = async (req, res) => {
     try {
         const Documentations = await documentationDB()
-
         const documentations = await Documentations.find({}).project({"content.version": 1}).toArray()
 
         if (!documentations.length) {
             return res.status(200).json([]);
         }
 
-        res.status(200).send(documentations)
+        return res.status(200).send(documentations)
     } catch (error) {
         return res.status(500).json({ "message": "Failed to get all versions" });
     }
@@ -57,77 +56,75 @@ const getMetadata = async (req, res) => {
             return res.status(200).send([]);
         }
 
-        res.status(200).send({
+        const metadata = {
             "title" : webMetadata[0].title,
             "logo": webMetadata[0].logo,
             "githubLink": webMetadata[0].githubLink,
             "footer": webMetadata[0].footer,
             "username" : userMetadata[0].username
-        })
+        }
+
+        return res.status(200).send(metadata)
     } catch (error) {
         return res.status(500).json({ "message": "Failed to get metadata" });
     }
 }
 
 const updateMetadata = async (req,res) => {
-    const Documentations = await documentationDB()
-    const User = await userCollection()
-
-    // Get user data from the session
-    const userDataSession = req.session.user;
-    
-    if (!Documentations || !User) return res.status(204).json({ 'message': 'Metadata not found.'});
-
-    if (!req?.body?.title || !req?.body?.logo || !req?.body?.footer) {
-        return res.status(400).json({'message': 'Please fill all required field'});
-    }
-
     try {
-        let data = {
+        const Documentations = await documentationDB()
+        const User = await userCollection()
+    
+        // Get user data from the session
+        const userDataSession = req.session?.user;
+        if(!userDataSession) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        let metadata = {
             "title" : req.body.title,
             "logo" : req.body.logo,
             "githubLink" : req?.body?.githubLink,
             "footer" : req.body.footer,
             "updatedBy": userDataSession.username
         }
-        const updateDoc = await Documentations.updateOne({}, {
-            $set : data
-        })
         
-        let update = {
-            updateDoc,
-            "message" : "Metadata updated!"
-        }
-        res.status(200).send(update)
-    } catch (error) {
-        res.status(400).send(error.message)
+        const result = await Documentations.updateOne(
+            {}, 
+            { $set : metadata },
+            { returnDocument: 'after' }
+        )
+
+        const updatedMetadata = result.value;
+        
+        return res.status(200).send({ message : "Metadata is successfully Updated!", data: updatedMetadata })
+    } catch (err) {
+        return res.status(500).json({ message: "Failed to update metadata" });
     }
 }
 
 // Create documentation info
 const createNewDocumentation = async (req, res) => {
-    if (!req?.body?.title || !req?.body?.description || !req?.body?.logo || !req?.body?.footer || !req?.body?.content) {
-        return res.status(400).json({ 'message': 'Title, Description, Logo, LogoLink, Footer, Content are required' });
-    }
-
-    const Documentations = await documentationDB()
-
-    // Get user data from the session
-    const userDataSession = req.session.user;
-
-    // Documentations collection should be only 1 document at a time
-    Documentations.countDocuments({}, function(err, count) {
-        if(err) throw err;
-        else if (count >= 1) {
-            res.status(409).send({
-                message : "There's already another documentations. Documentation should be only one data/document" 
-            })
-        }
-    })
-
     try {
-        // insert documentation
-        const insertedDocumentation = await Documentations.insertOne({
+        const Documentations = await documentationDB()
+
+        // Get user data from the session
+        const userDataSession = req.session?.user;
+        if(!userDataSession) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        // Documentations collection should be only 1 document at a time
+        Documentations.countDocuments({}, function(err, count) {
+            if(err) throw err;
+            else if (count >= 1) {
+                res.status(409).send({
+                    message : "There's already another documentations. Documentation should be only one data/document" 
+                })
+            }
+        })
+
+        const documentation = {
             title : req.body.title,
             logo : req.body.logo,
             description : req.body.description,
@@ -137,73 +134,75 @@ const createNewDocumentation = async (req, res) => {
             createdBy: userDataSession.username,
             createdAt : new Date(),
             updatedAt : new Date()
-        })
+        }
 
-        await Documentations.insertOne(insertedDocumentation)
+        // insert documentation
+        const insertedDocumentation = await Documentations.insertOne(documentation)
 
-        res.status(201).send({
-            message : "Documentation Data Created!" 
-        })
-    } catch(err) {
-        res.status(400).send({ message: err.message })
+        return res.status(201).send({ message : "Documentation is successfully created!", data: documentation })
+    } catch (err) {
+        return res.status(500).json({ message: "Failed to create documentation" });
     }
 }
 
 // Edit documentation info
 const updateDocumentation = async (req, res) => {
-    if (!req?.body?.title || !req?.body?.description || !req?.body?.logo || !req?.body?.logoLink || !req?.body?.footer) {
-        return res.status(400).json({ 'message': 'Title, Description, Logo, LogoLink, Footer are required' });
-    }
-
-    const Documentations = await documentationDB()
-
-    // Get user data from the session
-    const userDataSession = req.session.user;
-
-    const documentation = {
-        title : req.body.title,
-        logo : req.body.logo,
-        description : req.body.description,
-        githubLink : req.body.githubLink,
-        footer : req.body.footer,
-        updatedAt : new Date(),
-        updatedBy: userDataSession.username
-    }
-
     try {
-        await Documentations.updateOne(
-            {}, 
-            {
-                $set : documentation
-            }
-        )
-        res.status(200).send({
-            message : "Documentation Data Updated!"
-        })
-    } catch (error) {
-        res.status(400).send({ message: error.message })
-    }
+        const Documentations = await documentationDB()
+
+        // Get user data from the session
+        const userDataSession = req.session?.user;
+        if(!userDataSession) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
     
+        const documentation = {
+            title : req.body.title,
+            logo : req.body.logo,
+            description : req.body.description,
+            githubLink : req.body.githubLink,
+            footer : req.body.footer,
+            updatedAt : new Date(),
+            updatedBy: userDataSession.username
+        }
+
+        const result = await Documentations.updateOne(
+            {},
+            { $set: documentation },
+            { returnDocument: 'after' }
+        );
+
+        const updatedDocumentation = result.value;
+        
+        return res.status(200).send({ message : "Documentation is successfully Updated!", data: updatedDocumentation })
+    } catch (err) {
+        return res.status(500).json({ message: "Failed to update Documentation" });
+    }
 }
 
 // Delete documentation info
 const deleteDocumentation = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ 'message': 'Documentations ID required.' });
-
-    const Documentations = await documentationDB()
-    let objectId = new mongo.ObjectId(req.body.id)
-
     try {
-        await Documentations.deleteOne({
-            _id: objectId
-        })
-    } catch (error) {
-        res.status(400).send({ message: error.message })
+        const Documentations = await documentationDB()
+        let documentationId = new mongo.ObjectId(req.params.id)
+
+        // Delete chapter in chapter collections
+        let result = await Documentations.findOneAndDelete(
+            { _id: documentationId },
+            { returnDocument: 'after' }
+        )
+
+        const deletedDocumentation = result.value;
+
+        // Check if delete success for id
+        if(!deletedDocumentation) {
+            return res.status(404).json({ "message": `No documentations matches ID ${documentationId}.` });
+        }
+        
+        return res.status(200).send({ message : "Documentation is successfully deleted!", data: deletedDocumentation });
+    } catch (err) {
+        return res.status(500).send({ message: "Failed to delete documentation" });
     }
-    
-    res.status(201).send({
-        message : "Documentation Data Deleted!"
-    })
 }
 
 module.exports = {

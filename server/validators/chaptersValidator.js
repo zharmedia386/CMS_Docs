@@ -31,10 +31,13 @@ const updateChapterRules = [
 ];
 
 const deleteChapterRules = [
-  param('id')
-      .notEmpty().withMessage("id is required").bail()
-      .isString().withMessage("id must be a string").bail()
-      .custom(isObjectId).withMessage("id is invalid")
+  body('chapterId')
+      .notEmpty().withMessage("chapterId is required").bail()
+      .isString().withMessage("chapterId must be a string").bail()
+      .custom(isObjectId).withMessage("chapterId is invalid"),
+  body('content')
+      .notEmpty().withMessage('content is required').bail()
+      .isArray().withMessage('content must be a array'),
 ];
 
 module.exports = { getChapterByIdRules, createChapterRules, updateChapterRules, deleteChapterRules };
