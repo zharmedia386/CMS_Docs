@@ -57,6 +57,7 @@ const createNewChapter = async (req, res) => {
             title: req.body.title,
             version: req.body.version,
             createdBy: userDataSession.username,
+            section: [],
             createdAt: new Date(),
             updatedAt: new Date() 
         }

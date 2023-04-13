@@ -3,23 +3,60 @@
     <v-container class="d-flex justify-center mt-9 mb-10">
       <v-container class="mb-2">
         <v-row class="d-flex justify-center ">
-          <v-col class="col-8 white d-flex justify-center align-center pa-8 card-resp" cols="12" sm="8">
-            <v-card-text rounded class=" py-10 pl-8 ftl">
-              <h1 class="text-left display-1 font-weight-normal">Sign in</h1>
+          <v-col 
+            class="col-8 white d-flex justify-center align-center pa-8 card-resp" 
+            cols="12" 
+            sm="8"
+          >
+            <v-card-text 
+              class=" py-10 pl-8 ftl"
+              rounded 
+            >
+              <h1 class="text-left display-1 font-weight-normal">
+                Sign in
+              </h1>
               <div class="text-center mt-2 ">
               </div>
-              <v-form ref="form" v-model="form.valid" lazy-validation>
-                <v-text-field class="mt-12" v-model="form.username" label="Username" variant="tonal"
-                  :rules="form.usernameRules" required></v-text-field>
-                <v-text-field v-model="form.password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="show1 ? 'text' : 'password'" label="Password" :rules="form.passwordRules"
-                  @click:append="show1 = !show1" required></v-text-field>
-                <v-btn block @click="login()" class="ma-1 mt-15 gradient-btn">
+              <v-form 
+                id="login-form"
+                ref="form" 
+                v-model="form.valid" 
+                lazy-validation
+              >
+                <v-text-field 
+                  name="username"
+                  v-model="form.username" 
+                  class="mt-12" 
+                  label="Username" 
+                  variant="tonal"
+                  :rules="form.usernameRules" 
+                  required
+                ></v-text-field>
+                <v-text-field 
+                  name="password"
+                  v-model="form.password" 
+                  label="Password" 
+                  :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="show1 ? 'text' : 'password'" 
+                  :rules="form.passwordRules"
+                  @click:append="show1 = !show1" 
+                  required
+                ></v-text-field>
+                <v-btn 
+                  id="login-button"
+                  class="ma-1 mt-15 gradient-btn"
+                  @click="login()" 
+                  block 
+                >
                   Sign in
                 </v-btn>
                 <div class="mt-3">
                   <h5>Don't have an account?
-                    <router-link to="/register" class="text-decoration-none">
+                    <router-link 
+                      id="create-account-button"
+                      to="/register" 
+                      class="text-decoration-none"
+                    >
                       <span class="font1">Create Account</span>
                     </router-link>
                   </h5>
@@ -27,13 +64,23 @@
               </v-form>
             </v-card-text>
           </v-col>
-          <v-col class="d-none d-sm-flex col-2 d-flex justify-center align-center" cols="0" style="padding: 0;">
-            <img src="@/assets/docms1.jpeg" class="d-none d-sm-flex" style="width: 100% ; border-radius: 0 20px 20px 0">
+          <v-col 
+            class="d-none d-sm-flex col-2 d-flex justify-center align-center pa-0" 
+            cols="0" 
+          >
+            <img 
+              src="@/assets/docms1.jpeg" 
+              class="d-none d-sm-flex" 
+              style="width: 100% ; border-radius: 0 20px 20px 0"
+            >
           </v-col>
         </v-row>
       </v-container>
     </v-container>
-    <v-footer class="pt-5 pr-8 mt-5 pb-3" style="background-color: rgba(0, 0, 0, 0.25)">
+    <v-footer 
+      class="pt-5 pr-8 mt-5 pb-3" 
+      style="background-color: rgba(0, 0, 0, 0.25)"
+    >
       <v-row>
         <v-col md="3" cols="6" style="color: #8B949E">
           <span class="mr-15 ml-1">@2023 DoCMS.</span>
@@ -42,7 +89,6 @@
           <img src="@/assets/github.png">
         </v-col>
       </v-row>
-
     </v-footer>
   </div>
 </template>
