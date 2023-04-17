@@ -15,11 +15,16 @@
 
               <div class="text-center mt-2"></div>
 
-              <v-form ref="form" v-model="form.valid" lazy-validation>
+              <v-form 
+                id="register-form"
+                ref="form" 
+                v-model="form.valid" 
+                lazy-validation
+              >
                 <v-row>
                 <v-col cols="12" sm="6">
                 <v-text-field
-                  id="input-firstname"
+                  name="firstname"
                   class="mt-12"
                   v-model="form.firstname"
                   label="First name"
@@ -30,7 +35,7 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-text-field
-                  id="input-lastname"
+                  name="lastname"
                   class="mt-12"
                   v-model="form.lastname"
                   :rules="form.lastnameRules"
@@ -42,7 +47,7 @@
               </v-row>
 
                 <v-text-field
-                  id="input-email"
+                  name="email"
                   v-model="form.email"
                   label="Email"
                   variant="tonal"
@@ -50,7 +55,7 @@
                   required
                 ></v-text-field>
                 <v-text-field
-                  id="input-username"
+                  name="username"
                   v-model="form.username"
                   label="Username"
                   variant="tonal"
@@ -58,7 +63,7 @@
                   required
                 ></v-text-field>
                 <v-text-field
-                  id="input-password"
+                  name="password"
                   v-model="form.password"
                   :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="show1 ? 'text' : 'password'"
@@ -68,9 +73,10 @@
                   required
                 ></v-text-field>
                 <v-btn
-                  block
+                  id="register-button"
                   @click="register()"
                   class="ma-1 mt-15 gradient-btn"
+                  block
                 >
                   Create Account
                 </v-btn>
@@ -78,7 +84,11 @@
                 <div class="mt-3">
                   <h5>
                     Already have an account?
-                    <router-link to="/login" class="text-decoration-none">
+                    <router-link 
+                      id="login-button"
+                      to="/login" 
+                      class="text-decoration-none"
+                    >
                       <span class="font1">Log in</span>
                     </router-link>
                   </h5>
@@ -107,8 +117,6 @@
       <v-row>
         <v-col md="3" cols="6" style="color: #8b949e">
           <span class="mr-15 ml-1">@2023 DoCMS.</span>
-          <!-- <span class="mr-9">Terms</span>
-        <span>Privacy(Updated 8/2022)</span> -->
         </v-col>
         <v-col md="9" cols="6" class="text-right">
           <img src="@/assets/github.png" />

@@ -67,7 +67,7 @@ const createNewChapter = async (req, res) => {
         // masukan chapter baru didalam dokumen
         const result = await Documentation.updateOne(
             { content: { $elemMatch: { "version": `${req.body.version[0]}` } } },
-            { $push: { "content.$.chapter": { "_id": insertedChapter.insertedId, "title": `${req.body.title}`, "createdBy": userDataSession.username } } }
+            { $push: { "content.$.chapter": { "_id": insertedChapter.insertedId, "title": `${req.body.title}`, "createdBy": userDataSession.username, "section": [] } } }
         )
 
         // cek ketika chapter baru dimasukan kedalam dokumen

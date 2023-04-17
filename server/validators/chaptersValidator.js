@@ -24,10 +24,7 @@ const updateChapterRules = [
     .custom(isObjectId).withMessage("id is invalid"),
   body('title')
     .notEmpty().withMessage('title is required').bail()
-    .isString().withMessage('title must be a string'),
-  body('version')
-    .notEmpty().withMessage('version is required').bail()
-    .isArray().withMessage('version must be an array'),
+    .isString().withMessage('title must be a string')
 ];
 
 const deleteChapterRules = [
