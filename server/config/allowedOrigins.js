@@ -8,7 +8,8 @@ const allowedOrigins = [
     'https://topoci-nasution.com',
     'https://cms-docs.netlify.app',
     'https://phys-site.xyz',
-    'https://cms-docs.vercel.app'
+    'https://cms-docs.vercel.app',
+    'https://docms.web.id'
 ];
 
 module.exports = allowedOrigins;
