@@ -46,6 +46,9 @@ const editVersion = async (req, res) => {
 
     // Get user data from the session
     const userDataSession = req.session.user;
+    if(!userDataSession) {
+        return res.status(401).send({ message: "Unauthorized" });
+    }
 
     try {
         // Replace current version name with new version name

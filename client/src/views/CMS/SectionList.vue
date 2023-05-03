@@ -20,7 +20,7 @@
           id="v-step-chapter-0"
           to="/cms/section/create"
           color="#939AFF"
-          class="black--text d-flex align-start flex-column"
+          class="black--text d-flex align-start flex-column mb-4"
         >
           <v-icon class="mr-2">mdi-plus</v-icon>
           Add New
