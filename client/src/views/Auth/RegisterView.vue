@@ -22,29 +22,29 @@
                 lazy-validation
               >
                 <v-row>
-                <v-col cols="12" sm="6">
-                <v-text-field
-                  name="firstname"
-                  class="mt-12"
-                  v-model="form.firstname"
-                  label="First name"
-                  variant="tonal"
-                  :rules="form.firstnameRules"
-                  required
-                ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
+                  <v-col cols="6">
                   <v-text-field
-                  name="lastname"
-                  class="mt-12"
-                  v-model="form.lastname"
-                  :rules="form.lastnameRules"
-                  label="Last name"
-                  variant="tonal"
-                  required
+                    name="firstname"
+                    class="mt-12"
+                    v-model="form.firstname"
+                    label="First name"
+                    variant="tonal"
+                    :rules="form.firstnameRules"
+                    required
                   ></v-text-field>
-                </v-col>
-              </v-row>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                    name="lastname"
+                    class="mt-12"
+                    v-model="form.lastname"
+                    :rules="form.lastnameRules"
+                    label="Last name"
+                    variant="tonal"
+                    required
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
 
                 <v-text-field
                   name="email"

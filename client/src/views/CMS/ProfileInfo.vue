@@ -32,11 +32,11 @@
         </v-row>
       </div>
       <v-row id="v-step-profile-1">
-        <v-col cols="4" class="mt-4 ml-16 text-container">
+        <v-col cols="4" class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-16'">
           <span>Full Name</span>
         </v-col>
         
-        <v-col cols="3" class="mt-1">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 3" class="mt-1">
           <v-text-field 
           name="firstname"
           dark v-model="user.firstname" 
@@ -47,7 +47,7 @@
           >
         </v-text-field>
         </v-col>
-        <v-col cols="3" class="mt-1">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 3" class="mt-1">
           <v-text-field 
             name="lastname"
             dark 
@@ -61,11 +61,11 @@
       </v-row>
 
       <v-row id="v-step-profile-2">
-        <v-col cols="4" class="mt-4 ml-16 text-container">
+        <v-col cols="4" class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-16'">
           <span>Username</span>
         </v-col>
 
-        <v-col cols="6" class="mt-1">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6" class="mt-1">
           <v-text-field 
             name="username"
             dark 
@@ -79,11 +79,11 @@
       </v-row>
 
       <v-row id="v-step-profile-3">
-        <v-col cols="4" class="mt-4 ml-16 text-container">
+        <v-col cols="4" class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-16'">
           <span>Email</span>
         </v-col>
 
-        <v-col cols="6" class="mt-1">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6" class="mt-1">
           <v-text-field 
             name="email"
             dark 
@@ -97,11 +97,11 @@
       </v-row>
 
       <v-row id="v-step-profile-4">
-        <v-col cols="4" class="mt-4 ml-16 text-container">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 4"  class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-16'">
           <span>Old Password</span>
         </v-col>
 
-        <v-col cols="6" class="mt-1">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6" class="mt-1">
           <v-text-field 
             name="old-password"
             dark 
@@ -117,11 +117,11 @@
         </v-col>
       </v-row>
       <v-row id="v-step-profile-5">
-        <v-col cols="4" class="mt-4 ml-16 text-container">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 4" class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-16'">
           <span>New Password</span>
         </v-col>
 
-        <v-col cols="6" class="mt-1">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6" class="mt-1">
           <v-text-field 
             name="new-password"
             dark 

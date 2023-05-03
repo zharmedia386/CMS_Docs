@@ -31,32 +31,32 @@
       </v-col>
     </v-row>
     <v-row id="v-step-metadata-2">
-      <v-col cols="4" class="mt-4 ml-8 text-container">
+      <v-col cols="4" class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-8'">
         <span>Title</span>
       </v-col>
 
-      <v-col cols="7" class="mt-1">
+      <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 7" class="mt-1">
         <v-text-field id="input-title" v-model="metadata.title" :rules="rules.title" dark outlined required solo-inverted>
         </v-text-field>
       </v-col>
     </v-row>
     <v-row id="v-step-metadata-3">
-      <v-col cols="4" class="mt-4 ml-8 text-container">
+      <v-col cols="4" class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-8'">
         <span>Github Link</span>
       </v-col>
-      <v-col cols="7" class="mt-1">
+      <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 7" class="mt-1">
         <v-text-field id="input-github-link" v-model="metadata.githubLink" :rules="rules.githubLink" dark outlined
           required solo-inverted>
         </v-text-field>
       </v-col>
     </v-row>
     <v-row id="v-step-metadata-4">
-      <v-col dark cols="4" class="mt-4 ml-8 text-container">
+      <v-col dark cols="4" class="mt-4 text-container" :class="$vuetify.breakpoint.mobile ? 'ml-0' : 'ml-8'">
         <span dark solo-inverted>
           Footer
         </span>
       </v-col>
-      <v-col cols="7" class="mb-12" solo-inverted>
+      <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 7" class="mb-12" solo-inverted>
         <vue-editor id="input-footer" v-model="metadata.footer"></vue-editor>
       </v-col>
     </v-row>

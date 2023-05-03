@@ -7,6 +7,7 @@ import VueTour from 'vue-tour';
 import { createPinia, PiniaVuePlugin } from 'pinia';
 import './config/axiosInterceptor';
 
+import './assets/css/style.css';
 require('vue-tour/dist/vue-tour.css');
 
 Vue.use(PiniaVuePlugin);
