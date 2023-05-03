@@ -21,6 +21,7 @@
               </label>
               <v-file-input 
                 id="input-file" 
+                name="image-profile"
                 accept="image/*" 
                 prepend-icon="mdi-camera" 
                 class="camera-input"
@@ -37,16 +38,25 @@
         
         <v-col cols="3" class="mt-1">
           <v-text-field 
+          name="firstname"
           dark v-model="user.firstname" 
           :rules="rules.firstname" 
           outlined 
           required
-          solo-inverted>
+          solo-inverted
+          >
         </v-text-field>
         </v-col>
         <v-col cols="3" class="mt-1">
-          <v-text-field dark v-model="user.lastname" :rules="rules.lastname" outlined required
-            solo-inverted></v-text-field>
+          <v-text-field 
+            name="lastname"
+            dark 
+            v-model="user.lastname" 
+            :rules="rules.lastname" 
+            outlined 
+            required
+            solo-inverted
+          ></v-text-field>
         </v-col>
       </v-row>
 
@@ -56,8 +66,15 @@
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field dark v-model="user.username" :rules="rules.username" outlined required
-            solo-inverted></v-text-field>
+          <v-text-field 
+            name="username"
+            dark 
+            v-model="user.username" 
+            :rules="rules.username" 
+            outlined 
+            required
+            solo-inverted
+          ></v-text-field>
         </v-col>
       </v-row>
 
@@ -67,7 +84,15 @@
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field dark v-model="user.email" :rules="rules.email" outlined required solo-inverted></v-text-field>
+          <v-text-field 
+            name="email"
+            dark 
+            v-model="user.email" 
+            :rules="rules.email" 
+            outlined 
+            required 
+            solo-inverted
+          ></v-text-field>
         </v-col>
       </v-row>
 
@@ -77,8 +102,18 @@
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field dark v-model="oldPassword" :rules="rules.password" :append-icon="is ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="is ? 'text' : 'password'" @click:append="is = !is" outlined required solo-inverted></v-text-field>
+          <v-text-field 
+            name="old-password"
+            dark 
+            v-model="oldPassword" 
+            :rules="rules.password" 
+            :append-icon="is ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="is ? 'text' : 'password'" 
+            @click:append="is = !is" 
+            outlined 
+            required 
+            solo-inverted
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row id="v-step-profile-5">
@@ -87,15 +122,30 @@
         </v-col>
 
         <v-col cols="6" class="mt-1">
-          <v-text-field dark v-model="newPassword" :rules="rules.password" :append-icon="is ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="is ? 'text' : 'password'" @click:append="is = !is" outlined required solo-inverted></v-text-field>
+          <v-text-field 
+            name="new-password"
+            dark 
+            v-model="newPassword" 
+            :rules="rules.password" 
+            :append-icon="is ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="is ? 'text' : 'password'"
+            @click:append="is = !is" 
+            outlined 
+            required 
+            solo-inverted
+          ></v-text-field>
         </v-col>
       </v-row>
 
       <v-divider :thickness="4" class="border-opacity-100 mt-8" color="white"></v-divider>
 
       <div class="d-flex justify-end">
-        <v-btn type="button" class="mt-3 mr-6 colorbtn" id="v-step-profile-6" @click="save">Save Changes</v-btn>
+        <v-btn 
+          id="submit-button v-step-profile-6" 
+          type="button" 
+          class="mt-3 mr-6 colorbtn" 
+          @click="save"
+        >Save Changes</v-btn>
       </div>
     </v-container>
   </div>
