@@ -31,7 +31,7 @@ const updateMetadataRules = [
         .isString().withMessage('logo must be a string'),
     body('githubLink')
         .notEmpty().withMessage('githubLink is required').bail()
-        .isArray().withMessage('githubLink must be a array'),
+        .isString().withMessage('githubLink must be a array'),
     body('footer')
         .notEmpty().withMessage('footer is required').bail()
         .isString().withMessage('footer must be a string'),
