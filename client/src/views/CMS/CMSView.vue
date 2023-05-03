@@ -10,7 +10,9 @@
         ></v-app-bar-nav-icon>
 
         <v-toolbar-title class="d-flex justify-center align-center px-0">
-          <img :src="documentation.logo" class="logo mr-2" />
+          <router-link to="/" target="_blank">
+            <img :src="documentation.logo" class="logo mr-2" />
+          </router-link>
         </v-toolbar-title>
         <div class="ml-auto mr-2 d-flex justify-center align-center">
           <a :href="documentation.githubLink" target="_blank"
@@ -28,7 +30,12 @@
             offset-y
           >
             <template v-slot:activator="{ on }">
-              <v-btn icon x-large v-on="on">
+              <v-btn 
+                id="avatar-dropdown"
+                icon 
+                x-large 
+                v-on="on"
+              >
                 <v-avatar color="brown" size="48">
                   <img v-if="user.profilePicture" :src="user.profilePicture" alt="profilePicture">
                   <span v-else class="white--text text-h5">{{ user.initials }}</span>
@@ -47,11 +54,11 @@
                     {{ user.email }}
                   </p>
                   <v-divider class="my-3"></v-divider>
-                  <v-btn depressed rounded text :to="{ name: 'cms.profile' }">
+                  <v-btn id="profile-button" depressed rounded text :to="{ name: 'cms.profile' }">
                     Edit Profile
                   </v-btn>
                   <v-divider class="my-3"></v-divider>
-                  <v-btn depressed rounded text @click="logout()">
+                  <v-btn id="logout-button" depressed rounded text @click="logout()">
                     Logout
                   </v-btn>
                 </div>
@@ -79,7 +86,7 @@
                     v-for="(menu, index) in menus"
                     v-bind:key="index"
                     :to="menu.ref"
-                    :id="'v-step-' + index"
+                    :id="['v-step-' + index, 'menu-item-' + index].join(' ')"
                   >
                     <v-list-item-icon>
                       <v-icon
@@ -106,7 +113,7 @@
                   <v-list-item
                     @click="logout()"
                     style="align-self: flex-end"
-                    id="v-step-5"
+                    id="v-step-5 menu-item-5"
                   >
                     <v-list-item-icon>
                       <v-icon color="var(--primary-purple)">mdi-logout</v-icon>
