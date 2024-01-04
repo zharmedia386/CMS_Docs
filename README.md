@@ -1,7 +1,7 @@
 <h1 align="center">DoCMS: Solution for all your content needs</h1>
 
 <p align="center">
-  <img src="https://github.com/zharmedia386/CMS_Docs/blob/main/image-readme/favicon.png" />
+  <img src="https://github.com/zharmedia386/CMS_Docs/blob/main/image-readme/favicon.png" width="200" height="200" />
 </p>
 
 <p align="center">
