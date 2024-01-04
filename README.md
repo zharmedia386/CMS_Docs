@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  The Learning Management System (LMS) is a platform that provides educational materials and curriculum content to both urban and rural areas. It utilizes LoRa technology and cloud-based solutions to transmit data between urban and rural areas.
+  Documentation of Content Management System (DoCMS) is a software tool designed to streamline the creation, management, and organization of documentation content for certain technology products. Eliminated the need of coding experience, making it accessible for various type of users without any technical backgrounds.
 </p>
 
 
